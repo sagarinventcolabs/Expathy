@@ -12,12 +12,14 @@ import 'info_widget.dart';
 class UpcomingOrderItem extends StatefulWidget {
   final Function()? cancelPressed;
   final Function()? postponePressed;
+  final Function()? rebookPressed;
   final bool showRebookButton;
   const UpcomingOrderItem(
       {Key? key,
       this.cancelPressed,
       this.postponePressed,
-      this.showRebookButton = false})
+      this.showRebookButton = false,
+      this.rebookPressed})
       : super(key: key);
 
   @override
@@ -29,6 +31,7 @@ class _UpcomingOrderItemState extends State<UpcomingOrderItem> {
   Widget build(BuildContext context) {
     return ListView.separated(
       itemCount: 10,
+      physics: const BouncingScrollPhysics(),
       itemBuilder: (context, index) {
         return Container(
           decoration: BoxDecoration(
@@ -94,7 +97,8 @@ class _UpcomingOrderItemState extends State<UpcomingOrderItem> {
                       text2Tap: widget.postponePressed,
                     ),
                   if (widget.showRebookButton)
-                    ElevatedButtonWidget(onPressed: () {}, text: 'Rebook'),
+                    ElevatedButtonWidget(
+                        onPressed: widget.rebookPressed, text: 'Rebook'),
                 ]),
           ),
         );

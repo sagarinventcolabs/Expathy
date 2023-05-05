@@ -67,6 +67,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           padding: const EdgeInsets.only(
                               top: 32.0, right: 16, left: 16),
                           child: SingleChildScrollView(
+                            physics: const BouncingScrollPhysics(),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [

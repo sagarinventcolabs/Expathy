@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-
 import '../../Common Widgets/custom_scaffold.dart';
-import '../../Common Widgets/elevated_button_widget.dart';
 import '../../Common Widgets/text_widget.dart';
 import '../../Custom Painter /auth_screen_painter.dart';
 import '../../Utils/app_colors.dart';

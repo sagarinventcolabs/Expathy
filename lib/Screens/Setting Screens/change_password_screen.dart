@@ -88,7 +88,10 @@ class ChangePasswordScreen extends StatelessWidget {
                                   padding: EdgeInsets.symmetric(
                                       horizontal: deviceWidth(context) * 0.10),
                                   child: ElevatedButtonWidget(
-                                      onPressed: () {}, text: 'Save'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      text: 'Save'),
                                 ),
                                 heightGap(20),
                               ],

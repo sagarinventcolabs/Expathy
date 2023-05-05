@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../Common Widgets/custom_scaffold.dart';
 import '../../Common Widgets/text_widget.dart';
 import '../../Custom Painter /auth_screen_painter.dart';
+import '../../Models/flag_model.dart';
 import '../../Utils/app_colors.dart';
 import '../../Utils/app_fonts.dart';
 import '../../Utils/app_images.dart';
@@ -19,6 +20,26 @@ class ChangeLanguageScreen extends StatefulWidget {
 }
 
 class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
+  List<FlagModel> flagList = [
+    FlagModel(image: AppImages.f6, name: 'English'),
+    FlagModel(image: AppImages.f7, name: 'Español'),
+    FlagModel(image: AppImages.f17, name: 'العربية'),
+    FlagModel(image: AppImages.f13, name: 'Polski'),
+    FlagModel(image: AppImages.f1, name: 'Turkce'),
+    FlagModel(image: AppImages.f9, name: 'Farsi'),
+    FlagModel(image: AppImages.f11, name: 'हिन्दी'),
+    FlagModel(image: AppImages.f5, name: 'Deutsch'),
+    FlagModel(image: AppImages.f2, name: 'Português'),
+    FlagModel(image: AppImages.f12, name: 'Italiano'),
+    FlagModel(image: AppImages.f3, name: 'Portugese'),
+    FlagModel(image: AppImages.f14, name: 'Română'),
+    FlagModel(image: AppImages.f15, name: 'Ελληνικά'),
+    FlagModel(image: AppImages.f4, name: 'Čeština'),
+    FlagModel(image: AppImages.f10, name: 'Hrvatski'),
+    FlagModel(image: AppImages.f8, name: 'Magyar'),
+    FlagModel(image: AppImages.f16, name: 'български'),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
@@ -88,11 +109,17 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
                               Expanded(
                                 child: ListView.separated(
                                     itemBuilder: (context, index) {
+                                      final flagData = flagList[index];
                                       return Padding(
                                         padding:
                                             const EdgeInsets.only(bottom: 10.0),
                                         child: InkWell(
-                                          onTap: () {},
+                                          onTap: () {
+                                            setState(() {
+                                              flagData.isSelected =
+                                                  !flagData.isSelected;
+                                            });
+                                          },
                                           borderRadius:
                                               BorderRadius.circular(30),
                                           child: Container(
@@ -101,7 +128,9 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(30),
-                                              color: AppColors.white,
+                                              color: flagData.isSelected
+                                                  ? AppColors.yellow
+                                                  : AppColors.white,
                                               border: Border.all(
                                                   width: 1,
                                                   color: AppColors.borderColor),
@@ -111,10 +140,14 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
                                                   left: 20.0),
                                               child: Row(
                                                 children: [
-                                                  Icon(Icons.flag),
+                                                  Image.asset(
+                                                    flagData.image ?? '',
+                                                    width: 33,
+                                                    height: 24,
+                                                  ),
                                                   widthGap(10),
                                                   TextWidget(
-                                                    text: 'English',
+                                                    text: flagData.name ?? '',
                                                     textAlign: TextAlign.center,
                                                     fontSize: 14,
                                                     color: AppColors.black,
@@ -132,7 +165,7 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
                                     separatorBuilder: (context, index) {
                                       return heightGap(10);
                                     },
-                                    itemCount: 10),
+                                    itemCount: flagList.length),
                               ),
                               heightGap(16),
                               ElevatedButtonWidget(

@@ -121,10 +121,6 @@ class _QuestionAnswerScreenState extends State<QuestionAnswerScreen> {
                   Stack(
                     alignment: Alignment.bottomCenter,
                     children: [
-                      /*const SvgPic(
-                        image: AppImages.questionScreenBg,
-                        fit: BoxFit.fitWidth,
-                      ),*/
                       CustomPaint(
                         size: Size(
                             deviceWidth(context),
@@ -404,93 +400,106 @@ class _QuestionAnswerScreenState extends State<QuestionAnswerScreen> {
               Padding(
                 padding: const EdgeInsets.only(
                     left: 20.0, right: 20.0, top: 20.0, bottom: 100.0),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ToolBarWidget(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                      heightGap(14),
-                      TextWidget(
-                        text: questionData.heading ?? '',
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ToolBarWidget(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                    heightGap(14),
+                    TextWidget(
+                      text: questionData.heading ?? '',
+                      fontSize: 18,
+                      color: AppColors.white,
+                      fontFamily: AppFonts.poppins,
+                      fontWeight: FontWeight.w400,
+                    ),
+                    heightGap(18),
+                    LinearPercentIndicator(
+                      lineHeight: 10,
+                      percent: barPercentage,
+                      barRadius: const Radius.circular(16),
+                      progressColor: AppColors.yellow,
+                      backgroundColor: AppColors.questionBarBg,
+                    ),
+                    heightGap(30),
+                    Center(
+                      child: TextWidget(
+                        text: questionData.question ?? '',
                         fontSize: 22,
+                        textAlign: TextAlign.center,
                         color: AppColors.white,
                         fontFamily: AppFonts.poppins,
                         fontWeight: FontWeight.w500,
                       ),
-                      heightGap(18),
-                      LinearPercentIndicator(
-                        lineHeight: 10,
-                        percent: barPercentage,
-                        barRadius: const Radius.circular(16),
-                        progressColor: AppColors.yellow,
-                        backgroundColor: AppColors.questionBarBg,
-                      ),
-                      heightGap(30),
-                      Center(
-                        child: TextWidget(
-                          text: questionData.question ?? '',
-                          fontSize: 18,
-                          color: AppColors.white,
-                          fontFamily: AppFonts.poppins,
-                          fontWeight: FontWeight.w400,
+                    ),
+                    heightGap(30),
+                    if (questionIndex != questionList.length - 1)
+                      Expanded(
+                        child: SingleChildScrollView(
+                          physics: const BouncingScrollPhysics(),
+                          child: Column(
+                            children: [
+                              ...questionData.answers!.map((answer) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 10.0),
+                                  child: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        answer.isSelected = !answer.isSelected!;
+                                      });
+                                    },
+                                    borderRadius: BorderRadius.circular(30),
+                                    child: Container(
+                                      width: double.infinity,
+                                      height: 40,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(30),
+                                        color: answer.isSelected == true
+                                            ? AppColors.yellow
+                                            : AppColors.white,
+                                        border: Border.all(
+                                            width: 1,
+                                            color: /*answer.isSelected == true
+                                                ? AppColors.black
+                                                :*/
+                                                AppColors.borderColor),
+                                      ),
+                                      child: Center(
+                                        child: TextWidget(
+                                          text: answer.text ?? '',
+                                          textAlign: TextAlign.center,
+                                          fontSize: 14,
+                                          color: answer.isSelected == true
+                                              ? AppColors.white
+                                              : AppColors.black,
+                                          fontFamily: AppFonts.poppins,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }),
+                            ],
+                          ),
                         ),
                       ),
-                      heightGap(30),
-                      if (questionIndex != questionList.length - 1)
-                        ...questionData.answers!.map((answer) {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 10.0),
-                            child: InkWell(
-                              onTap: () {
-                                setState(() {
-                                  answer.isSelected = !answer.isSelected!;
-                                });
-                              },
-                              borderRadius: BorderRadius.circular(30),
-                              child: Container(
-                                width: double.infinity,
-                                height: 40,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(30),
-                                  color: answer.isSelected == true
-                                      ? AppColors.yellow
-                                      : AppColors.white,
-                                  border: Border.all(
-                                      width: 1,
-                                      color: answer.isSelected == true
-                                          ? AppColors.black
-                                          : AppColors.borderColor),
-                                ),
-                                child: Center(
-                                  child: TextWidget(
-                                    text: answer.text ?? '',
-                                    textAlign: TextAlign.center,
-                                    fontSize: 14,
-                                    color: answer.isSelected == true
-                                        ? AppColors.white
-                                        : AppColors.black,
-                                    fontFamily: AppFonts.poppins,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        }),
-                      if (questionIndex == questionList.length - 1)
-                        const TextFormFieldWidget(
+                    if (questionIndex == questionList.length - 1)
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 15.0),
+                        child: TextFormFieldWidget(
                           filled: true,
+                          borderRadius: 30,
                           hintColor: AppColors.black,
                           fillColor: AppColors.white,
                           textAlign: TextAlign.center,
                           hintText: 'Enter your answer',
                         ),
-                    ],
-                  ),
+                      ),
+                  ],
                 ),
               ),
             ],

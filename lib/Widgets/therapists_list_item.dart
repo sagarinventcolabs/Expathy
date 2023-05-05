@@ -7,7 +7,9 @@ import '../Utils/helper_methods.dart';
 import 'info_widget.dart';
 
 class TherapistsListItem extends StatelessWidget {
-  const TherapistsListItem({Key? key}) : super(key: key);
+  final bool isFromHome;
+  const TherapistsListItem({Key? key, this.isFromHome = false})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,9 +37,13 @@ class TherapistsListItem extends StatelessWidget {
           heightGap(12),
           ElevatedButtonWidget(
               onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const BottomBarScreen(),
-                ));
+                if (isFromHome) {
+                  Navigator.of(context).pop();
+                } else {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const BottomBarScreen(),
+                  ));
+                }
               },
               text: 'Select'),
         ]),

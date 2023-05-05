@@ -1,7 +1,6 @@
 import 'dart:async';
-
 import 'package:expathy/Common%20Widgets/custom_scaffold.dart';
-import 'package:expathy/Screens/Walkthrough%20Screens/walkthrough_screen.dart';
+import 'package:expathy/Screens/Walkthrough%20Screens/tutorial_screen.dart';
 import 'package:expathy/Utils/app_colors.dart';
 import 'package:expathy/Utils/app_images.dart';
 import 'package:expathy/Utils/helper_methods.dart';
@@ -18,11 +17,16 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
-    Future.delayed(const Duration(seconds: 5), () {
-      Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => const WalkthroughScreen(),
-      ));
-    });
+    Future.delayed(
+      const Duration(seconds: 5),
+      () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const TutorialScreen(),
+          ),
+        );
+      },
+    );
     super.initState();
   }
 

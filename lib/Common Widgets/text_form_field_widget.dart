@@ -29,6 +29,7 @@ class TextFormFieldWidget extends StatelessWidget {
   final Key? textFieldKey;
   final Function()? onVisibilityIconTap;
   final TextAlign textAlign;
+  final double? borderRadius;
 
   const TextFormFieldWidget({
     Key? key,
@@ -57,6 +58,7 @@ class TextFormFieldWidget extends StatelessWidget {
     this.filled,
     this.hintColor,
     this.textAlign = TextAlign.start,
+    this.borderRadius,
   }) : super(key: key);
 
   @override
@@ -99,19 +101,19 @@ class TextFormFieldWidget extends StatelessWidget {
         isCollapsed: false,
         enabledBorder: OutlineInputBorder(
           borderSide: const BorderSide(color: AppColors.borderColor, width: 1),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(borderRadius ?? 8),
         ),
         focusedBorder: OutlineInputBorder(
           borderSide: const BorderSide(color: AppColors.green, width: 1),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(borderRadius ?? 8),
         ),
         errorBorder: OutlineInputBorder(
           borderSide: const BorderSide(color: AppColors.borderColor, width: 1),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(borderRadius ?? 8),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderSide: const BorderSide(color: AppColors.borderColor, width: 1),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(borderRadius ?? 8),
         ),
       ),
     );

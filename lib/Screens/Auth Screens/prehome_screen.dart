@@ -28,9 +28,6 @@ class _PreHomeScreenState extends State<PreHomeScreen> {
           height: double.infinity,
           child: Stack(
             children: [
-              /*const SvgPic(
-                image: AppImages.signUpHeader,
-              ),*/
               CustomPaint(
                 size: Size(
                     deviceWidth(context),
@@ -61,6 +58,7 @@ class _PreHomeScreenState extends State<PreHomeScreen> {
                           padding: const EdgeInsets.only(
                               top: 32.0, right: 16, left: 16),
                           child: SingleChildScrollView(
+                            physics: const BouncingScrollPhysics(),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [

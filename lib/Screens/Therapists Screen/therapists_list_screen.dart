@@ -9,7 +9,9 @@ import '../../Common Widgets/text_widget.dart';
 import '../../Utils/app_fonts.dart';
 
 class TherapistsListScreen extends StatefulWidget {
-  const TherapistsListScreen({Key? key}) : super(key: key);
+  final bool isFromHome;
+  const TherapistsListScreen({Key? key, this.isFromHome = false})
+      : super(key: key);
 
   @override
   State<TherapistsListScreen> createState() => _TherapistsListScreenState();
@@ -45,7 +47,9 @@ class _TherapistsListScreenState extends State<TherapistsListScreen> {
                     itemCount: 6,
                     physics: const BouncingScrollPhysics(),
                     itemBuilder: (context, index) {
-                      return const TherapistsListItem();
+                      return TherapistsListItem(
+                        isFromHome: widget.isFromHome,
+                      );
                     },
                   ),
                 ),

@@ -1,5 +1,3 @@
-import 'dart:ui' as ui;
-
 import 'package:flutter/material.dart';
 
 class QuestionScreenCustomPainter extends CustomPainter {
@@ -27,7 +25,7 @@ class QuestionScreenCustomPainter extends CustomPainter {
     path_0.close();
 
     Paint paint_0_fill = Paint()..style = PaintingStyle.fill;
-    paint_0_fill.color = Color(0xff037D6B).withOpacity(1.0);
+    paint_0_fill.color = const Color(0xff037D6B).withOpacity(1.0);
     canvas.drawPath(path_0, paint_0_fill);
 
     Path path_1 = Path();
@@ -52,7 +50,7 @@ class QuestionScreenCustomPainter extends CustomPainter {
     path_1.close();
 
     Paint paint_1_fill = Paint()..style = PaintingStyle.fill;
-    paint_1_fill.color = Color(0xff012B28).withOpacity(1.0);
+    paint_1_fill.color = const Color(0xff012B28).withOpacity(1.0);
     canvas.drawPath(path_1, paint_1_fill);
   }
 

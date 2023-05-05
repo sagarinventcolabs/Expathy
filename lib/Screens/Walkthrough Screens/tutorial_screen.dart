@@ -1,5 +1,4 @@
 import 'package:expathy/Screens/Auth%20Screens/prehome_screen.dart';
-import 'package:expathy/Screens/Auth%20Screens/sign_up_screen.dart';
 import 'package:expathy/Custom%20Painter%20/walkthrough_custom_painter.dart';
 import 'package:expathy/Utils/app_colors.dart';
 import 'package:expathy/Utils/app_fonts.dart';
@@ -21,7 +20,6 @@ class TutorialScreen extends StatefulWidget {
 
 class _TutorialScreenState extends State<TutorialScreen> {
   final PageController _pageController = PageController(initialPage: 0);
-  final PageController _imageController = PageController(initialPage: 0);
   int pageChangeIndex = 0;
   int imageChangeIndex = 0;
 
@@ -55,21 +53,19 @@ class _TutorialScreenState extends State<TutorialScreen> {
       body: SafeArea(
         child: Stack(
           children: [
-            PageView.builder(
-              controller: _pageController,
-              scrollDirection: Axis.horizontal,
-              itemCount: onBoardingList.length,
-              onPageChanged: (value) {
-                setState(() {
-                  pageChangeIndex = value;
-                });
-              },
-              itemBuilder: (context, index) {
-                return SvgPic(
-                  image: onBoardingList[index].image ?? '',
+            SizedBox(
+              height: deviceHeight(context) * 0.50,
+              child: Padding(
+                padding: EdgeInsets.only(
+                  right: deviceWidth(context) * 0.10,
+                  left: deviceWidth(context) * 0.10,
+                  top: deviceHeight(context) * 0.05,
+                ),
+                child: SvgPic(
+                  image: onBoardingImageList[imageChangeIndex],
                   fit: BoxFit.contain,
-                );
-              },
+                ),
+              ),
             ),
             Positioned(
               bottom: 0,
@@ -77,13 +73,125 @@ class _TutorialScreenState extends State<TutorialScreen> {
               child: CustomPaint(
                 size: Size(
                     deviceWidth(context),
-                    (deviceHeight(context) * 0.65)
+                    (deviceHeight(context) * 0.62)
                         .toDouble()), //You can Replace [WIDTH] with your desired width for Custom Paint and height will be calculated automatically
                 painter: WalkthroughCustomPainter(),
               ),
             ),
-            Column(
+            Stack(
               children: [
+                Column(
+                  children: [
+                    Expanded(
+                      child: PageView.builder(
+                        controller: _pageController,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: onBoardingList.length,
+                        onPageChanged: (value) {
+                          setState(() {
+                            pageChangeIndex = value;
+                            imageChangeIndex = value;
+                          });
+                        },
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: EdgeInsets.only(
+                                right: deviceWidth(context) * 0.06,
+                                left: deviceWidth(context) * 0.06,
+                                top: deviceHeight(context) * 0.01,
+                                bottom: deviceHeight(context) * 0.10),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                TextWidget(
+                                  text: onBoardingList[index].heading ?? '',
+                                  color: AppColors.white,
+                                  fontSize: 28,
+                                  textAlign: TextAlign.center,
+                                  fontFamily: AppFonts.poppins,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                heightGap(12),
+                                TextWidget(
+                                  text: onBoardingList[index].title ?? '',
+                                  color: AppColors.white,
+                                  fontSize: 18,
+                                  textAlign: TextAlign.center,
+                                  fontFamily: AppFonts.poppins,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    Padding(
+                      /*  padding: const EdgeInsets.symmetric(
+                          vertical: 30.0, horizontal: 20),*/
+                      padding: const EdgeInsets.only(
+                          bottom: 30.0, left: 20, right: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          if (pageChangeIndex != 0)
+                            InkWell(
+                              onTap: () {
+                                previousPage();
+                              },
+                              child: Container(
+                                width: 65,
+                                height: 65,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100),
+                                  color: AppColors.white,
+                                ),
+                                child: const Icon(Icons.arrow_back),
+                              ),
+                            ),
+                          Flexible(
+                            child: Row(
+                              mainAxisAlignment: pageChangeIndex == 0
+                                  ? MainAxisAlignment.start
+                                  : MainAxisAlignment.center,
+                              children: List.generate(
+                                onBoardingList.length,
+                                (indexDots) {
+                                  return Container(
+                                    margin: const EdgeInsets.only(right: 3),
+                                    height: 3,
+                                    width:
+                                        pageChangeIndex == indexDots ? 42 : 4,
+                                    decoration: BoxDecoration(
+                                        color: pageChangeIndex == indexDots
+                                            ? AppColors.yellow
+                                            : AppColors.white,
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              nextPage();
+                            },
+                            child: Container(
+                              width: 65,
+                              height: 65,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(100),
+                                color: AppColors.white,
+                              ),
+                              child: const Icon(Icons.arrow_forward),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
                 Padding(
                   padding:
                       const EdgeInsets.only(left: 20.0, right: 20.0, top: 20),
@@ -93,7 +201,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
                       InkWell(
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => const SignUpScreen(),
+                            builder: (context) => const PreHomeScreen(),
                           ));
                         },
                         child: const TextWidget(
@@ -103,125 +211,6 @@ class _TutorialScreenState extends State<TutorialScreen> {
                           fontFamily: AppFonts.tajawal,
                           fontWeight: FontWeight.w400,
                           decoration: TextDecoration.underline,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: PageView.builder(
-                    controller: _pageController,
-                    scrollDirection: Axis.horizontal,
-                    itemCount: onBoardingList.length,
-                    onPageChanged: (value) {
-                      setState(() {
-                        pageChangeIndex = value;
-                      });
-                    },
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: EdgeInsets.only(
-                            right: deviceWidth(context) * 0.06,
-                            left: deviceWidth(context) * 0.06,
-                            top: deviceHeight(context) * 0.01),
-                        child: Column(
-                          children: [
-                            Expanded(
-                              flex: 1,
-                              child: Padding(
-                                padding: const EdgeInsets.only(top: 30.0),
-                                child: SvgPic(
-                                  image: onBoardingList[index].image ?? '',
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  TextWidget(
-                                    text: onBoardingList[index].heading ?? '',
-                                    color: AppColors.white,
-                                    fontSize: 28,
-                                    textAlign: TextAlign.center,
-                                    fontFamily: AppFonts.poppins,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                  heightGap(12),
-                                  TextWidget(
-                                    text: onBoardingList[index].title ?? '',
-                                    color: AppColors.white,
-                                    fontSize: 18,
-                                    textAlign: TextAlign.center,
-                                    fontFamily: AppFonts.poppins,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 30.0, horizontal: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      if (pageChangeIndex != 0)
-                        InkWell(
-                          onTap: () {
-                            previousPage();
-                          },
-                          child: Container(
-                            width: 65,
-                            height: 65,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(100),
-                              color: AppColors.white,
-                            ),
-                            child: const Icon(Icons.arrow_back),
-                          ),
-                        ),
-                      Flexible(
-                        child: Row(
-                          mainAxisAlignment: pageChangeIndex == 0
-                              ? MainAxisAlignment.start
-                              : MainAxisAlignment.center,
-                          children: List.generate(
-                            onBoardingList.length,
-                            (indexDots) {
-                              return Container(
-                                margin: const EdgeInsets.only(right: 3),
-                                height: 3,
-                                width: pageChangeIndex == indexDots ? 42 : 4,
-                                decoration: BoxDecoration(
-                                    color: pageChangeIndex == indexDots
-                                        ? AppColors.yellow
-                                        : AppColors.white,
-                                    borderRadius: BorderRadius.circular(10)),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          nextPage();
-                        },
-                        child: Container(
-                          width: 65,
-                          height: 65,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(100),
-                            color: AppColors.white,
-                          ),
-                          child: const Icon(Icons.arrow_forward),
                         ),
                       ),
                     ],

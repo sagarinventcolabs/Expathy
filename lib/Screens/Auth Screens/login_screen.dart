@@ -12,6 +12,7 @@ import '../../Utils/app_fonts.dart';
 import '../../Utils/app_images.dart';
 import '../../Widgets/svg_picture.dart';
 import '../Question Answer Screen/question_answer_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -65,12 +66,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           padding: const EdgeInsets.only(
                               top: 32.0, right: 16, left: 16),
                           child: SingleChildScrollView(
+                            physics: const BouncingScrollPhysics(),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 const Center(
                                   child: TextWidget(
-                                    text: 'Login Screen',
+                                    text: 'Login',
                                     color: AppColors.black,
                                     fontSize: 28,
                                     fontFamily: AppFonts.poppins,
@@ -119,7 +121,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                                   const QuestionAnswerScreen(),
                                             ));
                                       },
-                                      text: 'Login'),
+                                      text:
+                                          AppLocalizations.of(context)!.login),
                                 ),
                                 heightGap(20),
                                 divider(),

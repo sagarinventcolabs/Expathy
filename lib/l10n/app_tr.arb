@@ -1,0 +1,22 @@
+{
+  "login": "Giriş yapmak",
+  "signUpWithEmail": "Sign up with Email",
+  "signUpWithGoogle": "Sign up with Google",
+  "or": "Or",
+  "signUpWithApple": "Sign up with Apple",
+  "signUpWithFacebook": "Sign up with Facebook",
+  "alreadyHaveAnAccount": "Already have an account?",
+  "signUp": "Sign Up",
+  "userName": "User Name",
+  "email": "Email",
+  "password": "Password",
+  "confirmPassword": "Confirm Password",
+  "iHaveReadAndAcceptThe": "I have read and accept the",
+  "termAndConditions": "Term and Conditions.",
+  "iHaveReadAndAcceptThe": "I have read and accept the",
+  "privacyPolicy": "Privacy Policy.",
+  "rememberMe": "Remember Me",
+  "forgotPassword": "Forgot Password?",
+  "doNotHaveAccount": "Don’t have account?",
+  "createAccount": "Create Account"
+}

@@ -1,4 +1,5 @@
 import 'package:dotted_border/dotted_border.dart';
+import 'package:expathy/Screens/Payment%20Screen/payment_successful_screen.dart';
 import 'package:flutter/material.dart';
 import '../../Common Widgets/custom_scaffold.dart';
 import '../../Common Widgets/elevated_button_widget.dart';
@@ -188,7 +189,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       children: [
                         Expanded(
                             child: ElevatedButtonWidget(
-                                onPressed: () {}, text: 'Pay Now')),
+                                onPressed: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        const PaymentSuccessfulScreen(),
+                                  ));
+                                },
+                                text: 'Pay Now')),
                       ],
                     ),
                   ),

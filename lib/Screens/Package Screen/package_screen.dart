@@ -58,7 +58,9 @@ class _PackageScreenState extends State<PackageScreen> {
                       Row(
                         children: [
                           ToolBarWidget(
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.of(context).pop();
+                            },
                             title: 'Packages',
                           ),
                         ],

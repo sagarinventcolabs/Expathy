@@ -1,12 +1,4 @@
-import 'dart:ui' as ui;
-
 import 'package:flutter/material.dart';
-
-//Add this CustomPaint widget to the Widget Tree
-/*CustomPaint(
-size: Size(WIDTH, (WIDTH*1.1093023255813954).toDouble()), //You can Replace [WIDTH] with your desired width for Custom Paint and height will be calculated automatically
-painter: RPSCustomPainter(),
-)*/
 
 //Copy this CustomPainter code to the Bottom of the File
 class AuthScreenPainter extends CustomPainter {
@@ -34,7 +26,7 @@ class AuthScreenPainter extends CustomPainter {
     path_0.close();
 
     Paint paint_0_fill = Paint()..style = PaintingStyle.fill;
-    paint_0_fill.color = Color(0xffEBB42C).withOpacity(1.0);
+    paint_0_fill.color = const Color(0xffEBB42C).withOpacity(1.0);
     canvas.drawPath(path_0, paint_0_fill);
 
     Path path_1 = Path();
@@ -59,7 +51,7 @@ class AuthScreenPainter extends CustomPainter {
     path_1.close();
 
     Paint paint_1_fill = Paint()..style = PaintingStyle.fill;
-    paint_1_fill.color = Color(0xff012B28).withOpacity(1.0);
+    paint_1_fill.color = const Color(0xff012B28).withOpacity(1.0);
     canvas.drawPath(path_1, paint_1_fill);
   }
 

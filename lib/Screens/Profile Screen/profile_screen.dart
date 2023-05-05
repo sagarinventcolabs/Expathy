@@ -1,3 +1,4 @@
+import 'package:expathy/Screens/Auth%20Screens/prehome_screen.dart';
 import 'package:expathy/Screens/Profile%20Screen/edit_profile_screen.dart';
 import 'package:expathy/Screens/Setting%20Screens/change_language_screen.dart';
 import 'package:expathy/Screens/Setting%20Screens/change_password_screen.dart';
@@ -8,8 +9,6 @@ import 'package:expathy/Utils/app_images.dart';
 import 'package:expathy/Utils/helper_methods.dart';
 import 'package:expathy/Widgets/svg_picture.dart';
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
-
 import '../../Common Widgets/custom_scaffold.dart';
 import '../../Common Widgets/text_widget.dart';
 import '../../Utils/app_colors.dart';
@@ -29,6 +28,7 @@ class ProfileScreen extends StatelessWidget {
           width: double.infinity,
           height: double.infinity,
           child: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
             child: Padding(
               padding: const EdgeInsets.only(top: 20.0, right: 16, left: 16),
               child: Column(
@@ -52,10 +52,10 @@ class ProfileScreen extends StatelessWidget {
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: const [
-                                CircleAvatar(
+                                /* CircleAvatar(
                                   radius: 45,
                                   backgroundImage: AssetImage(AppImages.girl),
-                                ),
+                                ),*/
                                 TextWidget(
                                   text: 'Olivia Rhye',
                                   fontSize: 20,
@@ -132,7 +132,7 @@ class ProfileScreen extends StatelessWidget {
                               }),
                           tileWidget(
                               title: 'Manage Notification',
-                              icon: AppImages.notificationIcon,
+                              icon: AppImages.notiIcon,
                               onTap: () {
                                 Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) =>
@@ -230,7 +230,14 @@ class ProfileScreen extends StatelessWidget {
                           tileWidget(
                               title: 'Log out',
                               icon: AppImages.logoutIcon,
-                              onTap: () {}),
+                              onTap: () {
+                                Navigator.of(context).pushAndRemoveUntil(
+                                  MaterialPageRoute(
+                                    builder: (context) => const PreHomeScreen(),
+                                  ),
+                                  (route) => false,
+                                );
+                              }),
                         ],
                       ),
                     ),
