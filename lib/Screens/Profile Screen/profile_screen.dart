@@ -8,6 +8,7 @@ import 'package:expathy/Screens/Setting%20Screens/personal_information_screen.da
 import 'package:expathy/Utils/app_images.dart';
 import 'package:expathy/Utils/helper_methods.dart';
 import 'package:expathy/Widgets/svg_picture.dart';
+import 'package:expathy/main.dart';
 import 'package:flutter/material.dart';
 import '../../Common Widgets/custom_scaffold.dart';
 import '../../Common Widgets/text_widget.dart';
@@ -231,6 +232,7 @@ class ProfileScreen extends StatelessWidget {
                               title: 'Log out',
                               icon: AppImages.logoutIcon,
                               onTap: () {
+                                sharedPrefs?.clear();
                                 Navigator.of(context).pushAndRemoveUntil(
                                   MaterialPageRoute(
                                     builder: (context) => const PreHomeScreen(),

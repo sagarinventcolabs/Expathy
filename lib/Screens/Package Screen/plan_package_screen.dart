@@ -199,7 +199,7 @@ class _PlanPackageScreenState extends State<PlanPackageScreen> {
                 top: 40,
                 right: 10,
                 child: Container(
-                  width: deviceWidth(context) * 0.28,
+                  width: deviceWidth(context) * 0.30,
                   height: 40,
                   decoration: BoxDecoration(
                       color: AppColors.white,
@@ -274,12 +274,42 @@ class _PlanPackageScreenState extends State<PlanPackageScreen> {
                       fontWeight: FontWeight.w600,
                       fontFamily: AppFonts.poppins,
                     ),
-                    TextWidget(
+                    /* TextWidget(
                       text: amount ?? '',
                       fontSize: 42,
                       fontWeight: FontWeight.w600,
                       fontFamily: AppFonts.poppins,
-                    )
+                    )*/
+                    Column(children: [
+                      RichText(
+                        text: TextSpan(
+                          style: TextStyle(
+                            color: AppColors.black,
+                            fontSize: 42,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: AppFonts.poppins,
+                          ),
+                          children: [
+                            TextSpan(
+                              text: '29.',
+                            ),
+                            WidgetSpan(
+                              child: Transform.translate(
+                                offset: const Offset(0.0, -20.0),
+                                child: Text(
+                                  '99',
+                                  style: TextStyle(
+                                    fontSize: 28,
+                                    fontWeight: FontWeight.w600,
+                                    fontFamily: AppFonts.poppins,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ]),
                   ]),
                   const TextWidget(
                     text: 'per session',

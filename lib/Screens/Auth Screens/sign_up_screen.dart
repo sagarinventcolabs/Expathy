@@ -1,10 +1,13 @@
 import 'package:expathy/Common%20Widgets/elevated_button_widget.dart';
 import 'package:expathy/Common%20Widgets/text_form_field_widget.dart';
 import 'package:expathy/Common%20Widgets/text_widget.dart';
+import 'package:expathy/Providers/Auth%20Provider/auth_provider.dart';
 import 'package:expathy/Screens/Auth%20Screens/login_screen.dart';
 import 'package:expathy/Utils/helper_methods.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../Common Widgets/custom_scaffold.dart';
 import '../../Custom Painter /auth_screen_painter.dart';
 import '../../Utils/app_colors.dart';
@@ -21,12 +24,20 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  final userNameController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
   bool isTermsCheckBoxChecked = false;
   bool isPrivacyCheckBoxChecked = false;
-  bool passwordObsecure = true;
-  bool confirmPasswordObsecure = true;
+  bool passwordObSecure = true;
+  bool confirmPasswordObSecure = true;
+  bool isSignUp = false;
   @override
   Widget build(BuildContext context) {
+    AuthProvider authProvider =
+        Provider.of<AuthProvider>(context, listen: false);
     return CustomScaffold(
       body: SafeArea(
         child: SizedBox(
@@ -34,9 +45,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
           height: double.infinity,
           child: Stack(
             children: [
-              /*const SvgPic(
-                image: AppImages.signUpHeader,
-              ),*/
               CustomPaint(
                 size: Size(
                     deviceWidth(context),
@@ -68,83 +76,121 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               top: 32.0, right: 16, left: 16),
                           child: SingleChildScrollView(
                             physics: const BouncingScrollPhysics(),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                const Center(
-                                  child: TextWidget(
-                                    text: 'Sign Up',
-                                    color: AppColors.black,
-                                    fontSize: 28,
-                                    fontFamily: AppFonts.poppins,
-                                    fontWeight: FontWeight.w600,
+                            child: Form(
+                              key: _formKey,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  const Center(
+                                    child: TextWidget(
+                                      text: 'Sign Up',
+                                      color: AppColors.black,
+                                      fontSize: 28,
+                                      fontFamily: AppFonts.poppins,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
-                                ),
-                                heightGap(16),
-                                const TextFormFieldWidget(
-                                  hintText: 'User Name',
-                                ),
-                                heightGap(16),
-                                const TextFormFieldWidget(
-                                  hintText: 'Email',
-                                ),
-                                heightGap(16),
-                                TextFormFieldWidget(
-                                  hintText: 'Password',
-                                  obscureText: passwordObsecure,
-                                  isPassword: true,
-                                  onVisibilityIconTap: () {
-                                    setState(() {
-                                      passwordObsecure = !passwordObsecure;
-                                    });
-                                  },
-                                ),
-                                heightGap(16),
-                                TextFormFieldWidget(
-                                  hintText: 'Confirm Password',
-                                  obscureText: confirmPasswordObsecure,
-                                  isPassword: true,
-                                  onVisibilityIconTap: () {
-                                    setState(() {
-                                      confirmPasswordObsecure =
-                                          !confirmPasswordObsecure;
-                                    });
-                                  },
-                                ),
-                                heightGap(20),
-                                conditionWidget(
-                                    title: 'I have read and accept the',
-                                    heading: 'Term and Conditions.',
-                                    key: const Key('1')),
-                                heightGap(16),
-                                conditionWidget(
-                                    title: 'I have read and accept the',
-                                    heading: 'Privacy Policy.',
-                                    key: const Key('2')),
-                                heightGap(20),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: deviceWidth(context) * 0.10),
-                                  child: ElevatedButtonWidget(
-                                      onPressed: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const QuestionAnswerScreen(),
-                                            ));
-                                      },
-                                      text: 'Sign Up'),
-                                ),
-                                heightGap(16),
-                                conditionWidget(
-                                    title: 'Already have an account?',
-                                    heading: 'Login',
-                                    navigateToLogin: true,
-                                    showCheckBox: false,
-                                    textAlign: TextAlign.center,
-                                    decoration: TextDecoration.underline),
-                              ],
+                                  heightGap(16),
+                                  TextFormFieldWidget(
+                                    hintText: 'User Name',
+                                    controller: userNameController,
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return 'Please enter user name';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  heightGap(16),
+                                  TextFormFieldWidget(
+                                    hintText: 'Email',
+                                    controller: emailController,
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return 'Please enter email';
+                                      } else if (!RegExp(emailPattern)
+                                          .hasMatch(value)) {
+                                        return 'Please enter valid email address';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  heightGap(16),
+                                  TextFormFieldWidget(
+                                    hintText: 'Password',
+                                    controller: passwordController,
+                                    obscureText: passwordObSecure,
+                                    isPassword: true,
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return 'Please enter password';
+                                      }
+                                      return null;
+                                    },
+                                    onVisibilityIconTap: () {
+                                      setState(() {
+                                        passwordObSecure = !passwordObSecure;
+                                      });
+                                    },
+                                  ),
+                                  heightGap(16),
+                                  TextFormFieldWidget(
+                                    hintText: 'Confirm Password',
+                                    controller: confirmPasswordController,
+                                    obscureText: confirmPasswordObSecure,
+                                    isPassword: true,
+                                    onVisibilityIconTap: () {
+                                      setState(() {
+                                        confirmPasswordObSecure =
+                                            !confirmPasswordObSecure;
+                                      });
+                                    },
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return 'Please enter confirm password';
+                                      } else if (passwordController.text !=
+                                          confirmPasswordController.text) {
+                                        return 'Confirm password not match with password';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  heightGap(20),
+                                  conditionWidget(
+                                      title: 'I have read and accept the',
+                                      heading: 'Term and Conditions.',
+                                      key: const Key('1')),
+                                  heightGap(16),
+                                  conditionWidget(
+                                      title: 'I have read and accept the',
+                                      heading: 'Privacy Policy.',
+                                      key: const Key('2')),
+                                  heightGap(20),
+                                  isSignUp
+                                      ? const Center(
+                                          child: CupertinoActivityIndicator(),
+                                        )
+                                      : Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal:
+                                                  deviceWidth(context) * 0.10),
+                                          child: ElevatedButtonWidget(
+                                              onPressed: () async {
+                                                await callSignUpApi(
+                                                    authProvider: authProvider);
+                                              },
+                                              text: 'Sign Up'),
+                                        ),
+                                  heightGap(16),
+                                  conditionWidget(
+                                      title: 'Already have an account?',
+                                      heading: 'Login',
+                                      navigateToLogin: true,
+                                      showCheckBox: false,
+                                      textAlign: TextAlign.center,
+                                      decoration: TextDecoration.underline),
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -158,6 +204,37 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> callSignUpApi({required AuthProvider authProvider}) async {
+    if (_formKey.currentState!.validate()) {
+      if (!isTermsCheckBoxChecked) {
+        showSnackBar(
+            context: context,
+            message: 'please select terms & conditions',
+            isSuccess: false);
+      } else if (!isPrivacyCheckBoxChecked) {
+        showSnackBar(
+            context: context,
+            message: 'please select privacy policy',
+            isSuccess: false);
+      } else {
+        setState(() {
+          isSignUp = true;
+        });
+        await authProvider.signUpApi(
+          email: emailController.text.trim(),
+          userName: userNameController.text.trim().toString(),
+          password: passwordController.text,
+          type: 'Expact',
+          loginType: 'Email',
+          context: context,
+        );
+        setState(() {
+          isSignUp = false;
+        });
+      }
+    }
   }
 
   Widget conditionWidget(

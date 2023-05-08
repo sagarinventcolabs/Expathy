@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import '../Common Widgets/text_widget.dart';
 import 'app_colors.dart';
 
+const emailPattern =
+    r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+
 SizedBox heightGap(double height) {
   return SizedBox(
     height: height,
@@ -21,6 +24,34 @@ double deviceHeight(BuildContext context) {
 
 double deviceWidth(BuildContext context) {
   return MediaQuery.of(context).size.width;
+}
+
+void showSnackBar({
+  BuildContext? context,
+  String? message,
+  bool isSuccess = true,
+}) {
+  final snackBar = SnackBar(
+    elevation: 6,
+    duration: const Duration(seconds: 1),
+    behavior: SnackBarBehavior.floating,
+    content: Row(
+      children: [
+        isSuccess
+            ? const Icon(Icons.check, color: AppColors.white)
+            : const Icon(Icons.error_outline_rounded, color: AppColors.white),
+        widthGap(10),
+        Flexible(
+            child: TextWidget(
+          text: message ?? "",
+          color: AppColors.white,
+          overflow: TextOverflow.fade,
+        )),
+      ],
+    ),
+    backgroundColor: isSuccess ? AppColors.greenLight : AppColors.red,
+  );
+  ScaffoldMessenger.of(context!).showSnackBar(snackBar);
 }
 
 Future<void> showWarningDialog(

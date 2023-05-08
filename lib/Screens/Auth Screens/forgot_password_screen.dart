@@ -1,30 +1,36 @@
+import 'package:expathy/Screens/Auth%20Screens/sign_up_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../Common Widgets/custom_scaffold.dart';
 import '../../Common Widgets/elevated_button_widget.dart';
 import '../../Common Widgets/text_form_field_widget.dart';
 import '../../Common Widgets/text_widget.dart';
 import '../../Custom Painter /auth_screen_painter.dart';
+import '../../Providers/Auth Provider/auth_provider.dart';
 import '../../Utils/app_colors.dart';
 import '../../Utils/app_fonts.dart';
 import '../../Utils/app_images.dart';
 import '../../Utils/helper_methods.dart';
 import '../../Widgets/toolbar_widget.dart';
-import '../Auth Screens/sign_up_screen.dart';
 
-class ChangePasswordScreen extends StatefulWidget {
-  final bool makeSetPassword;
-  const ChangePasswordScreen({Key? key, this.makeSetPassword = true})
-      : super(key: key);
+class ForgotPasswordScreen extends StatefulWidget {
+  const ForgotPasswordScreen({Key? key}) : super(key: key);
 
   @override
-  State<ChangePasswordScreen> createState() => _ChangePasswordScreenState();
+  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
 }
 
-class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final emailController = TextEditingController();
+  bool isSendOtp = false;
   @override
   Widget build(BuildContext context) {
+    AuthProvider authProvider =
+        Provider.of<AuthProvider>(context, listen: false);
     return CustomScaffold(
       body: SafeArea(
         child: SizedBox(
@@ -32,9 +38,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           height: double.infinity,
           child: Stack(
             children: [
-              /*const SvgPic(
-                image: AppImages.signUpHeader,
-              ),*/
               CustomPaint(
                 size: Size(
                     deviceWidth(context),
@@ -71,51 +74,58 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           padding: const EdgeInsets.only(
                               top: 32.0, right: 16, left: 16),
                           child: SingleChildScrollView(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Center(
-                                  child: TextWidget(
-                                      text: widget.makeSetPassword
-                                          ? 'Set Password'
-                                          : 'Change Password',
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.w500,
-                                      fontFamily: AppFonts.poppins),
-                                ),
-                                heightGap(28),
-                                if (!widget.makeSetPassword)
-                                  const TextFormFieldWidget(
-                                    hintText: 'Current Password',
+                            child: Form(
+                              key: _formKey,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  const Center(
+                                    child: TextWidget(
+                                        text: 'Forgot Password',
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.w500,
+                                        fontFamily: AppFonts.poppins),
                                   ),
-                                if (!widget.makeSetPassword) heightGap(16),
-                                const TextFormFieldWidget(
-                                  hintText: 'New Password',
-                                ),
-                                heightGap(16),
-                                const TextFormFieldWidget(
-                                  hintText: 'Re-enter Password',
-                                ),
-                                heightGap(32),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: deviceWidth(context) * 0.10),
-                                  child: ElevatedButtonWidget(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      text: 'Save'),
-                                ),
-                                heightGap(20),
-                                if (widget.makeSetPassword)
+                                  heightGap(28),
+                                  TextFormFieldWidget(
+                                    hintText: 'Email',
+                                    controller: emailController,
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return 'Please enter email';
+                                      } else if (!RegExp(emailPattern)
+                                          .hasMatch(value)) {
+                                        return 'Please enter valid email address';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  heightGap(32),
+                                  isSendOtp
+                                      ? const Center(
+                                          child: CupertinoActivityIndicator(),
+                                        )
+                                      : Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal:
+                                                  deviceWidth(context) * 0.10),
+                                          child: ElevatedButtonWidget(
+                                              onPressed: () {
+                                                callForgotPasswordApi(
+                                                    authProvider: authProvider);
+                                              },
+                                              text: 'Send OTP'),
+                                        ),
+                                  heightGap(20),
                                   conditionWidget(
                                       title: 'Don’t have account?',
                                       heading: 'Create Account',
                                       showCheckBox: false,
                                       textAlign: TextAlign.center,
                                       decoration: TextDecoration.underline),
-                                if (widget.makeSetPassword) heightGap(20),
-                              ],
+                                  heightGap(20),
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -129,6 +139,22 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> callForgotPasswordApi(
+      {required AuthProvider authProvider}) async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        isSendOtp = true;
+      });
+      await authProvider.forgotPasswordApi(
+        email: emailController.text.trim(),
+        context: context,
+      );
+      setState(() {
+        isSendOtp = false;
+      });
+    }
   }
 
   Widget conditionWidget(

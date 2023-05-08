@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:pin_code_fields/pin_code_fields.dart';
 
 import '../../Common Widgets/custom_scaffold.dart';
 import '../../Common Widgets/elevated_button_widget.dart';
@@ -11,18 +12,16 @@ import '../../Utils/app_fonts.dart';
 import '../../Utils/app_images.dart';
 import '../../Utils/helper_methods.dart';
 import '../../Widgets/toolbar_widget.dart';
-import '../Auth Screens/sign_up_screen.dart';
+import 'login_screen.dart';
 
-class ChangePasswordScreen extends StatefulWidget {
-  final bool makeSetPassword;
-  const ChangePasswordScreen({Key? key, this.makeSetPassword = true})
-      : super(key: key);
+class OtpVerifyScreen extends StatefulWidget {
+  const OtpVerifyScreen({Key? key}) : super(key: key);
 
   @override
-  State<ChangePasswordScreen> createState() => _ChangePasswordScreenState();
+  State<OtpVerifyScreen> createState() => _OtpVerifyScreenState();
 }
 
-class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
+class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
@@ -74,47 +73,73 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                Center(
+                                const Center(
                                   child: TextWidget(
-                                      text: widget.makeSetPassword
-                                          ? 'Set Password'
-                                          : 'Change Password',
+                                      text: 'OTP Verification',
                                       fontSize: 24,
                                       fontWeight: FontWeight.w500,
                                       fontFamily: AppFonts.poppins),
                                 ),
                                 heightGap(28),
-                                if (!widget.makeSetPassword)
-                                  const TextFormFieldWidget(
-                                    hintText: 'Current Password',
+                                PinCodeTextField(
+                                  length: 6,
+                                  obscureText: false,
+                                  animationType: AnimationType.fade,
+                                  cursorColor: AppColors.greyText,
+                                  cursorHeight: 10,
+                                  textStyle: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      fontFamily: AppFonts.poppins,
+                                      color: AppColors.greyText),
+                                  pinTheme: PinTheme(
+                                    shape: PinCodeFieldShape.box,
+                                    borderRadius: BorderRadius.circular(5),
+                                    fieldHeight: 40,
+                                    fieldWidth: 45,
+                                    activeFillColor: Colors.white,
+                                    selectedColor: AppColors.greyText,
+                                    selectedFillColor: AppColors.white,
+                                    inactiveFillColor: AppColors.white,
+                                    inactiveColor: AppColors.greyText,
+                                    activeColor: AppColors.greyText,
+                                    borderWidth: 0.5,
+                                    disabledColor: AppColors.greyText,
                                   ),
-                                if (!widget.makeSetPassword) heightGap(16),
-                                const TextFormFieldWidget(
-                                  hintText: 'New Password',
-                                ),
-                                heightGap(16),
-                                const TextFormFieldWidget(
-                                  hintText: 'Re-enter Password',
+                                  animationDuration:
+                                      const Duration(milliseconds: 300),
+                                  enableActiveFill: true,
+                                  onCompleted: (v) {
+                                    print("Completed");
+                                  },
+                                  onChanged: (value) {
+                                    print(value);
+                                    setState(() {
+                                      // currentText = value;
+                                    });
+                                  },
+                                  beforeTextPaste: (text) {
+                                    print("Allowing to paste $text");
+                                    return true;
+                                  },
+                                  appContext: context,
                                 ),
                                 heightGap(32),
                                 Padding(
                                   padding: EdgeInsets.symmetric(
                                       horizontal: deviceWidth(context) * 0.10),
                                   child: ElevatedButtonWidget(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      text: 'Save'),
+                                      onPressed: () {}, text: 'Verify OTP'),
                                 ),
                                 heightGap(20),
-                                if (widget.makeSetPassword)
-                                  conditionWidget(
-                                      title: 'Don’t have account?',
-                                      heading: 'Create Account',
-                                      showCheckBox: false,
-                                      textAlign: TextAlign.center,
-                                      decoration: TextDecoration.underline),
-                                if (widget.makeSetPassword) heightGap(20),
+                                conditionWidget(
+                                    title: 'Already have an account?',
+                                    heading: 'Login',
+                                    navigateToLogin: true,
+                                    showCheckBox: false,
+                                    textAlign: TextAlign.center,
+                                    decoration: TextDecoration.underline),
+                                heightGap(20),
                               ],
                             ),
                           ),
@@ -136,6 +161,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       String? title,
       Key? key,
       String? heading,
+      bool navigateToLogin = false,
       TextAlign textAlign = TextAlign.start,
       TextDecoration decoration = TextDecoration.none}) {
     return Row(
@@ -161,11 +187,15 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   style:
                       TextStyle(color: AppColors.blue, decoration: decoration),
                   recognizer: TapGestureRecognizer()
-                    ..onTap = () => Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const SignUpScreen(),
-                        )),
+                    ..onTap = () {
+                      if (navigateToLogin) {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const LoginScreen(),
+                            ));
+                      }
+                    },
                 ),
               ],
             ),

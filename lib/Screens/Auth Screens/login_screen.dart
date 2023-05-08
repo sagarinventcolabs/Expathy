@@ -1,12 +1,16 @@
 import 'package:expathy/Common%20Widgets/elevated_button_widget.dart';
 import 'package:expathy/Common%20Widgets/text_form_field_widget.dart';
 import 'package:expathy/Common%20Widgets/text_widget.dart';
+import 'package:expathy/Screens/Auth%20Screens/forgot_password_screen.dart';
 import 'package:expathy/Screens/Auth%20Screens/sign_up_screen.dart';
 import 'package:expathy/Utils/helper_methods.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../Common Widgets/custom_scaffold.dart';
 import '../../Custom Painter /auth_screen_painter.dart';
+import '../../Providers/Auth Provider/auth_provider.dart';
 import '../../Utils/app_colors.dart';
 import '../../Utils/app_fonts.dart';
 import '../../Utils/app_images.dart';
@@ -23,9 +27,15 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool isRememberMeCheckBoxChecked = false;
-  bool passwordObsecure = true;
+  bool passwordObSecure = true;
+  final _formKey = GlobalKey<FormState>();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  bool isLogin = false;
   @override
   Widget build(BuildContext context) {
+    AuthProvider authProvider =
+        Provider.of<AuthProvider>(context, listen: false);
     return CustomScaffold(
       body: SafeArea(
         child: SizedBox(
@@ -67,83 +77,116 @@ class _LoginScreenState extends State<LoginScreen> {
                               top: 32.0, right: 16, left: 16),
                           child: SingleChildScrollView(
                             physics: const BouncingScrollPhysics(),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                const Center(
-                                  child: TextWidget(
-                                    text: 'Login',
-                                    color: AppColors.black,
-                                    fontSize: 28,
-                                    fontFamily: AppFonts.poppins,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                heightGap(16),
-                                const TextFormFieldWidget(
-                                  hintText: 'Email',
-                                ),
-                                heightGap(16),
-                                TextFormFieldWidget(
-                                  hintText: 'Password',
-                                  obscureText: passwordObsecure,
-                                  isPassword: true,
-                                  onVisibilityIconTap: () {
-                                    setState(() {
-                                      passwordObsecure = !passwordObsecure;
-                                    });
-                                  },
-                                ),
-                                heightGap(20),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: conditionWidget(
-                                        title: 'Remember Me',
-                                      ),
+                            child: Form(
+                              key: _formKey,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  const Center(
+                                    child: TextWidget(
+                                      text: 'Login',
+                                      color: AppColors.black,
+                                      fontSize: 28,
+                                      fontFamily: AppFonts.poppins,
+                                      fontWeight: FontWeight.w600,
                                     ),
-                                    const TextWidget(
-                                        text: 'Forgot Password?',
-                                        color: AppColors.blue,
-                                        decoration: TextDecoration.underline),
-                                  ],
-                                ),
-                                heightGap(20),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: deviceWidth(context) * 0.10),
-                                  child: ElevatedButtonWidget(
-                                      onPressed: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const QuestionAnswerScreen(),
-                                            ));
-                                      },
-                                      text:
-                                          AppLocalizations.of(context)!.login),
-                                ),
-                                heightGap(20),
-                                divider(),
-                                heightGap(20),
-                                Row(
-                                  children: [
-                                    socialContainer(image: AppImages.google),
-                                    widthGap(10),
-                                    socialContainer(image: AppImages.apple),
-                                    widthGap(10),
-                                    socialContainer(image: AppImages.facebook),
-                                  ],
-                                ),
-                                heightGap(20),
-                                conditionWidget(
-                                    title: 'Don’t have account?',
-                                    heading: 'Create Account',
-                                    showCheckBox: false,
-                                    textAlign: TextAlign.center,
-                                    decoration: TextDecoration.underline),
-                              ],
+                                  ),
+                                  heightGap(16),
+                                  TextFormFieldWidget(
+                                    hintText: 'Email',
+                                    controller: emailController,
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return 'Please enter email';
+                                      } else if (!RegExp(emailPattern)
+                                          .hasMatch(value)) {
+                                        return 'Please enter valid email address';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  heightGap(16),
+                                  TextFormFieldWidget(
+                                    hintText: 'Password',
+                                    controller: passwordController,
+                                    obscureText: passwordObSecure,
+                                    isPassword: true,
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return 'Please enter password';
+                                      }
+                                      return null;
+                                    },
+                                    onVisibilityIconTap: () {
+                                      setState(() {
+                                        passwordObSecure = !passwordObSecure;
+                                      });
+                                    },
+                                  ),
+                                  heightGap(20),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: conditionWidget(
+                                          title: 'Remember Me',
+                                        ),
+                                      ),
+                                      InkWell(
+                                        onTap: () {
+                                          Navigator.of(context)
+                                              .push(MaterialPageRoute(
+                                            builder: (context) =>
+                                                const ForgotPasswordScreen(),
+                                          ));
+                                        },
+                                        child: const TextWidget(
+                                            text: 'Forgot Password?',
+                                            color: AppColors.blue,
+                                            decoration:
+                                                TextDecoration.underline),
+                                      ),
+                                    ],
+                                  ),
+                                  heightGap(20),
+                                  isLogin
+                                      ? const Center(
+                                          child: CupertinoActivityIndicator(),
+                                        )
+                                      : Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal:
+                                                  deviceWidth(context) * 0.10),
+                                          child: ElevatedButtonWidget(
+                                              onPressed: () async {
+                                                await callLoginApi(
+                                                    authProvider: authProvider);
+                                              },
+                                              text:
+                                                  AppLocalizations.of(context)!
+                                                      .login),
+                                        ),
+                                  heightGap(20),
+                                  divider(),
+                                  heightGap(20),
+                                  Row(
+                                    children: [
+                                      socialContainer(image: AppImages.google),
+                                      widthGap(10),
+                                      socialContainer(image: AppImages.apple),
+                                      widthGap(10),
+                                      socialContainer(
+                                          image: AppImages.facebook),
+                                    ],
+                                  ),
+                                  heightGap(20),
+                                  conditionWidget(
+                                      title: 'Don’t have account?',
+                                      heading: 'Create Account',
+                                      showCheckBox: false,
+                                      textAlign: TextAlign.center,
+                                      decoration: TextDecoration.underline),
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -157,6 +200,23 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> callLoginApi({required AuthProvider authProvider}) async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        isLogin = true;
+      });
+      await authProvider.loginApi(
+        email: emailController.text.trim(),
+        password: passwordController.text,
+        type: 'Expact',
+        context: context,
+      );
+      setState(() {
+        isLogin = false;
+      });
+    }
   }
 
   Widget socialContainer({String? image}) {
