@@ -30,15 +30,24 @@ class RemoteService {
           await http.get(Uri.parse('$BASE_URL$url'), headers: <String, String>{
         'Content-Type': 'application/json',
         'device_type': 'mobile',
-        'x-access-token': authToken ?? "",
+        'Authorization': 'Bearer ${authToken ?? ""}',
       });
       responseJson = _returnResponse(response);
     } on SocketException catch (exception) {
-      throw FetchDataException('No Internet connection');
+      showSnackBar(
+          context: navigatorKey!.currentContext,
+          isSuccess: false,
+          message: exception.message.toString());
     } catch (e) {
-      log(e.toString());
+      log('main catch error $e');
+      final exceptionData = jsonDecode(e.toString());
+      showSnackBar(
+          context: navigatorKey!.currentContext,
+          isSuccess: false,
+          message:
+              '${exceptionData['message'].toString()} ${exceptionData['status'].toString()}');
     }
-    log(responseJson!.body.toString());
+    log('Api Url : $BASE_URL$url');
     return responseJson;
   }
 
@@ -53,12 +62,15 @@ class RemoteService {
           headers: <String, String>{
             'Content-Type': 'application/json',
             'device_type': 'mobile',
-            'x-access-token': authToken ?? "",
+            'Authorization': 'Bearer ${authToken ?? ""}',
           },
           body: jsonEncode(jsonData));
       responseJson = _returnResponse(response);
     } on SocketException catch (exception) {
-      throw FetchDataException('No Internet connection');
+      showSnackBar(
+          context: navigatorKey!.currentContext,
+          isSuccess: false,
+          message: exception.message.toString());
     } catch (e) {
       log('main catch error $e');
       final exceptionData = jsonDecode(e.toString());
@@ -80,7 +92,7 @@ class RemoteService {
       case 201:
         return response;
       case 400:
-        throw BadRequestException(response.body.toString());
+        return response;
       case 401:
       case 403:
         throw UnauthorisedException(response.body.toString());

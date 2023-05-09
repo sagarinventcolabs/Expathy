@@ -10,12 +10,17 @@ import 'package:expathy/Utils/app_strings.dart';
 import 'package:expathy/Utils/helper_methods.dart';
 import 'package:expathy/main.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import '../../Remote/api_config.dart';
 import '../../Remote/remote_service.dart';
 import '../../Screens/Question Answer Screen/question_answer_screen.dart';
 
 class AuthProvider with ChangeNotifier {
+  String? _email;
+  String? get getEmail => _email;
+  set setEmail(String? email) {
+    _email = email;
+  }
+
   Future<AuthModel?> signUpApi(
       {String? email,
       String? password,
@@ -33,24 +38,29 @@ class AuthProvider with ChangeNotifier {
     if (data != null) {
       final signUpResponse = AuthModel.fromJson(jsonDecode(data.body));
       log('api call response : ${signUpResponse.toJson().toString()}');
-      if (signUpResponse.status == 201) {
-        ///add token,user,email to sharedPreference
-        sharedPrefs?.setString(
-            AppStrings.token, signUpResponse.data?.token.toString() ?? '');
-        sharedPrefs?.setString(AppStrings.userName,
-            signUpResponse.data?.user?.userName.toString() ?? '');
-        sharedPrefs?.setString(AppStrings.email,
-            signUpResponse.data?.user?.email.toString() ?? '');
-        if (context.mounted) {
+      if (context.mounted) {
+        if (signUpResponse.status == 201) {
+          ///add token,user,email,languageCode to sharedPreference
+          sharedPrefs?.setString(
+              AppStrings.token, signUpResponse.data?.token.toString() ?? '');
+          sharedPrefs?.setString(AppStrings.userName,
+              signUpResponse.data?.user?.userName.toString() ?? '');
+          sharedPrefs?.setString(AppStrings.email,
+              signUpResponse.data?.user?.email.toString() ?? '');
+          /*sharedPrefs?.setString(AppStrings.languageCode,
+              signUpResponse.data?.user?.language.toString() ?? '');*/
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => const QuestionAnswerScreen(),
             ),
           );
-        }
-      } else if (signUpResponse.status == 409) {
-        if (context.mounted) {
+        } else if (signUpResponse.status == 409) {
+          showSnackBar(
+              isSuccess: false,
+              message: signUpResponse.message,
+              context: context);
+        } else if (signUpResponse.status == 400) {
           showSnackBar(
               isSuccess: false,
               message: signUpResponse.message,
@@ -76,24 +86,27 @@ class AuthProvider with ChangeNotifier {
     if (data != null) {
       final loginResponse = AuthModel.fromJson(jsonDecode(data.body));
       log('api call response : ${loginResponse.toJson().toString()}');
-      if (loginResponse.status == 200) {
-        ///add token,user,email to sharedPreference
-        sharedPrefs?.setString(
-            AppStrings.token, loginResponse.data?.token.toString() ?? '');
-        sharedPrefs?.setString(AppStrings.userName,
-            loginResponse.data?.user?.userName.toString() ?? '');
-        sharedPrefs?.setString(
-            AppStrings.email, loginResponse.data?.user?.email.toString() ?? '');
-        if (context.mounted) {
+      if (context.mounted) {
+        if (loginResponse.status == 200) {
+          ///add token,user,email to sharedPreference
+          sharedPrefs?.setString(
+              AppStrings.token, loginResponse.data?.token.toString() ?? '');
+          sharedPrefs?.setString(AppStrings.userName,
+              loginResponse.data?.user?.userName.toString() ?? '');
+          sharedPrefs?.setString(AppStrings.email,
+              loginResponse.data?.user?.email.toString() ?? '');
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => const BottomBarScreen(),
             ),
           );
-        }
-      } else if (loginResponse.status == 404) {
-        if (context.mounted) {
+        } else if (loginResponse.status == 404) {
+          showSnackBar(
+              isSuccess: false,
+              message: loginResponse.message,
+              context: context);
+        } else if (loginResponse.status == 400) {
           showSnackBar(
               isSuccess: false,
               message: loginResponse.message,
@@ -118,8 +131,8 @@ class AuthProvider with ChangeNotifier {
     if (data != null) {
       final resetPasswordResponse = CommonModel.fromJson(jsonDecode(data.body));
       log('api call response : ${resetPasswordResponse.toJson().toString()}');
-      if (resetPasswordResponse.status == 200) {
-        if (context.mounted) {
+      if (context.mounted) {
+        if (resetPasswordResponse.status == 200) {
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
@@ -127,9 +140,12 @@ class AuthProvider with ChangeNotifier {
             ),
             (route) => false,
           );
-        }
-      } else if (resetPasswordResponse.status == 404) {
-        if (context.mounted) {
+        } else if (resetPasswordResponse.status == 404) {
+          showSnackBar(
+              isSuccess: false,
+              message: resetPasswordResponse.message,
+              context: context);
+        } else if (resetPasswordResponse.status == 400) {
           showSnackBar(
               isSuccess: false,
               message: resetPasswordResponse.message,
@@ -153,17 +169,21 @@ class AuthProvider with ChangeNotifier {
     if (data != null) {
       final otpVerifyResponse = CommonModel.fromJson(jsonDecode(data.body));
       log('api call response : ${otpVerifyResponse.toJson().toString()}');
-      if (otpVerifyResponse.status == 200) {
-        if (context.mounted) {
+      if (context.mounted) {
+        if (otpVerifyResponse.status == 200) {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const ChangePasswordScreen(),
+              builder: (context) =>
+                  const ChangePasswordScreen(makeSetPassword: true),
             ),
           );
-        }
-      } else if (otpVerifyResponse.status == 404) {
-        if (context.mounted) {
+        } else if (otpVerifyResponse.status == 404) {
+          showSnackBar(
+              isSuccess: false,
+              message: otpVerifyResponse.message,
+              context: context);
+        } else if (otpVerifyResponse.status == 400) {
           showSnackBar(
               isSuccess: false,
               message: otpVerifyResponse.message,
@@ -178,42 +198,40 @@ class AuthProvider with ChangeNotifier {
 
   Future<CommonModel?> forgotPasswordApi(
       {required String email, required BuildContext context}) async {
-    try {
-      final data =
-          await RemoteService().callPostApi(url: eForgotPassword, jsonData: {
-        "email": email,
-      });
-      if (data != null) {
-        final forgotPasswordResponse =
-            CommonModel.fromJson(jsonDecode(data.body));
-        log('api call response : ${forgotPasswordResponse.toJson().toString()}');
+    final data =
+        await RemoteService().callPostApi(url: eForgotPassword, jsonData: {
+      "email": email,
+    });
+    if (data != null) {
+      final forgotPasswordResponse =
+          CommonModel.fromJson(jsonDecode(data.body));
+      log('api call response : ${forgotPasswordResponse.toJson().toString()}');
+      if (context.mounted) {
         if (forgotPasswordResponse.status == 200) {
-          if (context.mounted) {
-            showSnackBar(
-                isSuccess: true,
-                message: forgotPasswordResponse.message,
-                context: context);
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const OtpVerifyScreen(),
-              ),
-            );
-          }
+          showSnackBar(
+              isSuccess: true,
+              message: forgotPasswordResponse.message,
+              context: context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const OtpVerifyScreen(),
+            ),
+          );
         } else if (forgotPasswordResponse.status == 404) {
-          if (context.mounted) {
-            showSnackBar(
-                isSuccess: false,
-                message: forgotPasswordResponse.message,
-                context: context);
-          }
+          showSnackBar(
+              isSuccess: false,
+              message: forgotPasswordResponse.message,
+              context: context);
+        } else if (forgotPasswordResponse.status == 400) {
+          showSnackBar(
+              isSuccess: false,
+              message: forgotPasswordResponse.message,
+              context: context);
         }
-        notifyListeners();
-        return forgotPasswordResponse;
       }
-      return null;
-    } catch (e) {
-      log(e.toString());
+      notifyListeners();
+      return forgotPasswordResponse;
     }
     return null;
   }

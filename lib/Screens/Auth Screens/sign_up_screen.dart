@@ -14,7 +14,6 @@ import '../../Utils/app_colors.dart';
 import '../../Utils/app_fonts.dart';
 import '../../Utils/app_images.dart';
 import '../../Widgets/svg_picture.dart';
-import '../Question Answer Screen/question_answer_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -104,6 +103,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   heightGap(16),
                                   TextFormFieldWidget(
                                     hintText: 'Email',
+                                    keyboardType: TextInputType.emailAddress,
                                     controller: emailController,
                                     validator: (value) {
                                       if (value!.isEmpty) {

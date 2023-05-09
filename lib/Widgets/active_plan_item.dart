@@ -37,15 +37,15 @@ class _ActivePlanItemState extends State<ActivePlanItem> {
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const TextWidget(
+                      children: const [
+                        TextWidget(
                           text: 'Free Plan',
                           textAlign: TextAlign.center,
                           fontSize: 18,
                           fontFamily: AppFonts.poppins,
                           fontWeight: FontWeight.w500,
                         ),
-                        const TextWidget(
+                        TextWidget(
                           text: '(10 min./session)',
                           textAlign: TextAlign.center,
                           fontSize: 12,

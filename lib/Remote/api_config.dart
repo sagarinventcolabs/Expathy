@@ -1,8 +1,13 @@
 const String BASE_URL = BASE_URL_LIVE;
-const String BASE_URL_LIVE = 'http://3.20.147.34:9999/api/app/auth/';
+const String BASE_URL_LIVE = 'http://3.20.147.34:9999/api/app/';
 
-String eLogin = 'login';
-String eSignUp = 'sign-up';
-String eResetPassword = 'reset-password';
-String eVerifyOtp = 'verify-otp';
-String eForgotPassword = 'forget-password';
+///Post
+String eLogin = 'auth/login';
+String eSignUp = 'auth/sign-up';
+String eResetPassword = 'auth/reset-password';
+String eVerifyOtp = 'auth/verify-otp';
+String eForgotPassword = 'auth/forget-password';
+
+///Get
+String eFirstQuestion = 'question/first-question';
+String eQuestionList = 'question/question-list';

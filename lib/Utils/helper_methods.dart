@@ -1,4 +1,10 @@
+import 'dart:developer';
+import 'dart:io';
+
+import 'package:expathy/Utils/app_strings.dart';
+import 'package:expathy/main.dart';
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../Common Widgets/text_widget.dart';
 import 'app_colors.dart';
@@ -24,6 +30,14 @@ double deviceHeight(BuildContext context) {
 
 double deviceWidth(BuildContext context) {
   return MediaQuery.of(context).size.width;
+}
+
+Future<void> checkDeviceOs() async {
+  if (Platform.isAndroid) {
+    sharedPrefs?.setString(AppStrings.deviceOs, 'Android');
+  } else if (Platform.isIOS) {
+    sharedPrefs?.setString(AppStrings.deviceOs, 'Ios');
+  }
 }
 
 void showSnackBar({
@@ -52,6 +66,14 @@ void showSnackBar({
     backgroundColor: isSuccess ? AppColors.greenLight : AppColors.red,
   );
   ScaffoldMessenger.of(context!).showSnackBar(snackBar);
+}
+
+Widget shimmerEffect({required Widget widget}) {
+  return Shimmer.fromColors(
+    baseColor: Colors.grey.shade500,
+    highlightColor: Colors.grey.shade400,
+    child: widget,
+  );
 }
 
 Future<void> showWarningDialog(

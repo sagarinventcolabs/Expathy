@@ -1,8 +1,7 @@
 import 'package:expathy/Providers/app_provider.dart';
-import 'package:expathy/Screens/Auth%20Screens/forgot_password_screen.dart';
-import 'package:expathy/Screens/Auth%20Screens/otp_verify_screen.dart';
-import 'package:expathy/Screens/Setting%20Screens/change_password_screen.dart';
+import 'package:expathy/Screens/Question%20Answer%20Screen/first_question_screen.dart';
 import 'package:expathy/Screens/Splash/splash_screen.dart';
+import 'package:expathy/Utils/helper_methods.dart';
 import 'package:expathy/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,6 +19,7 @@ void main() async {
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   sharedPrefs = await SharedPreferences.getInstance();
   navigatorKey = GlobalKey<NavigatorState>();
+  await checkDeviceOs();
   runApp(
       MultiProvider(providers: AppProvider.appProviders, child: const MyApp()));
 }
@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const SplashScreen(),
+      home: const FirstQuestionScreen(),
     );
   }
 }

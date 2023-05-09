@@ -29,7 +29,7 @@ class ProfileScreen extends StatelessWidget {
           width: double.infinity,
           height: double.infinity,
           child: SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
+            physics: const BouncingScrollPhysics(),
             child: Padding(
               padding: const EdgeInsets.only(top: 20.0, right: 16, left: 16),
               child: Column(

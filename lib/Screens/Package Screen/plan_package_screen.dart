@@ -283,20 +283,20 @@ class _PlanPackageScreenState extends State<PlanPackageScreen> {
                     Column(children: [
                       RichText(
                         text: TextSpan(
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: AppColors.black,
                             fontSize: 42,
                             fontWeight: FontWeight.w600,
                             fontFamily: AppFonts.poppins,
                           ),
                           children: [
-                            TextSpan(
+                            const TextSpan(
                               text: '29.',
                             ),
                             WidgetSpan(
                               child: Transform.translate(
                                 offset: const Offset(0.0, -20.0),
-                                child: Text(
+                                child: const Text(
                                   '99',
                                   style: TextStyle(
                                     fontSize: 28,

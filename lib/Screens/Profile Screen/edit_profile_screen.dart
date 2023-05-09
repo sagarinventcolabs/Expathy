@@ -83,6 +83,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 heightGap(16),
                                 const TextFormFieldWidget(
                                   hintText: 'Email',
+                                  keyboardType: TextInputType.emailAddress,
                                 ),
                                 heightGap(32),
                                 Padding(

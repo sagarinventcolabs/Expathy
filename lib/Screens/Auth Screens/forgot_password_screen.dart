@@ -89,6 +89,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                   heightGap(28),
                                   TextFormFieldWidget(
                                     hintText: 'Email',
+                                    keyboardType: TextInputType.emailAddress,
                                     controller: emailController,
                                     validator: (value) {
                                       if (value!.isEmpty) {
@@ -147,6 +148,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       setState(() {
         isSendOtp = true;
       });
+      authProvider.setEmail = emailController.text.toString();
       await authProvider.forgotPasswordApi(
         email: emailController.text.trim(),
         context: context,

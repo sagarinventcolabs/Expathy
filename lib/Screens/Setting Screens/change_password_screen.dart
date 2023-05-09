@@ -1,11 +1,14 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../Common Widgets/custom_scaffold.dart';
 import '../../Common Widgets/elevated_button_widget.dart';
 import '../../Common Widgets/text_form_field_widget.dart';
 import '../../Common Widgets/text_widget.dart';
 import '../../Custom Painter /auth_screen_painter.dart';
+import '../../Providers/Auth Provider/auth_provider.dart';
 import '../../Utils/app_colors.dart';
 import '../../Utils/app_fonts.dart';
 import '../../Utils/app_images.dart';
@@ -15,7 +18,7 @@ import '../Auth Screens/sign_up_screen.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   final bool makeSetPassword;
-  const ChangePasswordScreen({Key? key, this.makeSetPassword = true})
+  const ChangePasswordScreen({Key? key, this.makeSetPassword = false})
       : super(key: key);
 
   @override
@@ -23,8 +26,14 @@ class ChangePasswordScreen extends StatefulWidget {
 }
 
 class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
+  final newPasswordController = TextEditingController();
+  final reEnterPasswordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  bool isSetPassword = false;
   @override
   Widget build(BuildContext context) {
+    AuthProvider authProvider =
+        Provider.of<AuthProvider>(context, listen: false);
     return CustomScaffold(
       body: SafeArea(
         child: SizedBox(
@@ -71,51 +80,88 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           padding: const EdgeInsets.only(
                               top: 32.0, right: 16, left: 16),
                           child: SingleChildScrollView(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Center(
-                                  child: TextWidget(
-                                      text: widget.makeSetPassword
-                                          ? 'Set Password'
-                                          : 'Change Password',
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.w500,
-                                      fontFamily: AppFonts.poppins),
-                                ),
-                                heightGap(28),
-                                if (!widget.makeSetPassword)
-                                  const TextFormFieldWidget(
-                                    hintText: 'Current Password',
+                            child: Form(
+                              key: _formKey,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Center(
+                                    child: TextWidget(
+                                        text: widget.makeSetPassword
+                                            ? 'Set Password'
+                                            : 'Change Password',
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.w500,
+                                        fontFamily: AppFonts.poppins),
                                   ),
-                                if (!widget.makeSetPassword) heightGap(16),
-                                const TextFormFieldWidget(
-                                  hintText: 'New Password',
-                                ),
-                                heightGap(16),
-                                const TextFormFieldWidget(
-                                  hintText: 'Re-enter Password',
-                                ),
-                                heightGap(32),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: deviceWidth(context) * 0.10),
-                                  child: ElevatedButtonWidget(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
+                                  heightGap(28),
+                                  if (!widget.makeSetPassword)
+                                    TextFormFieldWidget(
+                                      hintText: 'Current Password',
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return 'Please enter password';
+                                        }
+                                        return null;
                                       },
-                                      text: 'Save'),
-                                ),
-                                heightGap(20),
-                                if (widget.makeSetPassword)
-                                  conditionWidget(
-                                      title: 'Don’t have account?',
-                                      heading: 'Create Account',
-                                      showCheckBox: false,
-                                      textAlign: TextAlign.center,
-                                      decoration: TextDecoration.underline),
-                                if (widget.makeSetPassword) heightGap(20),
-                              ],
+                                    ),
+                                  if (!widget.makeSetPassword) heightGap(16),
+                                  TextFormFieldWidget(
+                                    hintText: 'New Password',
+                                    controller: newPasswordController,
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return 'Please enter new password';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  heightGap(16),
+                                  TextFormFieldWidget(
+                                    hintText: 'Re-enter Password',
+                                    controller: reEnterPasswordController,
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return 'Please re-enter password';
+                                      } else if (newPasswordController.text !=
+                                          reEnterPasswordController.text) {
+                                        return 'Re-enter password not match with new password';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  heightGap(32),
+                                  isSetPassword
+                                      ? const Center(
+                                          child: CupertinoActivityIndicator(),
+                                        )
+                                      : Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal:
+                                                  deviceWidth(context) * 0.10),
+                                          child: ElevatedButtonWidget(
+                                              onPressed: () {
+                                                if (widget.makeSetPassword) {
+                                                  callSetPasswordApi(
+                                                      authProvider:
+                                                          authProvider);
+                                                } else {
+                                                  Navigator.of(context).pop();
+                                                }
+                                              },
+                                              text: 'Save'),
+                                        ),
+                                  heightGap(20),
+                                  if (widget.makeSetPassword)
+                                    conditionWidget(
+                                        title: 'Don’t have account?',
+                                        heading: 'Create Account',
+                                        showCheckBox: false,
+                                        textAlign: TextAlign.center,
+                                        decoration: TextDecoration.underline),
+                                  if (widget.makeSetPassword) heightGap(20),
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -129,6 +175,22 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> callSetPasswordApi({required AuthProvider authProvider}) async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        isSetPassword = true;
+      });
+      await authProvider.resetPasswordApi(
+        context: context,
+        email: authProvider.getEmail.toString(),
+        password: newPasswordController.text.trim(),
+      );
+      setState(() {
+        isSetPassword = false;
+      });
+    }
   }
 
   Widget conditionWidget(

@@ -29,10 +29,8 @@ class _PreHomeScreenState extends State<PreHomeScreen> {
           child: Stack(
             children: [
               CustomPaint(
-                size: Size(
-                    deviceWidth(context),
-                    (deviceHeight(context) * 0.50)
-                        .toDouble()), //You can Replace [WIDTH] with your desired width for Custom Paint and height will be calculated automatically
+                size: Size(deviceWidth(context),
+                    (deviceHeight(context) * 0.50).toDouble()),
                 painter: AuthScreenPainter(),
               ),
               Column(

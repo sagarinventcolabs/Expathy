@@ -3,7 +3,9 @@ import 'package:expathy/Common%20Widgets/text_form_field_widget.dart';
 import 'package:expathy/Common%20Widgets/text_widget.dart';
 import 'package:expathy/Screens/Auth%20Screens/forgot_password_screen.dart';
 import 'package:expathy/Screens/Auth%20Screens/sign_up_screen.dart';
+import 'package:expathy/Utils/app_strings.dart';
 import 'package:expathy/Utils/helper_methods.dart';
+import 'package:expathy/main.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +17,6 @@ import '../../Utils/app_colors.dart';
 import '../../Utils/app_fonts.dart';
 import '../../Utils/app_images.dart';
 import '../../Widgets/svg_picture.dart';
-import '../Question Answer Screen/question_answer_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -32,6 +33,16 @@ class _LoginScreenState extends State<LoginScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   bool isLogin = false;
+
+  @override
+  void initState() {
+    emailController.text =
+        sharedPrefs?.getString(AppStrings.rememberMeEmail) ?? '';
+    passwordController.text =
+        sharedPrefs?.getString(AppStrings.rememberMePassword) ?? '';
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     AuthProvider authProvider =
@@ -43,14 +54,9 @@ class _LoginScreenState extends State<LoginScreen> {
           height: double.infinity,
           child: Stack(
             children: [
-              /* const SvgPic(
-                image: AppImages.signUpHeader,
-              ),*/
               CustomPaint(
-                size: Size(
-                    deviceWidth(context),
-                    (deviceHeight(context) * 0.50)
-                        .toDouble()), //You can Replace [WIDTH] with your desired width for Custom Paint and height will be calculated automatically
+                size: Size(deviceWidth(context),
+                    (deviceHeight(context) * 0.50).toDouble()),
                 painter: AuthScreenPainter(),
               ),
               Column(
@@ -95,6 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   TextFormFieldWidget(
                                     hintText: 'Email',
                                     controller: emailController,
+                                    keyboardType: TextInputType.emailAddress,
                                     validator: (value) {
                                       if (value!.isEmpty) {
                                         return 'Please enter email';
@@ -204,6 +211,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> callLoginApi({required AuthProvider authProvider}) async {
     if (_formKey.currentState!.validate()) {
+      if (isRememberMeCheckBoxChecked) {
+        sharedPrefs?.setString(
+            AppStrings.rememberMeEmail, emailController.text.trim());
+        sharedPrefs?.setString(
+            AppStrings.rememberMePassword, passwordController.text);
+      }
       setState(() {
         isLogin = true;
       });
