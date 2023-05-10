@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'package:expathy/Screens/No%20Internet%20Screen/no_internet_screen.dart';
 import 'package:expathy/Utils/app_strings.dart';
 import 'package:expathy/Utils/helper_methods.dart';
 import 'package:expathy/main.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'api_config.dart';
@@ -11,12 +13,20 @@ import 'app_exceptions.dart';
 
 class RemoteService {
   Future<String?> getAuthToken() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString(AppStrings.token);
+    String? token = sharedPrefs?.getString(AppStrings.token);
     if (token == '') {
       return null;
     } else {
       return token;
+    }
+  }
+
+  Future<String?> getOsType() async {
+    String? os = sharedPrefs?.getString(AppStrings.deviceOs);
+    if (os == '') {
+      return null;
+    } else {
+      return os;
     }
   }
 
@@ -26,10 +36,11 @@ class RemoteService {
     http.Response? responseJson;
     try {
       var authToken = await getAuthToken();
+      var osType = await getOsType();
       final response =
           await http.get(Uri.parse('$BASE_URL$url'), headers: <String, String>{
         'Content-Type': 'application/json',
-        'device_type': 'mobile',
+        'device_type': osType ?? 'mobile',
         'Authorization': 'Bearer ${authToken ?? ""}',
       });
       responseJson = _returnResponse(response);
@@ -38,6 +49,7 @@ class RemoteService {
           context: navigatorKey!.currentContext,
           isSuccess: false,
           message: exception.message.toString());
+      throw NoInternetException('No Internet');
     } catch (e) {
       log('main catch error $e');
       final exceptionData = jsonDecode(e.toString());
@@ -58,10 +70,11 @@ class RemoteService {
     http.Response? responseJson;
     try {
       var authToken = await getAuthToken();
+      var osType = await getOsType();
       final response = await http.post(Uri.parse('$BASE_URL$url'),
           headers: <String, String>{
             'Content-Type': 'application/json',
-            'device_type': 'mobile',
+            'device_type': osType ?? 'mobile',
             'Authorization': 'Bearer ${authToken ?? ""}',
           },
           body: jsonEncode(jsonData));
@@ -81,7 +94,6 @@ class RemoteService {
               '${exceptionData['message'].toString()} ${exceptionData['status'].toString()}');
     }
     log('Api Url : $BASE_URL$url');
-    log('Api request : $jsonData');
     return responseJson;
   }
 

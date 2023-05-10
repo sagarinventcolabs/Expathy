@@ -5,11 +5,13 @@ import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
+import '../../Common Widgets/custom_future_builder.dart';
 import '../../Common Widgets/custom_scaffold.dart';
 import '../../Common Widgets/text_widget.dart';
 import '../../Custom Painter /question_screen_custom_painter.dart';
 import '../../Models/first_question_model.dart';
 import '../../Models/questions_model.dart';
+import '../../Remote/app_exceptions.dart';
 import '../../Utils/app_colors.dart';
 import '../../Utils/app_fonts.dart';
 import '../../Utils/app_images.dart';
@@ -33,9 +35,9 @@ class _FirstQuestionScreenState extends State<FirstQuestionScreen> {
   @override
   void initState() {
     super.initState();
-    firstFuture = context
-        .read<QuestionProvider>()
-        .fetchFirstQuestionApi(context: context);
+    firstFuture = context.read<QuestionProvider>().fetchFirstQuestionApi(
+          context: context,
+        );
   }
 
   @override
@@ -118,7 +120,7 @@ class _FirstQuestionScreenState extends State<FirstQuestionScreen> {
                       backgroundColor: AppColors.questionBarBg,
                     ),
                     heightGap(30),
-                    Expanded(
+                    /*  Expanded(
                       child: FutureBuilder(
                         future: firstFuture,
                         builder: (context, snapshot) {
@@ -128,14 +130,17 @@ class _FirstQuestionScreenState extends State<FirstQuestionScreen> {
                           } else if (snapshot.connectionState ==
                               ConnectionState.done) {
                             if (snapshot.hasError) {
+                              if (snapshot.error is NoInternetException) {
+                                NoInternetException noInternetException =
+                                    snapshot.error as NoInternetException;
+                                return Center(
+                                  child: Lottie.asset(AppImages.oppsJson,
+                                      width: 200, height: 200),
+                                );
+                              }
                               return const Center(
-                                  child: TextWidget(
-                                text: 'Error',
-                                fontSize: 18,
-                                color: AppColors.white,
-                                fontFamily: AppFonts.poppins,
-                                fontWeight: FontWeight.w400,
-                              ));
+                                child: CupertinoActivityIndicator(),
+                              );
                             } else if (snapshot.hasData) {
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -222,6 +227,84 @@ class _FirstQuestionScreenState extends State<FirstQuestionScreen> {
                                 child:
                                     Text('State: ${snapshot.connectionState}'));
                           }
+                        },
+                      ),
+                    ),*/
+                    Expanded(
+                      child: CustomFutureBuilder<FirstQuestionModel?>(
+                        loaderWidget: loadingShimmer(),
+                        future: firstFuture,
+                        data: (snapshot) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Center(
+                                child: TextWidget(
+                                  text: snapshot?.data?.question ?? '',
+                                  fontSize: 22,
+                                  textAlign: TextAlign.center,
+                                  color: AppColors.white,
+                                  fontFamily: AppFonts.poppins,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              heightGap(30),
+                              Expanded(
+                                child: SingleChildScrollView(
+                                  physics: const BouncingScrollPhysics(),
+                                  child: Column(
+                                    children: [
+                                      ...?snapshot?.data?.options
+                                          ?.map((answer) {
+                                        return Padding(
+                                          padding: const EdgeInsets.only(
+                                              bottom: 10.0),
+                                          child: InkWell(
+                                            onTap: () {
+                                              setState(() {
+                                                selectedLanguage = answer;
+                                              });
+                                            },
+                                            borderRadius:
+                                                BorderRadius.circular(30),
+                                            child: Container(
+                                              width: double.infinity,
+                                              height: 40,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(30),
+                                                color:
+                                                    answer == selectedLanguage
+                                                        ? AppColors.yellow
+                                                        : AppColors.white,
+                                                border: Border.all(
+                                                    width: 1,
+                                                    color:
+                                                        AppColors.borderColor),
+                                              ),
+                                              child: Center(
+                                                child: TextWidget(
+                                                  text: answer,
+                                                  textAlign: TextAlign.center,
+                                                  fontSize: 14,
+                                                  color:
+                                                      answer == selectedLanguage
+                                                          ? AppColors.white
+                                                          : AppColors.black,
+                                                  fontFamily: AppFonts.poppins,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      }),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
                         },
                       ),
                     ),

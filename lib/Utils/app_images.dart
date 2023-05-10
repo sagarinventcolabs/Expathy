@@ -92,6 +92,7 @@ class AppImages {
   static const worryJson = "assets/images/noworry.json";
   static const congratsJson = "assets/images/congrats.json";
   static const emptyJson = "assets/images/empty.json";
+  static const networkJson = "assets/images/network.json";
 
   ///
   static const errorGif = "assets/images/error.gif";

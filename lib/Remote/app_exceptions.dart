@@ -15,6 +15,10 @@ class FetchDataException extends AppException {
       : super(message, "Error During Communication: ");
 }
 
+class NoInternetException extends AppException {
+  NoInternetException([String? message]) : super(message, "No internet: ");
+}
+
 class BadRequestException extends AppException {
   BadRequestException([message]) : super(message, "Invalid Request: ");
 }

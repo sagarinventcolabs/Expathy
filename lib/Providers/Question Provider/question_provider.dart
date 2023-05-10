@@ -13,7 +13,9 @@ class QuestionProvider with ChangeNotifier {
 
   Future<FirstQuestionModel?> fetchFirstQuestionApi(
       {required BuildContext context}) async {
-    final data = await RemoteService().callGetApi(url: eFirstQuestion);
+    final data = await RemoteService().callGetApi(
+      url: eFirstQuestion,
+    );
     if (data != null) {
       final firstQuestionResponse =
           FirstQuestionModel.fromJson(jsonDecode(data.body));
@@ -40,8 +42,10 @@ class QuestionProvider with ChangeNotifier {
   }
 
   Future<FirstQuestionModel?> fetchQuestionsListApi(
-      {required BuildContext context}) async {
-    final data = await RemoteService().callGetApi(url: eQuestionList);
+      {required BuildContext context, required String screenName}) async {
+    final data = await RemoteService().callGetApi(
+      url: eQuestionList,
+    );
     if (data != null) {
       final questionListResponse =
           FirstQuestionModel.fromJson(jsonDecode(data.body));
