@@ -10,9 +10,11 @@ import 'package:expathy/Utils/app_strings.dart';
 import 'package:expathy/Utils/helper_methods.dart';
 import 'package:expathy/main.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../Remote/api_config.dart';
 import '../../Remote/remote_service.dart';
 import '../../Screens/Question Answer Screen/question_answer_screen.dart';
+import '../Language Provider/language_provider.dart';
 
 class AuthProvider with ChangeNotifier {
   String? _email;
@@ -95,6 +97,9 @@ class AuthProvider with ChangeNotifier {
               loginResponse.data?.user?.userName.toString() ?? '');
           sharedPrefs?.setString(AppStrings.email,
               loginResponse.data?.user?.email.toString() ?? '');
+          context.read<LanguageProvider>().changeLanguage(
+                languageCode: loginResponse.data?.user?.language.toString(),
+              );
           Navigator.push(
             context,
             MaterialPageRoute(

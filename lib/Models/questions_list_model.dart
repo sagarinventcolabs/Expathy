@@ -1,14 +1,14 @@
-class LanguageListModel {
+class QuestionsListModel {
   int? status;
   String? statusText;
   String? message;
   Data? data;
   int? exeTime;
 
-  LanguageListModel(
+  QuestionsListModel(
       {this.status, this.statusText, this.message, this.data, this.exeTime});
 
-  LanguageListModel.fromJson(Map<String, dynamic> json) {
+  QuestionsListModel.fromJson(Map<String, dynamic> json) {
     status = json["status"];
     statusText = json["statusText"];
     message = json["message"];
@@ -30,14 +30,14 @@ class LanguageListModel {
 }
 
 class Data {
-  List<Data1>? data;
+  List<Question>? data;
 
   Data({this.data});
 
   Data.fromJson(Map<String, dynamic> json) {
     data = json["data"] == null
         ? null
-        : (json["data"] as List).map((e) => Data1.fromJson(e)).toList();
+        : (json["data"] as List).map((e) => Question.fromJson(e)).toList();
   }
 
   Map<String, dynamic> toJson() {
@@ -49,32 +49,37 @@ class Data {
   }
 }
 
-class Data1 {
+class Question {
   bool? isStatus;
   bool? isDeleted;
   String? id;
-  String? name;
-  String? value;
+  String? language;
+  String? question;
+  List<Options>? options;
   String? createdAt;
   String? updatedAt;
   int? v;
 
-  Data1(
+  Question(
       {this.isStatus,
       this.isDeleted,
       this.id,
-      this.name,
-      this.value,
+      this.language,
+      this.question,
+      this.options,
       this.createdAt,
       this.updatedAt,
       this.v});
 
-  Data1.fromJson(Map<String, dynamic> json) {
+  Question.fromJson(Map<String, dynamic> json) {
     isStatus = json["is_status"];
     isDeleted = json["is_deleted"];
     id = json["_id"];
-    name = json["name"];
-    value = json["value"];
+    language = json["language"];
+    question = json["question"];
+    options = json["options"] == null
+        ? null
+        : (json["options"] as List).map((e) => Options.fromJson(e)).toList();
     createdAt = json["created_at"];
     updatedAt = json["updated_at"];
     v = json["__v"];
@@ -85,11 +90,34 @@ class Data1 {
     _data["is_status"] = isStatus;
     _data["is_deleted"] = isDeleted;
     _data["_id"] = id;
-    _data["name"] = name;
-    _data["value"] = value;
+    _data["language"] = language;
+    _data["question"] = question;
+    if (options != null) {
+      _data["options"] = options?.map((e) => e.toJson()).toList();
+    }
     _data["created_at"] = createdAt;
     _data["updated_at"] = updatedAt;
     _data["__v"] = v;
+    return _data;
+  }
+}
+
+class Options {
+  String? id;
+  String? option;
+  bool isSelected = false;
+
+  Options({this.id, this.option, required this.isSelected});
+
+  Options.fromJson(Map<String, dynamic> json) {
+    id = json["_id"];
+    option = json["option"];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> _data = <String, dynamic>{};
+    _data["_id"] = id;
+    _data["option"] = option;
     return _data;
   }
 }

@@ -1,4 +1,5 @@
 import 'package:expathy/Common%20Widgets/elevated_button_widget.dart';
+import 'package:expathy/Utils/app_colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
@@ -9,6 +10,7 @@ class CustomFutureBuilder<T> extends StatelessWidget {
   final Widget Function(T data) data;
   final Widget loaderWidget;
   final Future<T> future;
+  final Function()? noInternetOnPressed;
   final Function(bool loading)? onLoading;
   const CustomFutureBuilder({
     Key? key,
@@ -16,6 +18,7 @@ class CustomFutureBuilder<T> extends StatelessWidget {
     required this.data,
     required this.loaderWidget,
     this.onLoading,
+    this.noInternetOnPressed,
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -31,10 +34,20 @@ class CustomFutureBuilder<T> extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Lottie.asset(
-                      AppImages.networkJson,
+                    Container(
+                      width: 250,
+                      height: 250,
+                      child: Lottie.asset(
+                        AppImages.networkJson,
+                        fit: BoxFit.contain,
+                      ),
                     ),
-                    ElevatedButtonWidget(onPressed: () {}, text: 'Try Again')
+                    ElevatedButtonWidget(
+                      onPressed: noInternetOnPressed,
+                      text: 'Try Again',
+                      primary: AppColors.borderColor,
+                      height: 45,
+                    )
                   ],
                 ),
               );

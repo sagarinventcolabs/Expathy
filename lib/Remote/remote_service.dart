@@ -113,6 +113,8 @@ class RemoteService {
       case 409:
         return response;
       case 500:
+        throw FetchDataException(
+            'Error 500 >>>> : ${response.body.toString()}');
       default:
         throw FetchDataException(
             'Error occurred while Communication with Server with StatusCode : ${response.statusCode}');

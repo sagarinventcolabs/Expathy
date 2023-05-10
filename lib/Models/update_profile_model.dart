@@ -1,14 +1,14 @@
-class AuthModel {
+class UpdateProfileModel {
   int? status;
   String? statusText;
   String? message;
   Data? data;
   int? exeTime;
 
-  AuthModel(
+  UpdateProfileModel(
       {this.status, this.statusText, this.message, this.data, this.exeTime});
 
-  AuthModel.fromJson(Map<String, dynamic> json) {
+  UpdateProfileModel.fromJson(Map<String, dynamic> json) {
     status = json["status"];
     statusText = json["statusText"];
     message = json["message"];
@@ -30,29 +30,8 @@ class AuthModel {
 }
 
 class Data {
-  User? user;
-  String? token;
-
-  Data({this.user, this.token});
-
-  Data.fromJson(Map<String, dynamic> json) {
-    user = json["user"] == null ? null : User.fromJson(json["user"]);
-    token = json["token"];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> _data = <String, dynamic>{};
-    if (user != null) {
-      _data["user"] = user?.toJson();
-    }
-    _data["token"] = token;
-    return _data;
-  }
-}
-
-class User {
   bool? isActive;
-  String? otp;
+  dynamic otp;
   int? percentage;
   String? language;
   String? type;
@@ -66,7 +45,7 @@ class User {
   int? v;
   String? languageId;
 
-  User(
+  Data(
       {this.isActive,
       this.otp,
       this.percentage,
@@ -82,7 +61,7 @@ class User {
       this.v,
       this.languageId});
 
-  User.fromJson(Map<String, dynamic> json) {
+  Data.fromJson(Map<String, dynamic> json) {
     isActive = json["is_active"];
     otp = json["otp"];
     percentage = json["percentage"];

@@ -7,6 +7,9 @@ import 'package:expathy/Utils/helper_methods.dart';
 import 'package:expathy/Widgets/svg_picture.dart';
 import 'package:flutter/material.dart';
 
+import '../../Utils/app_strings.dart';
+import '../../main.dart';
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
 

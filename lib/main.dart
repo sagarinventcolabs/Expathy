@@ -2,6 +2,7 @@ import 'package:expathy/Providers/app_provider.dart';
 import 'package:expathy/Screens/Auth%20Screens/login_screen.dart';
 import 'package:expathy/Screens/Question%20Answer%20Screen/first_question_screen.dart';
 import 'package:expathy/Screens/Splash/splash_screen.dart';
+import 'package:expathy/Utils/app_strings.dart';
 import 'package:expathy/Utils/helper_methods.dart';
 import 'package:expathy/l10n/l10n.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
+
+import 'Providers/Language Provider/language_provider.dart';
 
 SharedPreferences? sharedPrefs;
 GlobalKey<NavigatorState>? navigatorKey;
@@ -29,22 +32,29 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      navigatorKey: navigatorKey,
-      title: 'Expathy',
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      locale: const Locale('en'),
-      supportedLocales: L10n.all,
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return ChangeNotifierProvider<LanguageProvider>(
+      create: (context) => LanguageProvider(),
+      child: Consumer<LanguageProvider>(
+        builder: (context, value, child) {
+          return MaterialApp(
+            navigatorKey: navigatorKey,
+            title: 'Expathy',
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            locale: value.appLocal,
+            supportedLocales: L10n.all,
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              primarySwatch: Colors.blue,
+            ),
+            home: const FirstQuestionScreen(),
+          );
+        },
       ),
-      home: const FirstQuestionScreen(),
     );
   }
 }

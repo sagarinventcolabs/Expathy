@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:expathy/Common%20Widgets/custom_scaffold.dart';
 import 'package:expathy/Common%20Widgets/elevated_button_widget.dart';
 import 'package:expathy/Common%20Widgets/text_form_field_widget.dart';
 import 'package:expathy/Common%20Widgets/text_widget.dart';
+import 'package:expathy/Models/questions_list_model.dart';
 import 'package:expathy/Utils/app_colors.dart';
 import 'package:expathy/Utils/app_fonts.dart';
 import 'package:expathy/Widgets/gradient_background_widget.dart';
@@ -10,11 +13,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:provider/provider.dart';
+import '../../Common Widgets/custom_future_builder.dart';
 import '../../Custom Painter /question_screen_custom_painter.dart';
 import '../../Models/questions_model.dart';
+import '../../Providers/Question Provider/question_provider.dart';
 import '../../Utils/app_images.dart';
 import '../../Utils/helper_methods.dart';
 import '../Therapists Screen/find_therapists_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class QuestionAnswerScreen extends StatefulWidget {
   const QuestionAnswerScreen({Key? key}) : super(key: key);
@@ -24,7 +31,7 @@ class QuestionAnswerScreen extends StatefulWidget {
 }
 
 class _QuestionAnswerScreenState extends State<QuestionAnswerScreen> {
-  List<QuestionsModel> questionList = [
+  /* List<QuestionsModel> questionList = [
     QuestionsModel(
         question: 'What is your native language?',
         heading: 'Let’s Start...',
@@ -97,19 +104,25 @@ class _QuestionAnswerScreenState extends State<QuestionAnswerScreen> {
           AnswerModel(text: 'Yes', isSelected: false),
           AnswerModel(text: 'No', isSelected: false),
         ]),
-  ];
+  ];*/
   int questionIndex = 0;
   double barPercentage = 0.0;
+  late Future<List<Question>?> questionsListFuture;
+  List<Question>? questionList = [];
+  Question? questionData;
 
   @override
   void initState() {
-    calculatePercentage(questionIndex: 0, questionsLength: questionList.length);
+    questionsListFuture =
+        context.read<QuestionProvider>().fetchQuestionsListApi(
+              context: context,
+            );
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final questionData = questionList[questionIndex];
+    // final questionData = questionList[questionIndex];
     return CustomScaffold(
       body: GradientBackgroundWidget(
         child: SafeArea(
@@ -128,7 +141,7 @@ class _QuestionAnswerScreenState extends State<QuestionAnswerScreen> {
                                 .toDouble()), //You can Replace [WIDTH] with your desired width for Custom Paint and height will be calculated automatically
                         painter: QuestionScreenCustomPainter(),
                       ),
-                      if (questionIndex != questionList.length - 1)
+                      if (questionIndex != questionList!.length - 1)
                         Padding(
                           padding: const EdgeInsets.only(
                               bottom: 20.0, left: 20, right: 20),
@@ -139,7 +152,7 @@ class _QuestionAnswerScreenState extends State<QuestionAnswerScreen> {
                                   previousQuestion();
                                   calculatePercentage(
                                       questionIndex: questionIndex,
-                                      questionsLength: questionList.length);
+                                      questionsLength: questionList!.length);
                                 },
                                 child: questionIndex == 0
                                     ? const SizedBox(
@@ -158,29 +171,6 @@ class _QuestionAnswerScreenState extends State<QuestionAnswerScreen> {
                                         ),
                                       ),
                               ),
-                              /* Flexible(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: List.generate(
-                                    questionList.length,
-                                    (indexDots) {
-                                      return Container(
-                                        margin: const EdgeInsets.only(right: 3),
-                                        height: 2,
-                                        width: questionIndex == indexDots
-                                            ? 36
-                                            : 14,
-                                        decoration: BoxDecoration(
-                                            color: questionIndex == indexDots
-                                                ? AppColors.yellow
-                                                : AppColors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(5)),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ),*/
                               Flexible(
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -197,7 +187,7 @@ class _QuestionAnswerScreenState extends State<QuestionAnswerScreen> {
                                   nextQuestion();
                                   calculatePercentage(
                                       questionIndex: questionIndex,
-                                      questionsLength: questionList.length);
+                                      questionsLength: questionList!.length);
                                 },
                                 borderRadius: BorderRadius.circular(100),
                                 child: Container(
@@ -213,7 +203,7 @@ class _QuestionAnswerScreenState extends State<QuestionAnswerScreen> {
                             ],
                           ),
                         ),
-                      if (questionIndex == questionList.length - 1)
+                      if (questionIndex == questionList!.length - 1)
                         Padding(
                           padding: const EdgeInsets.only(
                               bottom: 20.0, left: 20.0, right: 20.0),
@@ -225,7 +215,7 @@ class _QuestionAnswerScreenState extends State<QuestionAnswerScreen> {
                                   previousQuestion();
                                   calculatePercentage(
                                       questionIndex: questionIndex,
-                                      questionsLength: questionList.length);
+                                      questionsLength: questionList!.length);
                                 },
                                 child: Container(
                                   width: 65,
@@ -409,96 +399,131 @@ class _QuestionAnswerScreenState extends State<QuestionAnswerScreen> {
                       },
                     ),
                     heightGap(14),
-                    TextWidget(
-                      text: questionData.heading ?? '',
-                      fontSize: 18,
-                      color: AppColors.white,
-                      fontFamily: AppFonts.poppins,
-                      fontWeight: FontWeight.w400,
-                    ),
-                    heightGap(18),
-                    LinearPercentIndicator(
-                      lineHeight: 10,
-                      percent: barPercentage,
-                      barRadius: const Radius.circular(16),
-                      progressColor: AppColors.yellow,
-                      backgroundColor: AppColors.questionBarBg,
-                    ),
-                    heightGap(30),
-                    Center(
-                      child: TextWidget(
-                        text: questionData.question ?? '',
-                        fontSize: 22,
-                        textAlign: TextAlign.center,
-                        color: AppColors.white,
-                        fontFamily: AppFonts.poppins,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    heightGap(30),
-                    if (questionIndex != questionList.length - 1)
-                      Expanded(
-                        child: SingleChildScrollView(
-                          physics: const BouncingScrollPhysics(),
+                    CustomFutureBuilder<List<Question>?>(
+                      loaderWidget: CircularProgressIndicator(),
+                      future: questionsListFuture,
+                      noInternetOnPressed: () {
+                        setState(() {
+                          questionsListFuture = context
+                              .read<QuestionProvider>()
+                              .fetchQuestionsListApi(
+                                context: context,
+                              );
+                        });
+                      },
+                      data: (snapshot) {
+                        questionList = snapshot;
+                        questionData = snapshot?[questionIndex];
+                        return Expanded(
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              ...questionData.answers!.map((answer) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(bottom: 10.0),
-                                  child: InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        answer.isSelected = !answer.isSelected!;
-                                      });
-                                    },
-                                    borderRadius: BorderRadius.circular(30),
-                                    child: Container(
-                                      width: double.infinity,
-                                      height: 40,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(30),
-                                        color: answer.isSelected == true
-                                            ? AppColors.yellow
-                                            : AppColors.white,
-                                        border: Border.all(
-                                            width: 1,
-                                            color: /*answer.isSelected == true
-                                                ? AppColors.black
-                                                :*/
-                                                AppColors.borderColor),
-                                      ),
-                                      child: Center(
-                                        child: TextWidget(
-                                          text: answer.text ?? '',
-                                          textAlign: TextAlign.center,
-                                          fontSize: 14,
-                                          color: answer.isSelected == true
-                                              ? AppColors.white
-                                              : AppColors.black,
-                                          fontFamily: AppFonts.poppins,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
+                              TextWidget(
+                                text: showHeading() ?? '',
+                                fontSize: 18,
+                                color: AppColors.white,
+                                fontFamily: AppFonts.poppins,
+                                fontWeight: FontWeight.w400,
+                              ),
+                              heightGap(18),
+                              LinearPercentIndicator(
+                                lineHeight: 10,
+                                percent: barPercentage,
+                                barRadius: const Radius.circular(16),
+                                progressColor: AppColors.yellow,
+                                backgroundColor: AppColors.questionBarBg,
+                              ),
+                              heightGap(30),
+                              Center(
+                                child: TextWidget(
+                                  text: questionData?.question ?? '',
+                                  fontSize: 22,
+                                  textAlign: TextAlign.center,
+                                  color: AppColors.white,
+                                  fontFamily: AppFonts.poppins,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              heightGap(30),
+                              if (questionData!.options!.isNotEmpty)
+                                Expanded(
+                                  child: SingleChildScrollView(
+                                    physics: const BouncingScrollPhysics(),
+                                    child: Column(
+                                      children: [
+                                        ...?questionData?.options!
+                                            .map((answer) {
+                                          return Padding(
+                                            padding: const EdgeInsets.only(
+                                                bottom: 10.0),
+                                            child: InkWell(
+                                              onTap: () {
+                                                setState(() {
+                                                  answer.isSelected =
+                                                      !answer.isSelected;
+                                                });
+                                              },
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
+                                              child: Container(
+                                                width: double.infinity,
+                                                height: 40,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(30),
+                                                  color:
+                                                      answer.isSelected == true
+                                                          ? AppColors.yellow
+                                                          : AppColors.white,
+                                                  border: Border.all(
+                                                      width: 1,
+                                                      color:
+                                                          answer.isSelected ==
+                                                                  true
+                                                              ? AppColors.black
+                                                              : AppColors
+                                                                  .borderColor),
+                                                ),
+                                                child: Center(
+                                                  child: TextWidget(
+                                                    text: answer.option ?? '',
+                                                    textAlign: TextAlign.center,
+                                                    fontSize: 14,
+                                                    color: answer.isSelected ==
+                                                            true
+                                                        ? AppColors.white
+                                                        : AppColors.black,
+                                                    fontFamily:
+                                                        AppFonts.poppins,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }),
+                                      ],
                                     ),
                                   ),
-                                );
-                              }),
+                                ),
+                              if (questionData!.options!.isEmpty)
+                                const Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 15.0),
+                                  child: TextFormFieldWidget(
+                                    filled: true,
+                                    borderRadius: 30,
+                                    hintColor: AppColors.black,
+                                    fillColor: AppColors.white,
+                                    textAlign: TextAlign.center,
+                                    hintText: 'Enter your answer',
+                                  ),
+                                ),
                             ],
                           ),
-                        ),
-                      ),
-                    if (questionIndex == questionList.length - 1)
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 15.0),
-                        child: TextFormFieldWidget(
-                          filled: true,
-                          borderRadius: 30,
-                          hintColor: AppColors.black,
-                          fillColor: AppColors.white,
-                          textAlign: TextAlign.center,
-                          hintText: 'Enter your answer',
-                        ),
-                      ),
+                        );
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -510,11 +535,31 @@ class _QuestionAnswerScreenState extends State<QuestionAnswerScreen> {
   }
 
   void nextQuestion() {
-    if (questionIndex == questionList.length - 1) {
+    if (questionIndex == questionList!.length - 1) {
     } else {
       setState(() {
         questionIndex++;
       });
+    }
+  }
+
+  String? showHeading() {
+    if (questionList?.length == 4) {
+      if (questionIndex == questionList!.length - 1) {
+        return 'And we are done...';
+      } else if (questionIndex == questionList!.length - 2) {
+        return 'One more...';
+      } else if (questionIndex == questionList!.length - 3) {
+        return 'Almost done...';
+      } else {
+        return AppLocalizations.of(context)!.greatMoving;
+      }
+    } else {
+      if (questionIndex == questionList!.length - 1) {
+        return 'And we are done...';
+      } else {
+        return AppLocalizations.of(context)!.greatMoving;
+      }
     }
   }
 
@@ -531,6 +576,7 @@ class _QuestionAnswerScreenState extends State<QuestionAnswerScreen> {
     final percentage = (questionIndex + 1) / questionsLength;
     setState(() {
       barPercentage = double.parse(percentage.toString());
+      log(barPercentage.toString());
     });
   }
 }
