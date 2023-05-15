@@ -90,7 +90,7 @@ class _PreHomeScreenState extends State<PreHomeScreen> {
                                 heightGap(30),
                                 containerItem(
                                     text: 'Sign up with Facebook',
-                                    image: AppImages.facebook,
+                                    image: AppImages.facebookCircle,
                                     onTap: () {}),
                                 heightGap(40),
                                 conditionWidget(

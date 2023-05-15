@@ -37,13 +37,17 @@ class RemoteService {
     try {
       var authToken = await getAuthToken();
       var osType = await getOsType();
-      final response =
-          await http.get(Uri.parse('$BASE_URL$url'), headers: <String, String>{
+      var header = <String, String>{
         'Content-Type': 'application/json',
         'device_type': osType ?? 'mobile',
         'Authorization': 'Bearer ${authToken ?? ""}',
-      });
+      };
+      final response =
+          await http.get(Uri.parse('$BASE_URL$url'), headers: header);
+      log('Api response >>> : ${response.body.toString()}');
+      log('Api response >>> : ${response.statusCode.toString()}');
       responseJson = _returnResponse(response);
+      log('Api header : $header');
     } on SocketException catch (exception) {
       showSnackBar(
           context: navigatorKey!.currentContext,
@@ -60,6 +64,7 @@ class RemoteService {
               '${exceptionData['message'].toString()} ${exceptionData['status'].toString()}');
     }
     log('Api Url : $BASE_URL$url');
+
     return responseJson;
   }
 

@@ -8,6 +8,7 @@ import '../../Common Widgets/text_form_field_widget.dart';
 import '../../Custom Painter /auth_screen_painter.dart';
 import '../../Utils/app_images.dart';
 import '../../Utils/helper_methods.dart';
+import '../../Widgets/svg_picture.dart';
 import '../../Widgets/toolbar_widget.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -39,19 +40,28 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
               Column(
                 children: [
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(left: 16.0, right: 16, top: 20),
-                    child: ToolBarWidget(
-                      onTap: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ),
-                  Image.asset(
-                    AppImages.logo,
-                    width: deviceWidth(context) * 0.40,
-                    height: deviceHeight(context) * 0.15,
+                  Stack(
+                    children: [
+                      Center(
+                        child: SizedBox(
+                          width: deviceWidth(context) * 0.40,
+                          height: deviceHeight(context) * 0.15,
+                          child: const SvgPic(
+                            image: AppImages.logoMain,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        left: 16,
+                        top: 20,
+                        child: ToolBarWidget(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                   Expanded(
                     child: Container(

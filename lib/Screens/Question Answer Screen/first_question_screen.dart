@@ -1,5 +1,6 @@
 import 'package:expathy/Providers/Question%20Provider/question_provider.dart';
 import 'package:expathy/Providers/User%20Provider/user_provider.dart';
+import 'package:expathy/Screens/Question%20Answer%20Screen/question_answer_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -8,7 +9,7 @@ import '../../Common Widgets/custom_future_builder.dart';
 import '../../Common Widgets/custom_scaffold.dart';
 import '../../Common Widgets/text_widget.dart';
 import '../../Custom Painter /question_screen_custom_painter.dart';
-import '../../Models/first_question_model.dart';
+import '../../Models/language_list_model.dart';
 import '../../Providers/Auth Provider/auth_provider.dart';
 import '../../Utils/app_colors.dart';
 import '../../Utils/app_fonts.dart';

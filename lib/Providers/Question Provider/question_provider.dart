@@ -1,17 +1,18 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'package:expathy/Models/first_question_model.dart';
+import 'package:expathy/Models/common_model.dart';
+import 'package:expathy/Models/language_list_model.dart';
 import 'package:expathy/Models/questions_list_model.dart';
+import 'package:expathy/Models/questions_model.dart';
 import 'package:flutter/material.dart';
 import '../../Remote/api_config.dart';
 import '../../Remote/remote_service.dart';
-import '../../Utils/app_strings.dart';
 import '../../Utils/helper_methods.dart';
-import '../../main.dart';
 
 class QuestionProvider with ChangeNotifier {
   LanguageListModel? languageListModel;
   QuestionsListModel? questionListModel;
+  List<Map<String, dynamic>> selectedQuestionList = [];
 
   Future<LanguageListModel?> fetchLanguageListApi(
       {required BuildContext context}) async {
@@ -71,5 +72,54 @@ class QuestionProvider with ChangeNotifier {
       return questionsListResponse.data?.data;
     }
     return null;
+  }
+
+  Future<CommonModel?> submitQuestionAnswerApi(
+      {required List<Map<String, dynamic>> selectedQuestionList,
+      required BuildContext context}) async {
+    final data = await RemoteService()
+        .callPostApi(url: eSubmitQuestionAnswer, jsonData: {
+      "question": selectedQuestionList,
+    });
+    if (data != null) {
+      final commonResponse = CommonModel.fromJson(jsonDecode(data.body));
+      log('api call response : ${commonResponse.toJson().toString()}');
+      if (context.mounted) {
+        if (commonResponse.status == 200) {
+          showSnackBar(
+              isSuccess: true,
+              message: commonResponse.message,
+              context: context);
+        } else if (commonResponse.status == 404) {
+          showSnackBar(
+              isSuccess: false,
+              message: commonResponse.message,
+              context: context);
+        } else if (commonResponse.status == 400) {
+          showSnackBar(
+              isSuccess: false,
+              message: commonResponse.message,
+              context: context);
+        }
+      }
+      notifyListeners();
+      return commonResponse;
+    }
+    return null;
+  }
+
+  Future<void> addSelectedQuestion() async {
+    questionListModel?.data?.data?.forEach((element) {
+      if (element.selectedAnswer.isNotEmpty) {
+        /*  selectedQuestionList.add(SelectedQuestionModel(
+            questionId: element.id.toString(),
+            options: element.selectedAnswer));
+      }*/
+        selectedQuestionList.add({
+          "questionId": element.id.toString(),
+          "answer": element.selectedAnswer
+        });
+      }
+    });
   }
 }

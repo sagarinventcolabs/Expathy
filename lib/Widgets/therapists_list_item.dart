@@ -1,6 +1,7 @@
 import 'package:expathy/Screens/Bottom%20Bar%20Screen/bottom_bar_screen.dart';
 import 'package:flutter/material.dart';
 import '../Common Widgets/elevated_button_widget.dart';
+import '../Models/pyschologist_list_model.dart';
 import '../Screens/Therapists Screen/therapists_detail_screen.dart';
 import '../Utils/app_colors.dart';
 import '../Utils/helper_methods.dart';
@@ -8,7 +9,9 @@ import 'info_widget.dart';
 
 class TherapistsListItem extends StatelessWidget {
   final bool isFromHome;
-  const TherapistsListItem({Key? key, this.isFromHome = false})
+  final PsychologistList? psychologist;
+  const TherapistsListItem(
+      {Key? key, this.isFromHome = false, this.psychologist})
       : super(key: key);
 
   @override
@@ -24,6 +27,8 @@ class TherapistsListItem extends StatelessWidget {
           InfoWidget(
             name: 'Norma Warren',
             type: 'Biopsychologists',
+            /* name: psychologist?.name ?? '',
+            type: psychologist?.type ?? '',*/
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => const TherapistsDetailScreen(),
@@ -31,6 +36,7 @@ class TherapistsListItem extends StatelessWidget {
             },
             showGreenIcon: false,
             description: 'Vestibsfevulum semwe acssscv fre porttitor...',
+            /* description: psychologist?.description ?? '',*/
           ),
           heightGap(12),
           expertiseButton(),

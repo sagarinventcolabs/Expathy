@@ -55,6 +55,7 @@ class Question {
   String? id;
   String? language;
   String? question;
+  List<String> selectedAnswer = [];
   List<Options>? options;
   String? createdAt;
   String? updatedAt;

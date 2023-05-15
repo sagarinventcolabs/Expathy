@@ -7,6 +7,7 @@ class AppImages {
   static const apple = "assets/images/apple.svg";
   static const google = "assets/images/google.svg";
   static const facebook = "assets/images/facebook.svg";
+  static const facebookCircle = "assets/images/facebookcircle.svg";
 
   static const reload = "assets/images/reload.svg";
   static const checkSymbol = "assets/images/checksymbol.svg";
@@ -94,6 +95,6 @@ class AppImages {
   static const emptyJson = "assets/images/empty.json";
   static const networkJson = "assets/images/network.json";
 
-  ///
+  ///gif
   static const errorGif = "assets/images/error.gif";
 }

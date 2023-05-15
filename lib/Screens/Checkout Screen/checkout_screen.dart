@@ -37,7 +37,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       Row(
                         children: [
                           ToolBarWidget(
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.of(context).pop();
+                            },
                             title: 'Checkout',
                           ),
                         ],

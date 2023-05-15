@@ -1,6 +1,9 @@
 {
   "login": "Login",
   "greatMoving": "Great Moving...",
+  "andWeAreDone": "And we are done...",
+  "oneMore": "One more...",
+  "almostDone": "Almost done...",
   "signUpWithEmail": "Sign up with Email",
   "signUpWithGoogle": "Sign up with Google",
   "or": "Or",

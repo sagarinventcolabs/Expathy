@@ -14,6 +14,7 @@ import '../../Utils/app_fonts.dart';
 import '../../Utils/app_images.dart';
 import '../../Utils/helper_methods.dart';
 import '../../Widgets/toolbar_widget.dart';
+import '../Setting Screens/change_password_screen.dart';
 import 'login_screen.dart';
 
 class OtpVerifyScreen extends StatefulWidget {
@@ -158,14 +159,14 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
                                               text: 'Verify OTP'),
                                         ),
                                   heightGap(20),
-                                  conditionWidget(
+                                  /*  conditionWidget(
                                       title: 'Already have an account?',
                                       heading: 'Login',
                                       navigateToLogin: true,
                                       showCheckBox: false,
                                       textAlign: TextAlign.center,
                                       decoration: TextDecoration.underline),
-                                  heightGap(20),
+                                  heightGap(20),*/
                                 ],
                               ),
                             ),
@@ -188,11 +189,19 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
       setState(() {
         isVerifyOtp = true;
       });
-      await authProvider.verifyOtpApi(
+      /* await authProvider.verifyOtpApi(
         context: context,
         email: authProvider.getEmail.toString(),
         otp: otp ?? '',
+      );*/
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              const ChangePasswordScreen(makeSetPassword: true),
+        ),
       );
+
       setState(() {
         isVerifyOtp = false;
       });

@@ -3,6 +3,7 @@ import 'package:expathy/Common%20Widgets/text_form_field_widget.dart';
 import 'package:expathy/Common%20Widgets/text_widget.dart';
 import 'package:expathy/Providers/Auth%20Provider/auth_provider.dart';
 import 'package:expathy/Screens/Auth%20Screens/login_screen.dart';
+import 'package:expathy/Screens/Question%20Answer%20Screen/question_answer_screen.dart';
 import 'package:expathy/Utils/helper_methods.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -14,6 +15,7 @@ import '../../Utils/app_colors.dart';
 import '../../Utils/app_fonts.dart';
 import '../../Utils/app_images.dart';
 import '../../Widgets/svg_picture.dart';
+import '../Setting Screens/personal_information_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -159,12 +161,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   conditionWidget(
                                       title: 'I have read and accept the',
                                       heading: 'Term and Conditions.',
-                                      key: const Key('1')),
+                                      key: const Key('1'),
+                                      navigateToTermsAndCondition: true),
                                   heightGap(16),
                                   conditionWidget(
                                       title: 'I have read and accept the',
                                       heading: 'Privacy Policy.',
-                                      key: const Key('2')),
+                                      key: const Key('2'),
+                                      navigateToPrivacyPolicy: true),
                                   heightGap(20),
                                   isSignUp
                                       ? const Center(
@@ -222,14 +226,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
         setState(() {
           isSignUp = true;
         });
-        await authProvider.signUpApi(
+        /* await authProvider.signUpApi(
           email: emailController.text.trim(),
           userName: userNameController.text.trim().toString(),
           password: passwordController.text,
           type: 'Expact',
           loginType: 'Email',
           context: context,
+        );*/
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const QuestionAnswerScreen(),
+          ),
         );
+
         setState(() {
           isSignUp = false;
         });
@@ -243,6 +254,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
       Key? key,
       String? heading,
       bool navigateToLogin = false,
+      bool navigateToTermsAndCondition = false,
+      bool navigateToPrivacyPolicy = false,
       TextAlign textAlign = TextAlign.start,
       TextDecoration decoration = TextDecoration.none}) {
     return Row(
@@ -304,6 +317,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => const LoginScreen(),
+                            ));
+                      } else if (navigateToTermsAndCondition) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const PersonalInformationScreen(
+                                      type: 'Terms of Use'),
+                            ));
+                      } else if (navigateToPrivacyPolicy) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const PersonalInformationScreen(
+                                      type: 'Privacy Policy'),
                             ));
                       }
                     },

@@ -1,3 +1,4 @@
+import 'package:expathy/Screens/Auth%20Screens/otp_verify_screen.dart';
 import 'package:expathy/Screens/Auth%20Screens/sign_up_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -118,13 +119,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                               text: 'Send OTP'),
                                         ),
                                   heightGap(20),
-                                  conditionWidget(
+                                  /*conditionWidget(
                                       title: 'Don’t have account?',
                                       heading: 'Create Account',
                                       showCheckBox: false,
                                       textAlign: TextAlign.center,
                                       decoration: TextDecoration.underline),
-                                  heightGap(20),
+                                  heightGap(20),*/
                                 ],
                               ),
                             ),
@@ -149,10 +150,17 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         isSendOtp = true;
       });
       authProvider.setEmail = emailController.text.toString();
-      await authProvider.forgotPasswordApi(
+      /* await authProvider.forgotPasswordApi(
         email: emailController.text.trim(),
         context: context,
+      );*/
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const OtpVerifyScreen(),
+        ),
       );
+
       setState(() {
         isSendOtp = false;
       });

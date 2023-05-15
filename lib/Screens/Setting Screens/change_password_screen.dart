@@ -13,7 +13,9 @@ import '../../Utils/app_colors.dart';
 import '../../Utils/app_fonts.dart';
 import '../../Utils/app_images.dart';
 import '../../Utils/helper_methods.dart';
+import '../../Widgets/svg_picture.dart';
 import '../../Widgets/toolbar_widget.dart';
+import '../Auth Screens/prehome_screen.dart';
 import '../Auth Screens/sign_up_screen.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
@@ -28,6 +30,11 @@ class ChangePasswordScreen extends StatefulWidget {
 class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   final newPasswordController = TextEditingController();
   final reEnterPasswordController = TextEditingController();
+
+  bool currentPasswordObSecure = true;
+  bool newPasswordObSecure = true;
+  bool reEnterPasswordObSecure = true;
+
   final _formKey = GlobalKey<FormState>();
   bool isSetPassword = false;
   @override
@@ -41,9 +48,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           height: double.infinity,
           child: Stack(
             children: [
-              /*const SvgPic(
-                image: AppImages.signUpHeader,
-              ),*/
               CustomPaint(
                 size: Size(
                     deviceWidth(context),
@@ -53,19 +57,28 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               ),
               Column(
                 children: [
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(left: 16.0, right: 16, top: 20),
-                    child: ToolBarWidget(
-                      onTap: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ),
-                  Image.asset(
-                    AppImages.logo,
-                    width: deviceWidth(context) * 0.40,
-                    height: deviceHeight(context) * 0.15,
+                  Stack(
+                    children: [
+                      Center(
+                        child: SizedBox(
+                          width: deviceWidth(context) * 0.40,
+                          height: deviceHeight(context) * 0.15,
+                          child: const SvgPic(
+                            image: AppImages.logoMain,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        left: 16,
+                        top: 20,
+                        child: ToolBarWidget(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                   Expanded(
                     child: Container(
@@ -98,28 +111,46 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                   if (!widget.makeSetPassword)
                                     TextFormFieldWidget(
                                       hintText: 'Current Password',
+                                      obscureText: currentPasswordObSecure,
+                                      isPassword: true,
                                       validator: (value) {
                                         if (value!.isEmpty) {
                                           return 'Please enter password';
                                         }
                                         return null;
                                       },
+                                      onVisibilityIconTap: () {
+                                        setState(() {
+                                          currentPasswordObSecure =
+                                              !currentPasswordObSecure;
+                                        });
+                                      },
                                     ),
                                   if (!widget.makeSetPassword) heightGap(16),
                                   TextFormFieldWidget(
                                     hintText: 'New Password',
                                     controller: newPasswordController,
+                                    obscureText: newPasswordObSecure,
+                                    isPassword: true,
                                     validator: (value) {
                                       if (value!.isEmpty) {
                                         return 'Please enter new password';
                                       }
                                       return null;
                                     },
+                                    onVisibilityIconTap: () {
+                                      setState(() {
+                                        newPasswordObSecure =
+                                            !newPasswordObSecure;
+                                      });
+                                    },
                                   ),
                                   heightGap(16),
                                   TextFormFieldWidget(
                                     hintText: 'Re-enter Password',
                                     controller: reEnterPasswordController,
+                                    obscureText: reEnterPasswordObSecure,
+                                    isPassword: true,
                                     validator: (value) {
                                       if (value!.isEmpty) {
                                         return 'Please re-enter password';
@@ -128,6 +159,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                         return 'Re-enter password not match with new password';
                                       }
                                       return null;
+                                    },
+                                    onVisibilityIconTap: () {
+                                      setState(() {
+                                        reEnterPasswordObSecure =
+                                            !reEnterPasswordObSecure;
+                                      });
                                     },
                                   ),
                                   heightGap(32),
@@ -152,14 +189,14 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                               text: 'Save'),
                                         ),
                                   heightGap(20),
-                                  if (widget.makeSetPassword)
+                                  /*  if (widget.makeSetPassword)
                                     conditionWidget(
                                         title: 'Don’t have account?',
                                         heading: 'Create Account',
                                         showCheckBox: false,
                                         textAlign: TextAlign.center,
                                         decoration: TextDecoration.underline),
-                                  if (widget.makeSetPassword) heightGap(20),
+                                  if (widget.makeSetPassword) heightGap(20),*/
                                 ],
                               ),
                             ),
@@ -182,11 +219,19 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       setState(() {
         isSetPassword = true;
       });
-      await authProvider.resetPasswordApi(
+      /*  await authProvider.resetPasswordApi(
         context: context,
         email: authProvider.getEmail.toString(),
         password: newPasswordController.text.trim(),
+      );*/
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const PreHomeScreen(),
+        ),
+        (route) => false,
       );
+
       setState(() {
         isSetPassword = false;
       });

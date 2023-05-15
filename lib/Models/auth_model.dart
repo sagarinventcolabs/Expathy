@@ -52,15 +52,22 @@ class Data {
 
 class User {
   bool? isActive;
-  String? otp;
+  dynamic otp;
   int? percentage;
   String? language;
   String? type;
+  List<dynamic>? psychologistLanguage;
+  dynamic description;
+  bool? isQuestionSubmit;
+  bool? isSuicide;
+  bool? isHaveTherapists;
+  int? experience;
   String? loginType;
   String? id;
   String? email;
   String? password;
   String? userName;
+  String? name;
   String? createdAt;
   String? updatedAt;
   int? v;
@@ -72,11 +79,18 @@ class User {
       this.percentage,
       this.language,
       this.type,
+      this.psychologistLanguage,
+      this.description,
+      this.isQuestionSubmit,
+      this.isSuicide,
+      this.isHaveTherapists,
+      this.experience,
       this.loginType,
       this.id,
       this.email,
       this.password,
       this.userName,
+      this.name,
       this.createdAt,
       this.updatedAt,
       this.v,
@@ -88,11 +102,18 @@ class User {
     percentage = json["percentage"];
     language = json["language"];
     type = json["type"];
+    psychologistLanguage = json["psychologistLanguage"] ?? [];
+    description = json["description"];
+    isQuestionSubmit = json["isQuestionSubmit"];
+    isSuicide = json["isSuicide"];
+    isHaveTherapists = json["isHaveTherapists"];
+    experience = json["experience"];
     loginType = json["loginType"];
     id = json["_id"];
     email = json["email"];
     password = json["password"];
     userName = json["userName"];
+    name = json["name"];
     createdAt = json["created_at"];
     updatedAt = json["updated_at"];
     v = json["__v"];
@@ -106,11 +127,20 @@ class User {
     _data["percentage"] = percentage;
     _data["language"] = language;
     _data["type"] = type;
+    if (psychologistLanguage != null) {
+      _data["psychologistLanguage"] = psychologistLanguage;
+    }
+    _data["description"] = description;
+    _data["isQuestionSubmit"] = isQuestionSubmit;
+    _data["isSuicide"] = isSuicide;
+    _data["isHaveTherapists"] = isHaveTherapists;
+    _data["experience"] = experience;
     _data["loginType"] = loginType;
     _data["_id"] = id;
     _data["email"] = email;
     _data["password"] = password;
     _data["userName"] = userName;
+    _data["name"] = name;
     _data["created_at"] = createdAt;
     _data["updated_at"] = updatedAt;
     _data["__v"] = v;

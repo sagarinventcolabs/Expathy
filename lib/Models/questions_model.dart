@@ -11,3 +11,12 @@ class AnswerModel {
   bool? isSelected;
   AnswerModel({this.text, this.isSelected});
 }
+
+/*
+class SelectedQuestionModel {
+  final String? questionId;
+  List<String>? options;
+
+  SelectedQuestionModel({this.questionId, this.options});
+}
+*/

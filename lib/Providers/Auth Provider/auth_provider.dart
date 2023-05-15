@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:expathy/Models/common_model.dart';
-import 'package:expathy/Models/sign_up_model.dart';
+import 'package:expathy/Models/auth_model.dart';
+import 'package:expathy/Screens/Auth%20Screens/login_screen.dart';
 import 'package:expathy/Screens/Auth%20Screens/otp_verify_screen.dart';
 import 'package:expathy/Screens/Auth%20Screens/prehome_screen.dart';
 import 'package:expathy/Screens/Bottom%20Bar%20Screen/bottom_bar_screen.dart';
+import 'package:expathy/Screens/Question%20Answer%20Screen/first_question_screen.dart';
 import 'package:expathy/Screens/Setting%20Screens/change_password_screen.dart';
+import 'package:expathy/Screens/Therapists%20Screen/therapists_list_screen.dart';
 import 'package:expathy/Utils/app_strings.dart';
 import 'package:expathy/Utils/helper_methods.dart';
 import 'package:expathy/main.dart';
@@ -54,7 +57,7 @@ class AuthProvider with ChangeNotifier {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const QuestionAnswerScreen(),
+              builder: (context) => const FirstQuestionScreen(),
             ),
           );
         } else if (signUpResponse.status == 409) {
@@ -100,12 +103,32 @@ class AuthProvider with ChangeNotifier {
           context.read<LanguageProvider>().changeLanguage(
                 languageCode: loginResponse.data?.user?.language.toString(),
               );
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const BottomBarScreen(),
-            ),
-          );
+
+          if (loginResponse.data?.user?.isQuestionSubmit != null &&
+              loginResponse.data?.user?.isHaveTherapists != null) {
+            if (!(loginResponse.data!.user!.isQuestionSubmit!)) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const FirstQuestionScreen(),
+                ),
+              );
+            } else if (!(loginResponse.data!.user!.isHaveTherapists!)) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const TherapistsListScreen(),
+                ),
+              );
+            } else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const BottomBarScreen(),
+                ),
+              );
+            }
+          }
         } else if (loginResponse.status == 404) {
           showSnackBar(
               isSuccess: false,

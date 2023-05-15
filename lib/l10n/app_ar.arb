@@ -1,6 +1,9 @@
 {
   "login": "Login",
   "greatMoving": "نقل عظيم ...",
+  "andWeAreDone": "وانتهينا ...",
+  "oneMore": "مرة اخرى...",
+  "almostDone": "يكاد ينتهي...",
   "signUpWithEmail": "Sign up with Email",
   "signUpWithGoogle": "Sign up with Google",
   "or": "Or",
@@ -8,6 +11,7 @@
   "signUpWithFacebook": "Sign up with Facebook",
   "alreadyHaveAnAccount": "Already have an account?",
   "signUp": "Sign Up",
+
   "userName": "User Name",
   "email": "Email",
   "password": "Password",

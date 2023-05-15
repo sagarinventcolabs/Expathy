@@ -17,3 +17,5 @@ String eUpdateProfile = 'app/user/update-profile';
 String eLanguageList = 'common/language-list';
 //question
 String eQuestionList = 'app/question/question-list';
+String ePsychologistList = 'app/user/psychologist-list';
+String eSubmitQuestionAnswer = 'app/question/submit-question-answer';

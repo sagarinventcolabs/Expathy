@@ -49,14 +49,11 @@ class ProfileScreen extends StatelessWidget {
                             borderRadius: BorderRadius.circular(8),
                             color: AppColors.white),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 16.0),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 16.0, horizontal: 16),
                           child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: const [
-                                /* CircleAvatar(
-                                  radius: 45,
-                                  backgroundImage: AssetImage(AppImages.girl),
-                                ),*/
                                 TextWidget(
                                   text: 'Olivia Rhye',
                                   fontSize: 20,

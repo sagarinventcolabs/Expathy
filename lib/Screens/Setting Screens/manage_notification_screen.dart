@@ -62,7 +62,7 @@ class _ManageNotificationScreenState extends State<ManageNotificationScreen> {
                   Expanded(
                     child: Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
                       child: Card(
                         shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.only(
@@ -70,7 +70,7 @@ class _ManageNotificationScreenState extends State<ManageNotificationScreen> {
                                 topLeft: Radius.circular(16))),
                         child: Padding(
                           padding: const EdgeInsets.only(
-                              top: 20.0, right: 10, left: 10),
+                              top: 20.0, right: 15, left: 15),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
@@ -90,25 +90,6 @@ class _ManageNotificationScreenState extends State<ManageNotificationScreen> {
                                       'This will not affect any session updates'),
                               heightGap(16),
                               divider(),
-                              heightGap(16),
-                              rowItem(
-                                  title: 'Optimized Experience',
-                                  heading: 'For internet connection quality'),
-                              heightGap(16),
-                              rowItem(
-                                title: 'Optimized Image Quality',
-                              ),
-                              heightGap(16),
-                              rowItem(
-                                title: 'Optimized Checkout Flow',
-                              ),
-                              heightGap(16),
-                              divider(),
-                              heightGap(16),
-                              rowItem(
-                                  title: 'Lorem ipsum',
-                                  heading:
-                                      'This will not affect any session updates'),
                             ],
                           ),
                         ),
