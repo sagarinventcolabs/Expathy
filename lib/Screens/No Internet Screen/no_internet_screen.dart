@@ -41,7 +41,7 @@ class _NoInternetScreenState extends State<NoInternetScreen> {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => FirstQuestionScreen(),
+                        builder: (context) => const FirstQuestionScreen(),
                       ),
                     );
                   }

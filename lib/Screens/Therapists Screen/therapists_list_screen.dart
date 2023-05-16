@@ -15,10 +15,7 @@ import '../../Common Widgets/custom_future_builder.dart';
 import '../../Common Widgets/text_widget.dart';
 import '../../Providers/User Provider/user_provider.dart';
 import '../../Utils/app_fonts.dart';
-import '../../Utils/app_strings.dart';
 import '../../Widgets/skeleton_widget.dart';
-import '../../main.dart';
-import '../Auth Screens/prehome_screen.dart';
 
 class TherapistsListScreen extends StatefulWidget {
   final bool isFromHome;

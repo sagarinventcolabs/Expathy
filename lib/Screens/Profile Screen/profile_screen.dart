@@ -1,4 +1,3 @@
-import 'package:expathy/Screens/Auth%20Screens/prehome_screen.dart';
 import 'package:expathy/Screens/Profile%20Screen/edit_profile_screen.dart';
 import 'package:expathy/Screens/Setting%20Screens/change_language_screen.dart';
 import 'package:expathy/Screens/Setting%20Screens/change_password_screen.dart';
@@ -8,13 +7,11 @@ import 'package:expathy/Screens/Setting%20Screens/personal_information_screen.da
 import 'package:expathy/Utils/app_images.dart';
 import 'package:expathy/Utils/helper_methods.dart';
 import 'package:expathy/Widgets/svg_picture.dart';
-import 'package:expathy/main.dart';
 import 'package:flutter/material.dart';
 import '../../Common Widgets/custom_scaffold.dart';
 import '../../Common Widgets/text_widget.dart';
 import '../../Utils/app_colors.dart';
 import '../../Utils/app_fonts.dart';
-import '../../Utils/app_strings.dart';
 import '../../Widgets/gradient_background_widget.dart';
 import '../../Widgets/horzontal_two_button_widget.dart';
 import '../../Widgets/toolbar_widget.dart';

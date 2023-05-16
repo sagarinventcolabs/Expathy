@@ -12,13 +12,9 @@ import '../../Models/language_list_model.dart';
 import '../../Utils/app_colors.dart';
 import '../../Utils/app_fonts.dart';
 import '../../Utils/app_images.dart';
-import '../../Utils/app_strings.dart';
 import '../../Utils/helper_methods.dart';
 import '../../Widgets/gradient_background_widget.dart';
-import '../../Widgets/horzontal_two_button_widget.dart';
 import '../../Widgets/skeleton_widget.dart';
-import '../../main.dart';
-import '../Auth Screens/prehome_screen.dart';
 
 class FirstQuestionScreen extends StatefulWidget {
   final bool showLogoutDialog;
