@@ -1,4 +1,4 @@
-import 'package:expathy/Screens/Bottom%20Bar%20Screen/bottom_bar_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../Common Widgets/elevated_button_widget.dart';
 import '../Models/pyschologist_list_model.dart';
@@ -8,10 +8,14 @@ import '../Utils/helper_methods.dart';
 import 'info_widget.dart';
 
 class TherapistsListItem extends StatelessWidget {
-  final bool isFromHome;
   final PsychologistList? psychologist;
+  final Function()? selectButtonPressed;
+  final bool isTherapistsSelecting;
   const TherapistsListItem(
-      {Key? key, this.isFromHome = false, this.psychologist})
+      {Key? key,
+      this.psychologist,
+      this.selectButtonPressed,
+      this.isTherapistsSelecting = false})
       : super(key: key);
 
   @override
@@ -25,33 +29,28 @@ class TherapistsListItem extends StatelessWidget {
         child:
             Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           InfoWidget(
-            name: 'Norma Warren',
-            type: 'Biopsychologists',
-            /* name: psychologist?.name ?? '',
-            type: psychologist?.type ?? '',*/
+            /*  name: 'Norma Warren',
+            type: 'Biopsychologists',*/
+            name: psychologist?.name ?? '',
+            type: psychologist?.type ?? '',
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => const TherapistsDetailScreen(),
               ));
             },
             showGreenIcon: false,
-            description: 'Vestibsfevulum semwe acssscv fre porttitor...',
-            /* description: psychologist?.description ?? '',*/
+            // description: 'Vestibsfevulum semwe acssscv fre porttitor...',
+            description: psychologist?.description ?? '',
           ),
           heightGap(12),
           expertiseButton(),
           heightGap(12),
-          ElevatedButtonWidget(
-              onPressed: () {
-                if (isFromHome) {
-                  Navigator.of(context).pop();
-                } else {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const BottomBarScreen(),
-                  ));
-                }
-              },
-              text: 'Select'),
+          isTherapistsSelecting
+              ? const Center(
+                  child: CupertinoActivityIndicator(),
+                )
+              : ElevatedButtonWidget(
+                  onPressed: selectButtonPressed, text: 'Select'),
         ]),
       ),
     );

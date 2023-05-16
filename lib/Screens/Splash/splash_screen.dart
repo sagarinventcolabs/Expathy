@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:expathy/Common%20Widgets/custom_scaffold.dart';
+import 'package:expathy/Screens/Auth%20Screens/prehome_screen.dart';
 import 'package:expathy/Screens/Walkthrough%20Screens/tutorial_screen.dart';
 import 'package:expathy/Utils/app_colors.dart';
 import 'package:expathy/Utils/app_images.dart';
@@ -9,6 +10,9 @@ import 'package:flutter/material.dart';
 
 import '../../Utils/app_strings.dart';
 import '../../main.dart';
+import '../Bottom Bar Screen/bottom_bar_screen.dart';
+import '../Question Answer Screen/first_question_screen.dart';
+import '../Therapists Screen/therapists_list_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -23,11 +27,47 @@ class _SplashScreenState extends State<SplashScreen> {
     Future.delayed(
       const Duration(seconds: 5),
       () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => const TutorialScreen(),
-          ),
-        );
+        if (sharedPrefs?.getBool(AppStrings.isLogin) ?? false) {
+          if (sharedPrefs?.getBool(AppStrings.isQuestionSubmit) != true) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    const FirstQuestionScreen(showLogoutDialog: true),
+              ),
+            );
+          } else if (sharedPrefs?.getBool(AppStrings.isHaveOneTherapists) !=
+              true) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const TherapistsListScreen(
+                    showChangeLanguageDialog: true, showBackButton: false),
+              ),
+            );
+          } else {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const BottomBarScreen(),
+              ),
+            );
+          }
+        } else {
+          if (sharedPrefs?.getBool(AppStrings.isFirstTimeOnApp) ?? true) {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const TutorialScreen(),
+              ),
+            );
+          } else {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const PreHomeScreen(),
+              ),
+            );
+          }
+        }
       },
     );
     super.initState();

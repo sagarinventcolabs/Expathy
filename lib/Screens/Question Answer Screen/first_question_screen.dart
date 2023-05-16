@@ -1,6 +1,5 @@
 import 'package:expathy/Providers/Question%20Provider/question_provider.dart';
 import 'package:expathy/Providers/User%20Provider/user_provider.dart';
-import 'package:expathy/Screens/Question%20Answer%20Screen/question_answer_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -10,16 +9,21 @@ import '../../Common Widgets/custom_scaffold.dart';
 import '../../Common Widgets/text_widget.dart';
 import '../../Custom Painter /question_screen_custom_painter.dart';
 import '../../Models/language_list_model.dart';
-import '../../Providers/Auth Provider/auth_provider.dart';
 import '../../Utils/app_colors.dart';
 import '../../Utils/app_fonts.dart';
 import '../../Utils/app_images.dart';
+import '../../Utils/app_strings.dart';
 import '../../Utils/helper_methods.dart';
 import '../../Widgets/gradient_background_widget.dart';
+import '../../Widgets/horzontal_two_button_widget.dart';
 import '../../Widgets/skeleton_widget.dart';
+import '../../main.dart';
+import '../Auth Screens/prehome_screen.dart';
 
 class FirstQuestionScreen extends StatefulWidget {
-  const FirstQuestionScreen({Key? key}) : super(key: key);
+  final bool showLogoutDialog;
+  const FirstQuestionScreen({Key? key, this.showLogoutDialog = false})
+      : super(key: key);
 
   @override
   State<FirstQuestionScreen> createState() => _FirstQuestionScreenState();
@@ -36,10 +40,48 @@ class _FirstQuestionScreenState extends State<FirstQuestionScreen> {
   @override
   void initState() {
     super.initState();
-    languageListFuture = context.read<QuestionProvider>().fetchLanguageListApi(
+    languageListFuture = context
+        .read<QuestionProvider>()
+        .fetchLanguageListApi(
           context: context,
-        );
+        )
+        .whenComplete(() {
+      /*  if (widget.showLogoutDialog) {
+        _showDialog();
+      }*/
+    });
   }
+
+  /*_showDialog() async {
+    await Future.delayed(const Duration(milliseconds: 50));
+    if (context.mounted) {
+      await showWarningDialog(
+          context: context,
+          barrierDismissible: false,
+          radius: 16,
+          title: 'Logout',
+          content: 'Do you want to logout?',
+          widget: [
+            HorizontalTwoButtonWidget(
+              text1: 'No',
+              text2: 'Yes',
+              text1Tap: () {
+                Navigator.of(context).pop();
+              },
+              text2Tap: () {
+                sharedPrefs?.clear();
+                sharedPrefs?.setBool(AppStrings.isFirstTimeOnApp, false);
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (context) => const PreHomeScreen(),
+                  ),
+                  (route) => false,
+                );
+              },
+            )
+          ]);
+    }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -112,12 +154,33 @@ class _FirstQuestionScreenState extends State<FirstQuestionScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     heightGap(14),
-                    const TextWidget(
-                      text: 'Let\'s Start...',
-                      fontSize: 18,
-                      color: AppColors.white,
-                      fontFamily: AppFonts.poppins,
-                      fontWeight: FontWeight.w400,
+                    Row(
+                      children: [
+                        const Expanded(
+                          child: TextWidget(
+                            text: 'Let\'s Start...',
+                            fontSize: 18,
+                            color: AppColors.white,
+                            fontFamily: AppFonts.poppins,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        InkWell(
+                            onTap: () {
+                              /* sharedPrefs?.clear();
+                              sharedPrefs?.setBool(
+                                  AppStrings.isFirstTimeOnApp, false);
+                              Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                  builder: (context) => const PreHomeScreen(),
+                                ),
+                                (route) => false,
+                              );*/
+                              logOut(context: context);
+                            },
+                            child: const Icon(Icons.logout,
+                                color: AppColors.white)),
+                      ],
                     ),
                     heightGap(18),
                     LinearPercentIndicator(

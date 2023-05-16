@@ -14,6 +14,7 @@ import '../../Common Widgets/custom_scaffold.dart';
 import '../../Common Widgets/text_widget.dart';
 import '../../Utils/app_colors.dart';
 import '../../Utils/app_fonts.dart';
+import '../../Utils/app_strings.dart';
 import '../../Widgets/gradient_background_widget.dart';
 import '../../Widgets/horzontal_two_button_widget.dart';
 import '../../Widgets/toolbar_widget.dart';
@@ -229,13 +230,16 @@ class ProfileScreen extends StatelessWidget {
                               title: 'Log out',
                               icon: AppImages.logoutIcon,
                               onTap: () {
-                                sharedPrefs?.clear();
+                                /* sharedPrefs?.clear();
+                                sharedPrefs?.setBool(
+                                    AppStrings.isFirstTimeOnApp, false);
                                 Navigator.of(context).pushAndRemoveUntil(
                                   MaterialPageRoute(
                                     builder: (context) => const PreHomeScreen(),
                                   ),
                                   (route) => false,
-                                );
+                                );*/
+                                logOut(context: context);
                               }),
                         ],
                       ),

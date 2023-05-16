@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:expathy/Models/common_model.dart';
 import 'package:expathy/Models/auth_model.dart';
-import 'package:expathy/Screens/Auth%20Screens/login_screen.dart';
 import 'package:expathy/Screens/Auth%20Screens/otp_verify_screen.dart';
 import 'package:expathy/Screens/Auth%20Screens/prehome_screen.dart';
 import 'package:expathy/Screens/Bottom%20Bar%20Screen/bottom_bar_screen.dart';
@@ -16,7 +15,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../Remote/api_config.dart';
 import '../../Remote/remote_service.dart';
-import '../../Screens/Question Answer Screen/question_answer_screen.dart';
 import '../Language Provider/language_provider.dart';
 
 class AuthProvider with ChangeNotifier {
@@ -52,6 +50,8 @@ class AuthProvider with ChangeNotifier {
               signUpResponse.data?.user?.userName.toString() ?? '');
           sharedPrefs?.setString(AppStrings.email,
               signUpResponse.data?.user?.email.toString() ?? '');
+          sharedPrefs?.setBool(AppStrings.isLogin, true);
+          sharedPrefs?.setBool(AppStrings.isFirstTimeOnApp, false);
           /*sharedPrefs?.setString(AppStrings.languageCode,
               signUpResponse.data?.user?.language.toString() ?? '');*/
           Navigator.push(
@@ -93,13 +93,16 @@ class AuthProvider with ChangeNotifier {
       log('api call response : ${loginResponse.toJson().toString()}');
       if (context.mounted) {
         if (loginResponse.status == 200) {
-          ///add token,user,email to sharedPreference
+          ///add token,user,email,islogin to sharedPreference
           sharedPrefs?.setString(
               AppStrings.token, loginResponse.data?.token.toString() ?? '');
           sharedPrefs?.setString(AppStrings.userName,
               loginResponse.data?.user?.userName.toString() ?? '');
           sharedPrefs?.setString(AppStrings.email,
               loginResponse.data?.user?.email.toString() ?? '');
+          sharedPrefs?.setBool(AppStrings.isFirstTimeOnApp, false);
+          sharedPrefs?.setBool(AppStrings.isFirstTimeOnApp, false);
+          sharedPrefs?.setBool(AppStrings.isLogin, true);
           context.read<LanguageProvider>().changeLanguage(
                 languageCode: loginResponse.data?.user?.language.toString(),
               );
@@ -117,7 +120,8 @@ class AuthProvider with ChangeNotifier {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const TherapistsListScreen(),
+                  builder: (context) => const TherapistsListScreen(
+                      showChangeLanguageDialog: true, showBackButton: false),
                 ),
               );
             } else {

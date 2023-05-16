@@ -3,7 +3,6 @@ import 'package:expathy/Common%20Widgets/text_form_field_widget.dart';
 import 'package:expathy/Common%20Widgets/text_widget.dart';
 import 'package:expathy/Screens/Auth%20Screens/forgot_password_screen.dart';
 import 'package:expathy/Screens/Auth%20Screens/sign_up_screen.dart';
-import 'package:expathy/Screens/Question%20Answer%20Screen/question_answer_screen.dart';
 import 'package:expathy/Utils/app_strings.dart';
 import 'package:expathy/Utils/helper_methods.dart';
 import 'package:expathy/main.dart';
@@ -19,8 +18,6 @@ import '../../Utils/app_fonts.dart';
 import '../../Utils/app_images.dart';
 import '../../Widgets/svg_picture.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
-import '../Question Answer Screen/first_question_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -223,18 +220,18 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         isLogin = true;
       });
-      /* await authProvider.loginApi(
+      await authProvider.loginApi(
         email: emailController.text.trim(),
         password: passwordController.text,
         type: 'Expact',
         context: context,
-      );*/
-      Navigator.push(
+      );
+      /*Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => const QuestionAnswerScreen(),
         ),
-      );
+      );*/
       setState(() {
         isLogin = false;
       });

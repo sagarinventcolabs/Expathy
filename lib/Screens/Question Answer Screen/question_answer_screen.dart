@@ -1,18 +1,15 @@
-/*import 'dart:convert';
 import 'dart:developer';
 import 'package:expathy/Common%20Widgets/custom_scaffold.dart';
 import 'package:expathy/Common%20Widgets/elevated_button_widget.dart';
 import 'package:expathy/Common%20Widgets/text_form_field_widget.dart';
 import 'package:expathy/Common%20Widgets/text_widget.dart';
 import 'package:expathy/Models/questions_list_model.dart';
-import 'package:expathy/Models/questions_model.dart';
 import 'package:expathy/Utils/app_colors.dart';
 import 'package:expathy/Utils/app_fonts.dart';
 import 'package:expathy/Widgets/gradient_background_widget.dart';
 import 'package:expathy/Widgets/toolbar_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:lottie/lottie.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import '../../Common Widgets/custom_future_builder.dart';
@@ -21,7 +18,6 @@ import '../../Providers/Question Provider/question_provider.dart';
 import '../../Utils/app_images.dart';
 import '../../Utils/helper_methods.dart';
 import '../../Widgets/skeleton_widget.dart';
-import '../Therapists Screen/find_therapists_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class QuestionAnswerScreen extends StatefulWidget {
@@ -38,6 +34,7 @@ class _QuestionAnswerScreenState extends State<QuestionAnswerScreen> {
   List<Question>? questionList = [];
   Question? questionData;
   String? questionId;
+  bool isQuestionsSubmitting = false;
 
   @override
   void initState() {
@@ -152,170 +149,22 @@ class _QuestionAnswerScreenState extends State<QuestionAnswerScreen> {
                                   child: const Icon(Icons.arrow_back),
                                 ),
                               ),
-                              ElevatedButtonWidget(
-                                  onPressed: () {
-                                    context
-                                        .read<QuestionProvider>()
-                                        .addSelectedQuestion();
-                                    context
-                                        .read<QuestionProvider>()
-                                        .submitQuestionAnswerApi(
-                                            selectedQuestionList: context
-                                                .read<QuestionProvider>()
-                                                .selectedQuestionList,
-                                            context: context);
-
-                                    // showDialog<void>(
-                                    //   context: context,
-                                    //   barrierDismissible:
-                                    //   true, // user must tap button!
-                                    //   builder: (BuildContext context) {
-                                    //     return AlertDialog(
-                                    //       shape: RoundedRectangleBorder(
-                                    //           borderRadius:
-                                    //           BorderRadius.circular(12)),
-                                    //       content: Column(
-                                    //           mainAxisSize: MainAxisSize.min,
-                                    //           crossAxisAlignment:
-                                    //           CrossAxisAlignment.stretch,
-                                    //           children: [
-                                    //             Lottie.asset(
-                                    //                 AppImages.warningJson,
-                                    //                 width: 100,
-                                    //                 height: 100),
-                                    //             heightGap(5),
-                                    //             const Text.rich(
-                                    //               textAlign: TextAlign.start,
-                                    //               TextSpan(
-                                    //                 children: [
-                                    //                   TextSpan(
-                                    //                     text:
-                                    //                     'This app is not suitable for people with suicidal tendencies.',
-                                    //                     style: TextStyle(
-                                    //                       fontSize: 14,
-                                    //                       fontFamily:
-                                    //                       AppFonts.poppins,
-                                    //                       fontWeight:
-                                    //                       FontWeight.w500,
-                                    //                     ),
-                                    //                   ),
-                                    //                   TextSpan(
-                                    //                     text:
-                                    //                     ' Please call 113',
-                                    //                     style: TextStyle(
-                                    //                         fontSize: 14,
-                                    //                         color: AppColors
-                                    //                             .yellow,
-                                    //                         fontFamily: AppFonts
-                                    //                             .poppins,
-                                    //                         fontWeight:
-                                    //                         FontWeight
-                                    //                             .w500),
-                                    //                   ),
-                                    //                   TextSpan(
-                                    //                     text:
-                                    //                     ' Suicide prevention unit !!!',
-                                    //                     style: TextStyle(
-                                    //                         fontSize: 14,
-                                    //                         fontFamily: AppFonts
-                                    //                             .poppins,
-                                    //                         fontWeight:
-                                    //                         FontWeight
-                                    //                             .w500),
-                                    //                   ),
-                                    //                 ],
-                                    //               ),
-                                    //             ),
-                                    //             heightGap(18),
-                                    //             Center(
-                                    //               child: Container(
-                                    //                   decoration: BoxDecoration(
-                                    //                     borderRadius:
-                                    //                     BorderRadius
-                                    //                         .circular(10),
-                                    //                     color: AppColors
-                                    //                         .yellowLight,
-                                    //                   ),
-                                    //                   child: Padding(
-                                    //                     padding:
-                                    //                     const EdgeInsets
-                                    //                         .symmetric(
-                                    //                         horizontal:
-                                    //                         20.0,
-                                    //                         vertical: 10),
-                                    //                     child: Row(
-                                    //                       mainAxisSize:
-                                    //                       MainAxisSize.min,
-                                    //                       children: [
-                                    //                         const Icon(
-                                    //                           Icons.call,
-                                    //                           color: AppColors
-                                    //                               .yellow,
-                                    //                           size: 15,
-                                    //                         ),
-                                    //                         widthGap(5),
-                                    //                         const TextWidget(
-                                    //                           text: '113',
-                                    //                           fontSize: 14,
-                                    //                           color: AppColors
-                                    //                               .yellow,
-                                    //                           fontFamily:
-                                    //                           AppFonts
-                                    //                               .poppins,
-                                    //                           fontWeight:
-                                    //                           FontWeight
-                                    //                               .w600,
-                                    //                         ),
-                                    //                         widthGap(10),
-                                    //                         InkWell(
-                                    //                           onTap: () async {
-                                    //                             await Clipboard.setData(
-                                    //                                 const ClipboardData(
-                                    //                                     text:
-                                    //                                     "113"))
-                                    //                                 .then(
-                                    //                                     (value) {
-                                    //                                   ScaffoldMessenger.of(
-                                    //                                       context)
-                                    //                                       .showSnackBar(const SnackBar(
-                                    //                                       content:
-                                    //                                       Text("copied to clipboard")));
-                                    //                                 });
-                                    //                             // copied successfully
-                                    //                           },
-                                    //                           child: const Icon(
-                                    //                             Icons.copy,
-                                    //                             color: AppColors
-                                    //                                 .black,
-                                    //                             size: 20,
-                                    //                           ),
-                                    //                         ),
-                                    //                       ],
-                                    //                     ),
-                                    //                   )),
-                                    //             ),
-                                    //             heightGap(18),
-                                    //             ElevatedButtonWidget(
-                                    //                 onPressed: () {
-                                    //                   Navigator.of(context)
-                                    //                       .pop();
-                                    //                   Navigator.push(
-                                    //                       context,
-                                    //                       MaterialPageRoute(
-                                    //                         builder: (context) =>
-                                    //                         const FindTherapistsScreen(),
-                                    //                       ));
-                                    //                 },
-                                    //                 text: 'Ok'),
-                                    //           ]),
-                                    //     );
-                                    //   },
-                                    // );
-                                  },
-                                  height: 48,
-                                  text: 'Complete',
-                                  primary: AppColors.white,
-                                  textColor: AppColors.black),
+                              isQuestionsSubmitting
+                                  ? const Center(
+                                      child: CupertinoActivityIndicator(
+                                          color: AppColors.white),
+                                    )
+                                  : ElevatedButtonWidget(
+                                      onPressed: () async {
+                                        context
+                                            .read<QuestionProvider>()
+                                            .addSelectedQuestion();
+                                        await callSubmitQuestionAnswerApi();
+                                      },
+                                      height: 48,
+                                      text: 'Complete',
+                                      primary: AppColors.white,
+                                      textColor: AppColors.black),
                             ],
                           ),
                         ),
@@ -481,6 +330,19 @@ class _QuestionAnswerScreenState extends State<QuestionAnswerScreen> {
     );
   }
 
+  Future<void> callSubmitQuestionAnswerApi({String? therapistsId}) async {
+    setState(() {
+      isQuestionsSubmitting = true;
+    });
+    await context.read<QuestionProvider>().submitQuestionAnswerApi(
+        selectedQuestionList:
+            context.read<QuestionProvider>().selectedQuestionList,
+        context: context);
+    setState(() {
+      isQuestionsSubmitting = false;
+    });
+  }
+
   Widget loadingShimmer() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -577,8 +439,9 @@ class _QuestionAnswerScreenState extends State<QuestionAnswerScreen> {
       log(barPercentage.toString());
     });
   }
-}*/
+}
 
+/*
 import 'dart:developer';
 import 'package:expathy/Common%20Widgets/custom_scaffold.dart';
 import 'package:expathy/Common%20Widgets/elevated_button_widget.dart';
@@ -1110,3 +973,4 @@ class _QuestionAnswerScreenState extends State<QuestionAnswerScreen> {
     });
   }
 }
+*/

@@ -1,12 +1,11 @@
-import 'dart:developer';
 import 'dart:io';
-
+import 'package:expathy/Utils/app_fonts.dart';
 import 'package:expathy/Utils/app_strings.dart';
 import 'package:expathy/main.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
-
 import '../Common Widgets/text_widget.dart';
+import '../Screens/Auth Screens/prehome_screen.dart';
 import 'app_colors.dart';
 
 const emailPattern =
@@ -80,11 +79,12 @@ Future<void> showWarningDialog(
     {BuildContext? context,
     double? radius,
     String? title,
+    bool barrierDismissible = true,
     String? content,
     List<Widget>? widget}) async {
   return showDialog<void>(
     context: context!,
-    barrierDismissible: true, // user must tap button!
+    barrierDismissible: barrierDismissible, // user must tap button!
     builder: (BuildContext context) {
       return AlertDialog(
         shape: RoundedRectangleBorder(
@@ -94,16 +94,29 @@ Future<void> showWarningDialog(
           color: AppColors.black,
           fontSize: 18,
           fontWeight: FontWeight.w400,
+          fontFamily: AppFonts.poppins,
         ),
         title: TextWidget(
           text: title ?? '',
           color: AppColors.black,
           fontSize: 22,
           fontWeight: FontWeight.w400,
+          fontFamily: AppFonts.poppins,
         ),
         actions: widget,
       );
     },
+  );
+}
+
+Future<void> logOut({BuildContext? context}) async {
+  sharedPrefs?.clear();
+  sharedPrefs?.setBool(AppStrings.isFirstTimeOnApp, false);
+  Navigator.of(context!).pushAndRemoveUntil(
+    MaterialPageRoute(
+      builder: (context) => const PreHomeScreen(),
+    ),
+    (route) => false,
   );
 }
 

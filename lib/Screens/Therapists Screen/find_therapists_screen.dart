@@ -243,9 +243,13 @@ class _FindTherapistsScreenState extends State<FindTherapistsScreen>
   @override
   void didChangeDependencies() {
     Future.delayed(const Duration(milliseconds: 3500), () {
-      Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => const TherapistsListScreen(),
-      ));
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (context) =>
+              const TherapistsListScreen(showBackButton: false),
+        ),
+        (route) => false,
+      );
     });
     super.didChangeDependencies();
   }

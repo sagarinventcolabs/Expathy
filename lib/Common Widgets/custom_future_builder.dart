@@ -1,7 +1,6 @@
 import 'package:expathy/Common%20Widgets/elevated_button_widget.dart';
 import 'package:expathy/Utils/app_colors.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import '../Remote/app_exceptions.dart';
 import '../Utils/app_images.dart';
@@ -34,7 +33,7 @@ class CustomFutureBuilder<T> extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Container(
+                    SizedBox(
                       width: 250,
                       height: 250,
                       child: Lottie.asset(

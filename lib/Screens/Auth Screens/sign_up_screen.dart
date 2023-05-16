@@ -3,7 +3,6 @@ import 'package:expathy/Common%20Widgets/text_form_field_widget.dart';
 import 'package:expathy/Common%20Widgets/text_widget.dart';
 import 'package:expathy/Providers/Auth%20Provider/auth_provider.dart';
 import 'package:expathy/Screens/Auth%20Screens/login_screen.dart';
-import 'package:expathy/Screens/Question%20Answer%20Screen/question_answer_screen.dart';
 import 'package:expathy/Utils/helper_methods.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -226,20 +225,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
         setState(() {
           isSignUp = true;
         });
-        /* await authProvider.signUpApi(
+        await authProvider.signUpApi(
           email: emailController.text.trim(),
           userName: userNameController.text.trim().toString(),
           password: passwordController.text,
           type: 'Expact',
           loginType: 'Email',
           context: context,
-        );*/
-        Navigator.push(
+        );
+        /* Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => const QuestionAnswerScreen(),
           ),
-        );
+        );*/
 
         setState(() {
           isSignUp = false;

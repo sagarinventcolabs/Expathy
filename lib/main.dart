@@ -1,5 +1,4 @@
 import 'package:expathy/Providers/app_provider.dart';
-import 'package:expathy/Screens/Question%20Answer%20Screen/question_answer_screen.dart';
 import 'package:expathy/Screens/Splash/splash_screen.dart';
 import 'package:expathy/Utils/helper_methods.dart';
 import 'package:expathy/l10n/l10n.dart';

@@ -1,13 +1,10 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
-import 'package:expathy/Screens/No%20Internet%20Screen/no_internet_screen.dart';
 import 'package:expathy/Utils/app_strings.dart';
 import 'package:expathy/Utils/helper_methods.dart';
 import 'package:expathy/main.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 import 'api_config.dart';
 import 'app_exceptions.dart';
 

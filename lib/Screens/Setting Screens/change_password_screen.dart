@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../Common Widgets/custom_scaffold.dart';
 import '../../Common Widgets/elevated_button_widget.dart';
 import '../../Common Widgets/text_form_field_widget.dart';
@@ -15,7 +14,6 @@ import '../../Utils/app_images.dart';
 import '../../Utils/helper_methods.dart';
 import '../../Widgets/svg_picture.dart';
 import '../../Widgets/toolbar_widget.dart';
-import '../Auth Screens/prehome_screen.dart';
 import '../Auth Screens/sign_up_screen.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
@@ -219,18 +217,18 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       setState(() {
         isSetPassword = true;
       });
-      /*  await authProvider.resetPasswordApi(
+      await authProvider.resetPasswordApi(
         context: context,
         email: authProvider.getEmail.toString(),
         password: newPasswordController.text.trim(),
-      );*/
-      Navigator.pushAndRemoveUntil(
+      );
+      /*  Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
           builder: (context) => const PreHomeScreen(),
         ),
         (route) => false,
-      );
+      );*/
 
       setState(() {
         isSetPassword = false;
