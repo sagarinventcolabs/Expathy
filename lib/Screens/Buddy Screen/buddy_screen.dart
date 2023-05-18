@@ -40,59 +40,58 @@ class _BuddyScreenState extends State<BuddyScreen> {
                         left: 20,
                         right: 20.0,
                       ),
-                      child: SingleChildScrollView(
-                        child: Column(
-                          // crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            const SvgPic(
+                      child: Column(
+                        // crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          const Expanded(
+                            child: SvgPic(
                                 image: AppImages.buddyImage,
                                 fit: BoxFit.contain),
-                            heightGap(10),
-                            SizedBox(
-                              width: deviceWidth(context) * 0.70,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  const TextWidget(
-                                    text:
-                                        "We know that you are NOT alone. Expathy will find a mental buddy right now.",
-                                    color: AppColors.black,
-                                    textAlign: TextAlign.center,
-                                    fontSize: 16,
-                                    fontFamily: AppFonts.poppins,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                  heightGap(20),
-                                  SizedBox(
-                                    height: 48,
-                                    child: ElevatedButton.icon(
-                                      onPressed: () {},
-                                      icon: const SvgPic(
-                                          image: AppImages.butterfly),
-                                      style: ElevatedButton.styleFrom(
-                                        elevation: 0,
-                                        backgroundColor: AppColors.green,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                      ),
-                                      label: const TextWidget(
-                                        text: "Click here",
-                                        textAlign: TextAlign.center,
-                                        color: AppColors.white,
-                                        fontFamily: AppFonts.poppins,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
+                          ),
+                          heightGap(10),
+                          SizedBox(
+                            width: deviceWidth(context) * 0.70,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                const TextWidget(
+                                  text:
+                                      "We know that you are NOT alone. Expathy will find a mental buddy right now.",
+                                  color: AppColors.black,
+                                  textAlign: TextAlign.center,
+                                  fontSize: 16,
+                                  fontFamily: AppFonts.poppins,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                heightGap(20),
+                                SizedBox(
+                                  height: 48,
+                                  child: ElevatedButton.icon(
+                                    onPressed: () {},
+                                    icon: const SvgPic(
+                                        image: AppImages.butterfly),
+                                    style: ElevatedButton.styleFrom(
+                                      elevation: 0,
+                                      backgroundColor: AppColors.green,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
                                       ),
                                     ),
+                                    label: const TextWidget(
+                                      text: "Click here",
+                                      textAlign: TextAlign.center,
+                                      color: AppColors.white,
+                                      fontFamily: AppFonts.poppins,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                            heightGap(10),
-                          ],
-                        ),
+                          ),
+                          heightGap(10),
+                        ],
                       ),
                     ),
                   ),

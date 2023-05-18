@@ -15,6 +15,7 @@ import '../../Utils/helper_methods.dart';
 import '../../Widgets/svg_picture.dart';
 import '../../Widgets/toolbar_widget.dart';
 import '../Auth Screens/sign_up_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   final bool makeSetPassword;
@@ -27,6 +28,7 @@ class ChangePasswordScreen extends StatefulWidget {
 
 class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   final newPasswordController = TextEditingController();
+  final currentPasswordController = TextEditingController();
   final reEnterPasswordController = TextEditingController();
 
   bool currentPasswordObSecure = true;
@@ -100,7 +102,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                     child: TextWidget(
                                         text: widget.makeSetPassword
                                             ? 'Set Password'
-                                            : 'Change Password',
+                                            : AppLocalizations.of(context)!
+                                                .changePassword,
                                         fontSize: 24,
                                         fontWeight: FontWeight.w500,
                                         fontFamily: AppFonts.poppins),
@@ -108,12 +111,14 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                   heightGap(28),
                                   if (!widget.makeSetPassword)
                                     TextFormFieldWidget(
-                                      hintText: 'Current Password',
+                                      hintText: AppLocalizations.of(context)!
+                                          .currentPassword,
+                                      controller: currentPasswordController,
                                       obscureText: currentPasswordObSecure,
                                       isPassword: true,
                                       validator: (value) {
                                         if (value!.isEmpty) {
-                                          return 'Please enter password';
+                                          return 'Please enter current password';
                                         }
                                         return null;
                                       },
@@ -126,7 +131,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                     ),
                                   if (!widget.makeSetPassword) heightGap(16),
                                   TextFormFieldWidget(
-                                    hintText: 'New Password',
+                                    hintText: AppLocalizations.of(context)!
+                                        .newPassword,
                                     controller: newPasswordController,
                                     obscureText: newPasswordObSecure,
                                     isPassword: true,
@@ -145,7 +151,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                   ),
                                   heightGap(16),
                                   TextFormFieldWidget(
-                                    hintText: 'Re-enter Password',
+                                    hintText: AppLocalizations.of(context)!
+                                        .reEnterPassword,
                                     controller: reEnterPasswordController,
                                     obscureText: reEnterPasswordObSecure,
                                     isPassword: true,
@@ -175,16 +182,18 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                               horizontal:
                                                   deviceWidth(context) * 0.10),
                                           child: ElevatedButtonWidget(
-                                              onPressed: () {
-                                                if (widget.makeSetPassword) {
-                                                  callSetPasswordApi(
-                                                      authProvider:
-                                                          authProvider);
-                                                } else {
-                                                  Navigator.of(context).pop();
-                                                }
-                                              },
-                                              text: 'Save'),
+                                            onPressed: () {
+                                              if (widget.makeSetPassword) {
+                                                callSetPasswordApi(
+                                                    authProvider: authProvider);
+                                              } else {
+                                                callChangePasswordApi(
+                                                    authProvider: authProvider);
+                                              }
+                                            },
+                                            text: AppLocalizations.of(context)!
+                                                .save,
+                                          ),
                                         ),
                                   heightGap(20),
                                   /*  if (widget.makeSetPassword)
@@ -220,16 +229,25 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       await authProvider.resetPasswordApi(
         context: context,
         email: authProvider.getEmail.toString(),
-        password: newPasswordController.text.trim(),
+        password: newPasswordController.text,
       );
-      /*  Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const PreHomeScreen(),
-        ),
-        (route) => false,
-      );*/
+      setState(() {
+        isSetPassword = false;
+      });
+    }
+  }
 
+  Future<void> callChangePasswordApi(
+      {required AuthProvider authProvider}) async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        isSetPassword = true;
+      });
+      await authProvider.changePasswordApi(
+        context: context,
+        password: currentPasswordController.text,
+        newPassword: newPasswordController.text,
+      );
       setState(() {
         isSetPassword = false;
       });

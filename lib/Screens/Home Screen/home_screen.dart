@@ -23,6 +23,7 @@ import '../../Utils/app_colors.dart';
 import '../../Utils/app_fonts.dart';
 import '../../Widgets/active_plan_item.dart';
 import '../Therapists Screen/therapists_detail_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -104,8 +105,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             heightGap(20),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
-                                TextWidget(
+                              children: [
+                                const TextWidget(
                                   text: 'John,',
                                   textAlign: TextAlign.center,
                                   fontSize: 22,
@@ -115,7 +116,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 Flexible(
                                   child: TextWidget(
-                                    text: ' we are here for you',
+                                    text: AppLocalizations.of(context)!
+                                        .weAreHereForYou,
                                     textAlign: TextAlign.center,
                                     fontSize: 22,
                                     color: AppColors.white,
@@ -129,8 +131,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       heightGap(24),
-                      const TextWidget(
-                        text: 'Active Plan',
+                      TextWidget(
+                        text: AppLocalizations.of(context)!.activePlan,
                         fontSize: 18,
                         color: AppColors.white,
                         fontFamily: AppFonts.poppins,
@@ -144,9 +146,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       heightGap(24),
                       Row(
                         children: [
-                          const Expanded(
+                          Expanded(
                             child: TextWidget(
-                              text: 'Your Therapist',
+                              text: AppLocalizations.of(context)!.yourTherapist,
                               fontSize: 18,
                               color: AppColors.white,
                               fontFamily: AppFonts.poppins,
@@ -186,11 +188,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                         heightGap(18),
                                         HorizontalTwoButtonWidget(
-                                          text1: 'No',
+                                          text1:
+                                              AppLocalizations.of(context)!.no,
                                           text1Tap: () {
                                             Navigator.of(context).pop();
                                           },
-                                          text2: 'Yes',
+                                          text2:
+                                              AppLocalizations.of(context)!.yes,
                                           text2Tap: () {
                                             Navigator.of(context).pop();
                                             Navigator.of(context).push(
@@ -213,8 +217,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               side: const BorderSide(
                                   width: 1, color: AppColors.white),
                             ),
-                            label: const TextWidget(
-                              text: 'Change',
+                            label: TextWidget(
+                              text: AppLocalizations.of(context)!.change,
                               fontSize: 14,
                               color: AppColors.white,
                               fontFamily: AppFonts.poppins,
@@ -254,11 +258,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               expertiseButton(),
                               heightGap(10),
                               HorizontalTwoButtonWidget(
-                                text1: 'Free Session NOW',
+                                text1: AppLocalizations.of(context)!
+                                    .freeSessionNow,
                                 text1Tap: () {
                                   _bottomSheet(context: context);
                                 },
-                                text2: 'Book Full Session',
+                                text2: AppLocalizations.of(context)!
+                                    .bookFullSession,
                                 text2Tap: () {
                                   _bottomSheet(
                                       context: context,
@@ -273,7 +279,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       if (!(sharedPrefs?.getBool(AppStrings.isFreePlan) ??
                           true))
                         Column(children: [
-                          const ViewAllRowWidget(text: 'Upcoming Sessions'),
+                          ViewAllRowWidget(
+                            text:
+                                AppLocalizations.of(context)!.upcomingSessions,
+                          ),
                           heightGap(8),
                           SizedBox(
                             height: 185,
@@ -309,9 +318,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           width: 100,
                                                           height: 100),
                                                       heightGap(5),
-                                                      const TextWidget(
-                                                        text:
-                                                            'Are you sure to CANCEL the session?',
+                                                      TextWidget(
+                                                        text: AppLocalizations
+                                                                .of(context)!
+                                                            .areYouSureToCancelTheSession,
                                                         fontSize: 16,
                                                         fontFamily:
                                                             AppFonts.poppins,
@@ -322,12 +332,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   ),
                                                   heightGap(18),
                                                   HorizontalTwoButtonWidget(
-                                                    text1: 'No',
+                                                    text1: AppLocalizations.of(
+                                                            context)!
+                                                        .no,
                                                     text1Tap: () {
                                                       Navigator.of(context)
                                                           .pop();
                                                     },
-                                                    text2: 'Yes',
+                                                    text2: AppLocalizations.of(
+                                                            context)!
+                                                        .yes,
                                                     text2Tap: () {
                                                       setState(() {
                                                         showDropDown = true;
@@ -349,9 +363,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                 .start,
                                                         children: [
                                                           heightGap(18),
-                                                          const TextWidget(
-                                                            text:
-                                                                'Select reason',
+                                                          TextWidget(
+                                                            text: AppLocalizations
+                                                                    .of(context)!
+                                                                .selectReason,
                                                             fontSize: 14,
                                                             fontFamily: AppFonts
                                                                 .poppins,
@@ -465,9 +480,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       ),
                                                       heightGap(18),
                                                       HorizontalTwoButtonWidget(
-                                                        text1: 'No',
+                                                        text1:
+                                                            AppLocalizations.of(
+                                                                    context)!
+                                                                .no,
                                                         text1Tap: () {},
-                                                        text2: 'Yes',
+                                                        text2:
+                                                            AppLocalizations.of(
+                                                                    context)!
+                                                                .yes,
                                                         text2Tap: () {},
                                                       ),
                                                     ]),
@@ -545,8 +566,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           heightGap(24),
                         ]),
-                      const ViewAllRowWidget(
-                          text: 'Articles', viewAllColor: AppColors.blue),
+                      ViewAllRowWidget(
+                          text: AppLocalizations.of(context)!.articles,
+                          viewAllColor: AppColors.blue),
                       heightGap(8),
                       SizedBox(
                         height: 270,
@@ -583,6 +605,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                       child: SizedBox(
                                         height: 150,
+                                        width: double.infinity,
                                         child: Image.asset(
                                           articleData.image ?? '',
                                           fit: BoxFit.cover,
@@ -812,8 +835,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     ),
                     heightGap(15),
-                    const TextWidget(
-                      text: 'Select Time',
+                    TextWidget(
+                      text: AppLocalizations.of(context)!.selectTime,
                       fontSize: 20,
                       fontFamily: AppFonts.poppins,
                       fontWeight: FontWeight.w500,
@@ -872,8 +895,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                             Lottie.asset(AppImages.congratsJson,
                                                 width: 100, height: 100),
                                             heightGap(5),
-                                            const TextWidget(
-                                              text: 'Congrats',
+                                            TextWidget(
+                                              text:
+                                                  AppLocalizations.of(context)!
+                                                      .congrats,
                                               color: AppColors.greenLight,
                                               fontSize: 24,
                                               fontFamily: AppFonts.poppins,
@@ -891,10 +916,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                         heightGap(18),
                                         ElevatedButtonWidget(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            text: 'Go to Home'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          text: AppLocalizations.of(context)!
+                                              .goToHome,
+                                        ),
                                       ]),
                                 );
                               },
@@ -923,16 +950,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                             Lottie.asset(AppImages.congratsJson,
                                                 width: 100, height: 100),
                                             heightGap(5),
-                                            const TextWidget(
-                                              text: 'Congrats',
+                                            TextWidget(
+                                              text:
+                                                  AppLocalizations.of(context)!
+                                                      .congrats,
                                               color: AppColors.greenLight,
                                               fontSize: 24,
                                               fontFamily: AppFonts.poppins,
                                               fontWeight: FontWeight.w500,
                                             ),
-                                            const TextWidget(
+                                            TextWidget(
                                               text:
-                                                  'yes you booked successfully',
+                                                  AppLocalizations.of(context)!
+                                                      .yesYouBookedSuccessfully,
                                               fontFamily: AppFonts.poppins,
                                               fontSize: 18,
                                               textAlign: TextAlign.center,
@@ -942,17 +972,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                         heightGap(18),
                                         ElevatedButtonWidget(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            text: 'Go to Home'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          text: AppLocalizations.of(context)!
+                                              .goToHome,
+                                        ),
                                       ]),
                                 );
                               },
                             );
                           }
                         },
-                        text: showBookAgainText ? 'Book Again' : 'Book Session',
+                        text: showBookAgainText
+                            ? 'Book Again'
+                            : AppLocalizations.of(context)!.bookSession,
                         primary: AppColors.yellow),
                   ],
                 ),

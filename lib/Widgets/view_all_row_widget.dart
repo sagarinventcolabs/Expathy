@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../Common Widgets/text_widget.dart';
 import '../Utils/app_colors.dart';
 import '../Utils/app_fonts.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ViewAllRowWidget extends StatelessWidget {
   final String? text;
@@ -29,7 +30,7 @@ class ViewAllRowWidget extends StatelessWidget {
           ),
         ),
         TextWidget(
-          text: 'View all',
+          text: AppLocalizations.of(context)!.viewAll,
           fontSize: 14,
           color: viewAllColor,
           decoration: TextDecoration.underline,

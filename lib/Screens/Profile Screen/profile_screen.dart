@@ -1,3 +1,4 @@
+import 'package:expathy/Providers/User%20Provider/user_provider.dart';
 import 'package:expathy/Screens/Profile%20Screen/edit_profile_screen.dart';
 import 'package:expathy/Screens/Setting%20Screens/change_language_screen.dart';
 import 'package:expathy/Screens/Setting%20Screens/change_password_screen.dart';
@@ -7,7 +8,9 @@ import 'package:expathy/Screens/Setting%20Screens/personal_information_screen.da
 import 'package:expathy/Utils/app_images.dart';
 import 'package:expathy/Utils/helper_methods.dart';
 import 'package:expathy/Widgets/svg_picture.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../Common Widgets/custom_scaffold.dart';
 import '../../Common Widgets/text_widget.dart';
 import '../../Utils/app_colors.dart';
@@ -15,12 +18,15 @@ import '../../Utils/app_fonts.dart';
 import '../../Widgets/gradient_background_widget.dart';
 import '../../Widgets/horzontal_two_button_widget.dart';
 import '../../Widgets/toolbar_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    UserProvider authProvider =
+        Provider.of<UserProvider>(context, listen: true);
     return CustomScaffold(
       body: GradientBackgroundWidget(
         child: SizedBox(
@@ -36,7 +42,7 @@ class ProfileScreen extends StatelessWidget {
                   ToolBarWidget(
                     onTap: () {},
                     showArrowIcon: false,
-                    title: 'Profile',
+                    title: AppLocalizations.of(context)!.profile,
                   ),
                   heightGap(20),
                   Stack(
@@ -100,7 +106,8 @@ class ProfileScreen extends StatelessWidget {
                       child: Column(
                         children: [
                           tileWidget(
-                              title: 'Change Password',
+                              title:
+                                  AppLocalizations.of(context)!.changePassword,
                               icon: AppImages.lockIcon,
                               onTap: () {
                                 Navigator.of(context).push(MaterialPageRoute(
@@ -109,7 +116,8 @@ class ProfileScreen extends StatelessWidget {
                                 ));
                               }),
                           tileWidget(
-                              title: 'Invite friends',
+                              title:
+                                  AppLocalizations.of(context)!.inviteFriends,
                               icon: AppImages.personIcon,
                               onTap: () {
                                 Navigator.of(context).push(MaterialPageRoute(
@@ -118,7 +126,8 @@ class ProfileScreen extends StatelessWidget {
                               }),
                           divider(),
                           tileWidget(
-                              title: 'Change Language',
+                              title:
+                                  AppLocalizations.of(context)!.changeLanguage,
                               icon: AppImages.languageIcon,
                               onTap: () {
                                 Navigator.of(context).push(MaterialPageRoute(
@@ -127,7 +136,8 @@ class ProfileScreen extends StatelessWidget {
                                 ));
                               }),
                           tileWidget(
-                              title: 'Manage Notification',
+                              title: AppLocalizations.of(context)!
+                                  .manageNotification,
                               icon: AppImages.notiIcon,
                               onTap: () {
                                 Navigator.of(context).push(MaterialPageRoute(
@@ -137,7 +147,7 @@ class ProfileScreen extends StatelessWidget {
                               }),
                           divider(),
                           tileWidget(
-                              title: 'About Us',
+                              title: AppLocalizations.of(context)!.aboutUs,
                               icon: AppImages.aboutIcon,
                               onTap: () {
                                 Navigator.of(context).push(MaterialPageRoute(
@@ -147,7 +157,8 @@ class ProfileScreen extends StatelessWidget {
                                 ));
                               }),
                           tileWidget(
-                              title: 'Cancellation Policy',
+                              title: AppLocalizations.of(context)!
+                                  .cancellationPolicy,
                               icon: AppImages.policyIcon,
                               onTap: () {
                                 Navigator.of(context).push(MaterialPageRoute(
@@ -157,7 +168,8 @@ class ProfileScreen extends StatelessWidget {
                                 ));
                               }),
                           tileWidget(
-                              title: 'Privacy Policy',
+                              title:
+                                  AppLocalizations.of(context)!.privacyPolicy,
                               icon: AppImages.privacyIcon,
                               onTap: () {
                                 Navigator.of(context).push(MaterialPageRoute(
@@ -167,7 +179,7 @@ class ProfileScreen extends StatelessWidget {
                                 ));
                               }),
                           tileWidget(
-                              title: 'Terms of Use',
+                              title: AppLocalizations.of(context)!.termsOfUse,
                               icon: AppImages.termsIcon,
                               onTap: () {
                                 Navigator.of(context).push(MaterialPageRoute(
@@ -178,7 +190,8 @@ class ProfileScreen extends StatelessWidget {
                               }),
                           divider(),
                           tileWidget(
-                              title: 'Delete Account',
+                              title:
+                                  AppLocalizations.of(context)!.deleteAccount,
                               icon: AppImages.deleteIcon,
                               onTap: () {
                                 showDialog<void>(
@@ -186,45 +199,74 @@ class ProfileScreen extends StatelessWidget {
                                   barrierDismissible:
                                       true, // user must tap button!
                                   builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(12)),
-                                      content: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.stretch,
-                                          children: [
-                                            Column(
-                                              children: [
-                                                Image.asset(AppImages.errorGif,
-                                                    width: 120, height: 120),
-                                                heightGap(5),
-                                                const TextWidget(
-                                                  text:
-                                                      'Are you sure to DELETE Account?',
-                                                  fontSize: 15,
-                                                  fontFamily: AppFonts.poppins,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ],
-                                            ),
-                                            heightGap(18),
-                                            HorizontalTwoButtonWidget(
-                                              text1: 'No',
-                                              text1Tap: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              text2: 'Yes',
-                                              text2Tap: () {},
-                                            ),
-                                          ]),
+                                    return Hero(
+                                      tag: '',
+                                      child: AlertDialog(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(12)),
+                                        content: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.stretch,
+                                            children: [
+                                              Column(
+                                                children: [
+                                                  Image.asset(
+                                                      AppImages.errorGif,
+                                                      width: 120,
+                                                      height: 120),
+                                                  heightGap(5),
+                                                  TextWidget(
+                                                    text: AppLocalizations.of(
+                                                            context)!
+                                                        .areYouSureToDeleteAccount,
+                                                    fontSize: 15,
+                                                    fontFamily:
+                                                        AppFonts.poppins,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ],
+                                              ),
+                                              heightGap(18),
+                                              Consumer<UserProvider>(
+                                                builder:
+                                                    (context, value, child) {
+                                                  return value
+                                                          .showLoadingIndicator
+                                                      ? const Center(
+                                                          child:
+                                                              CupertinoActivityIndicator(),
+                                                        )
+                                                      : HorizontalTwoButtonWidget(
+                                                          text1: AppLocalizations
+                                                                  .of(context)!
+                                                              .no,
+                                                          text1Tap: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                          text2: AppLocalizations
+                                                                  .of(context)!
+                                                              .yes,
+                                                          text2Tap: () {
+                                                            authProvider
+                                                                .deleteAccountApi(
+                                                                    context:
+                                                                        context);
+                                                          },
+                                                        );
+                                                },
+                                              ),
+                                            ]),
+                                      ),
                                     );
                                   },
                                 );
                               }),
                           tileWidget(
-                              title: 'Log out',
+                              title: AppLocalizations.of(context)!.logOut,
                               icon: AppImages.logoutIcon,
                               onTap: () {
                                 /* sharedPrefs?.clear();

@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import '../../Utils/app_strings.dart';
 
 class LanguageProvider with ChangeNotifier {
-  Locale _appLocale = Locale('en');
+  Locale _appLocale =
+      Locale(sharedPrefs?.getString(AppStrings.languageCode) ?? 'en');
+
   Locale get appLocal => _appLocale;
 
   void toArabic() async {
@@ -19,15 +21,22 @@ class LanguageProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void toHindi() async {
+    await sharedPrefs?.setString(AppStrings.languageCode, 'hi');
+    _appLocale = Locale('hi');
+    notifyListeners();
+  }
+
   void changeLanguage({String? languageCode}) {
     if (languageCode == 'ar') {
       toArabic();
+    } else if (languageCode == 'hi') {
+      toHindi();
     } else {
       toEnglish();
     }
     notifyListeners();
   }
-
 /*  Locale _appLocale = Locale('en');
 
   Locale get appLocal => _appLocale ?? Locale("en");

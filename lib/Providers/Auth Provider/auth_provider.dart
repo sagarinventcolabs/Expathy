@@ -93,7 +93,7 @@ class AuthProvider with ChangeNotifier {
       log('api call response : ${loginResponse.toJson().toString()}');
       if (context.mounted) {
         if (loginResponse.status == 200) {
-          ///add token,user,email,islogin to sharedPreference
+          ///add token,userName,email,isFirstTimeOnApp,islogin, to sharedPreference
           sharedPrefs?.setString(
               AppStrings.token, loginResponse.data?.token.toString() ?? '');
           sharedPrefs?.setString(AppStrings.userName,
@@ -101,8 +101,11 @@ class AuthProvider with ChangeNotifier {
           sharedPrefs?.setString(AppStrings.email,
               loginResponse.data?.user?.email.toString() ?? '');
           sharedPrefs?.setBool(AppStrings.isFirstTimeOnApp, false);
-          sharedPrefs?.setBool(AppStrings.isFirstTimeOnApp, false);
           sharedPrefs?.setBool(AppStrings.isLogin, true);
+          sharedPrefs?.setBool(AppStrings.isQuestionSubmit,
+              loginResponse.data?.user?.isQuestionSubmit ?? false);
+          sharedPrefs?.setBool(AppStrings.isHaveOneTherapists,
+              loginResponse.data?.user?.isHaveTherapists ?? false);
           context.read<LanguageProvider>().changeLanguage(
                 languageCode: loginResponse.data?.user?.language.toString(),
               );
@@ -264,6 +267,44 @@ class AuthProvider with ChangeNotifier {
       }
       notifyListeners();
       return forgotPasswordResponse;
+    }
+    return null;
+  }
+
+  Future<CommonModel?> changePasswordApi(
+      {String? password,
+      String? newPassword,
+      required BuildContext context}) async {
+    final data =
+        await RemoteService().callPostApi(url: eChangePassword, jsonData: {
+      "password": password,
+      "new_password": newPassword,
+    });
+    if (data != null) {
+      final changePasswordResponse =
+          CommonModel.fromJson(jsonDecode(data.body));
+      log('api call response : ${changePasswordResponse.toJson().toString()}');
+      if (context.mounted) {
+        if (changePasswordResponse.status == 200) {
+          showSnackBar(
+              isSuccess: true,
+              message: changePasswordResponse.message,
+              context: context);
+          Navigator.of(context).pop();
+        } else if (changePasswordResponse.status == 404) {
+          showSnackBar(
+              isSuccess: false,
+              message: changePasswordResponse.message,
+              context: context);
+        } else if (changePasswordResponse.status == 400) {
+          showSnackBar(
+              isSuccess: false,
+              message: changePasswordResponse.message,
+              context: context);
+        }
+      }
+      notifyListeners();
+      return changePasswordResponse;
     }
     return null;
   }

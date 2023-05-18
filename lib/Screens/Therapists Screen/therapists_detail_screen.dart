@@ -17,6 +17,7 @@ import '../../Utils/helper_methods.dart';
 import '../../Widgets/horzontal_two_button_widget.dart';
 import '../../Widgets/info_widget.dart';
 import '../Article Screen/article_detail_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TherapistsDetailScreen extends StatefulWidget {
   const TherapistsDetailScreen({Key? key}) : super(key: key);
@@ -85,7 +86,7 @@ class _TherapistsDetailScreenState extends State<TherapistsDetailScreen> {
                       Navigator.of(context).pop();
                     },
                     iconColor: AppColors.white,
-                    title: 'Therapists Details',
+                    title: AppLocalizations.of(context)!.therapistDetails,
                     titleColor: AppColors.white,
                   ),
                   heightGap(20),
@@ -115,11 +116,12 @@ class _TherapistsDetailScreenState extends State<TherapistsDetailScreen> {
                           ),
                           heightGap(10),
                           HorizontalTwoButtonWidget(
-                            text1: 'Free Session NOW',
+                            text1: AppLocalizations.of(context)!.freeSessionNow,
                             text1Tap: () {
                               _bottomSheet(context: context);
                             },
-                            text2: 'Book Full Session',
+                            text2:
+                                AppLocalizations.of(context)!.bookFullSession,
                             text2Tap: () {
                               _bottomSheet(
                                   context: context,
@@ -131,8 +133,8 @@ class _TherapistsDetailScreenState extends State<TherapistsDetailScreen> {
                     ),
                   ),
                   heightGap(16),
-                  const TextWidget(
-                    text: 'Biography',
+                  TextWidget(
+                    text: AppLocalizations.of(context)!.biography,
                     fontSize: 18,
                     color: AppColors.white,
                     fontFamily: AppFonts.poppins,
@@ -150,13 +152,18 @@ class _TherapistsDetailScreenState extends State<TherapistsDetailScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const UnderLineText(text: 'Areas of Expertise'),
+                          UnderLineText(
+                            text:
+                                AppLocalizations.of(context)!.areasOfExpertise,
+                          ),
                           heightGap(10),
                           expertiseButton(),
                           heightGap(10),
                           expertiseButton(),
                           heightGap(30),
-                          const UnderLineText(text: 'Education'),
+                          UnderLineText(
+                            text: AppLocalizations.of(context)!.education,
+                          ),
                           heightGap(10),
                           ListView.separated(
                             shrinkWrap: true,
@@ -171,7 +178,9 @@ class _TherapistsDetailScreenState extends State<TherapistsDetailScreen> {
                             },
                           ),
                           heightGap(30),
-                          const UnderLineText(text: 'About'),
+                          UnderLineText(
+                            text: AppLocalizations.of(context)!.about,
+                          ),
                           heightGap(12),
                           const TextWidget(
                             text:
@@ -186,8 +195,8 @@ class _TherapistsDetailScreenState extends State<TherapistsDetailScreen> {
                     ),
                   ),
                   heightGap(24),
-                  const ViewAllRowWidget(
-                      text: 'Articles',
+                  ViewAllRowWidget(
+                      text: AppLocalizations.of(context)!.articles,
                       textColor: AppColors.black,
                       viewAllColor: AppColors.blue),
                   heightGap(8),
@@ -226,6 +235,7 @@ class _TherapistsDetailScreenState extends State<TherapistsDetailScreen> {
                                   ),
                                   child: SizedBox(
                                     height: 150,
+                                    width: double.infinity,
                                     child: Image.asset(
                                       articleData.image ?? '',
                                       fit: BoxFit.cover,
@@ -490,8 +500,8 @@ class _TherapistsDetailScreenState extends State<TherapistsDetailScreen> {
                       },
                     ),
                     heightGap(15),
-                    const TextWidget(
-                      text: 'Select Time',
+                    TextWidget(
+                      text: AppLocalizations.of(context)!.selectTime,
                       fontSize: 20,
                       fontFamily: AppFonts.poppins,
                       fontWeight: FontWeight.w500,
@@ -555,16 +565,19 @@ class _TherapistsDetailScreenState extends State<TherapistsDetailScreen> {
                                             Lottie.asset(AppImages.congratsJson,
                                                 width: 100, height: 100),
                                             heightGap(5),
-                                            const TextWidget(
-                                              text: 'Congrats',
+                                            TextWidget(
+                                              text:
+                                                  AppLocalizations.of(context)!
+                                                      .congrats,
                                               color: AppColors.greenLight,
                                               fontSize: 24,
                                               fontFamily: AppFonts.poppins,
                                               fontWeight: FontWeight.w500,
                                             ),
-                                            const TextWidget(
+                                            TextWidget(
                                               text:
-                                                  'yes you booked successfully',
+                                                  AppLocalizations.of(context)!
+                                                      .yesYouBookedSuccessfully,
                                               fontFamily: AppFonts.poppins,
                                               fontSize: 18,
                                               textAlign: TextAlign.center,
@@ -574,17 +587,19 @@ class _TherapistsDetailScreenState extends State<TherapistsDetailScreen> {
                                         ),
                                         heightGap(18),
                                         ElevatedButtonWidget(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            text: 'Go to Home'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          text: AppLocalizations.of(context)!
+                                              .goToHome,
+                                        ),
                                       ]),
                                 );
                               },
                             );
                           }
                         },
-                        text: 'Book Session',
+                        text: AppLocalizations.of(context)!.bookSession,
                         primary: AppColors.yellow),
                   ],
                 ),

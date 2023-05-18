@@ -8,6 +8,7 @@ import '../Common Widgets/text_widget.dart';
 import '../Utils/app_colors.dart';
 import '../Utils/app_fonts.dart';
 import 'info_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class UpcomingOrderItem extends StatefulWidget {
   final Function()? cancelPressed;
@@ -91,9 +92,9 @@ class _UpcomingOrderItemState extends State<UpcomingOrderItem> {
                   heightGap(10),
                   if (!widget.showRebookButton)
                     HorizontalTwoButtonWidget(
-                      text1: 'Cancel',
+                      text1: AppLocalizations.of(context)!.cancel,
                       text1Tap: widget.cancelPressed,
-                      text2: 'Postpone',
+                      text2: AppLocalizations.of(context)!.postpone,
                       text2Tap: widget.postponePressed,
                     ),
                   if (widget.showRebookButton)

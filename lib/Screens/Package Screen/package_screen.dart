@@ -9,7 +9,7 @@ import 'package:expathy/Widgets/gradient_background_widget.dart';
 import 'package:expathy/Widgets/toolbar_widget.dart';
 import 'package:expathy/Widgets/underline_text_widget.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../Common Widgets/text_widget.dart';
 
 class PackageScreen extends StatefulWidget {
@@ -61,13 +61,13 @@ class _PackageScreenState extends State<PackageScreen> {
                             onTap: () {
                               Navigator.of(context).pop();
                             },
-                            title: 'Packages',
+                            title: AppLocalizations.of(context)!.packages,
                           ),
                         ],
                       ),
                       heightGap(24),
-                      const TextWidget(
-                        text: 'Benefits includes:',
+                      TextWidget(
+                        text: AppLocalizations.of(context)!.benefitsIncludes,
                         color: AppColors.white,
                         fontFamily: AppFonts.poppins,
                         fontWeight: FontWeight.w400,
@@ -164,8 +164,9 @@ class _PackageScreenState extends State<PackageScreen> {
                                               fontFamily: AppFonts.poppins,
                                             )
                                           ]),
-                                      const TextWidget(
-                                        text: 'per session',
+                                      TextWidget(
+                                        text: AppLocalizations.of(context)!
+                                            .perSession,
                                         fontSize: 16,
                                         fontWeight: FontWeight.w400,
                                         fontFamily: AppFonts.poppins,
@@ -174,8 +175,10 @@ class _PackageScreenState extends State<PackageScreen> {
                                       Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            const TextWidget(
-                                              text: 'save',
+                                            TextWidget(
+                                              text:
+                                                  AppLocalizations.of(context)!
+                                                      .save,
                                               fontSize: 18,
                                               fontWeight: FontWeight.w400,
                                               color: AppColors.greenDark,
@@ -241,7 +244,9 @@ class _PackageScreenState extends State<PackageScreen> {
                           ),
                         ),
                         ElevatedButtonWidget(
-                            onPressed: () {}, text: 'Purchased'),
+                          onPressed: () {},
+                          text: AppLocalizations.of(context)!.purchase,
+                        ),
                       ],
                     ),
                   ),

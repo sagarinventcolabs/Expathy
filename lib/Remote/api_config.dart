@@ -1,21 +1,22 @@
 const String BASE_URL = BASE_URL_LIVE;
 const String BASE_URL_LIVE = 'http://3.20.147.34:9999/api/';
 
-///Post
-//auth
+///auth
 String eLogin = 'app/auth/login';
 String eSignUp = 'app/auth/sign-up';
 String eResetPassword = 'app/auth/reset-password';
 String eVerifyOtp = 'app/auth/verify-otp';
 String eForgotPassword = 'app/auth/forget-password';
 
-//user
+///user
 String eUpdateProfile = 'app/user/update-profile';
+String eChangePassword = 'app/user/change-password';
+String eDeleteAccount = 'app/user/delete-account';
 
-///Get
-//common
+///common
 String eLanguageList = 'common/language-list';
-//question
+
+///question
 String eQuestionList = 'app/question/question-list';
 String ePsychologistList = 'app/user/psychologist-list';
 String eSubmitQuestionAnswer = 'app/question/submit-question-answer';

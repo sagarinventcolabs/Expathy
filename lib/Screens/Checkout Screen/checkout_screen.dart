@@ -9,6 +9,7 @@ import '../../Utils/app_fonts.dart';
 import '../../Utils/helper_methods.dart';
 import '../../Widgets/gradient_background_widget.dart';
 import '../../Widgets/toolbar_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({Key? key}) : super(key: key);
@@ -45,8 +46,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         ],
                       ),
                       heightGap(24),
-                      const TextWidget(
-                        text: 'Plan Summary',
+                      TextWidget(
+                        text: AppLocalizations.of(context)!.planSummary,
                         color: AppColors.white,
                         fontFamily: AppFonts.poppins,
                         fontWeight: FontWeight.w400,
@@ -67,15 +68,16 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
-                                      children: const [
-                                        TextWidget(
+                                      children: [
+                                        const TextWidget(
                                           text: 'Gold Plan',
                                           fontFamily: AppFonts.poppins,
                                           fontWeight: FontWeight.w500,
                                           fontSize: 26,
                                         ),
                                         TextWidget(
-                                          text: 'Your plan includes',
+                                          text: AppLocalizations.of(context)!
+                                              .yourPlanIncludes,
                                           fontFamily: AppFonts.poppins,
                                           fontWeight: FontWeight.w400,
                                           fontSize: 14,
@@ -89,8 +91,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                         color: AppColors.yellow),
                                     child: Padding(
                                       padding: const EdgeInsets.all(10.0),
-                                      child: Column(children: const [
-                                        TextWidget(
+                                      child: Column(children: [
+                                        const TextWidget(
                                           text: '50 min',
                                           fontFamily: AppFonts.poppins,
                                           color: AppColors.white,
@@ -98,7 +100,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                           fontSize: 18,
                                         ),
                                         TextWidget(
-                                          text: 'per session',
+                                          text: AppLocalizations.of(context)!
+                                              .perSession,
                                           fontFamily: AppFonts.poppins,
                                           color: AppColors.white,
                                           fontWeight: FontWeight.w400,
@@ -122,8 +125,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         ),
                       ),
                       heightGap(24),
-                      const TextWidget(
-                        text: 'Payment Summary',
+                      TextWidget(
+                        text: AppLocalizations.of(context)!.paymentSummary,
                         color: AppColors.white,
                         fontFamily: AppFonts.poppins,
                         fontWeight: FontWeight.w400,
@@ -146,13 +149,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             child: Column(
                               children: [
                                 summeryItem(
-                                  title: 'Plan Price',
+                                  title:
+                                      AppLocalizations.of(context)!.planPrice,
                                   value: '€ 696',
                                   valueWeight: FontWeight.w500,
                                 ),
                                 heightGap(20),
                                 summeryItem(
-                                    title: 'Discount',
+                                    title:
+                                        AppLocalizations.of(context)!.discount,
                                     value: '-€ 96',
                                     valueWeight: FontWeight.w500,
                                     valueColor: AppColors.greenDark),
@@ -160,7 +165,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                 const Divider(),
                                 heightGap(20),
                                 summeryItem(
-                                    title: 'Total Amount',
+                                    title: AppLocalizations.of(context)!
+                                        .totalAmount,
                                     value: '€ 600',
                                     valueSize: 24,
                                     valueWeight: FontWeight.w600,
@@ -191,13 +197,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       children: [
                         Expanded(
                             child: ElevatedButtonWidget(
-                                onPressed: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) =>
-                                        const PaymentSuccessfulScreen(),
-                                  ));
-                                },
-                                text: 'Pay Now')),
+                          onPressed: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) =>
+                                  const PaymentSuccessfulScreen(),
+                            ));
+                          },
+                          text: AppLocalizations.of(context)!.payNow,
+                        )),
                       ],
                     ),
                   ),

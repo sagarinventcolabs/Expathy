@@ -43,7 +43,6 @@ class AppImages {
 
   ///png
   static const logo = "assets/images/logo.png";
-  static const splashBg = "assets/images/splashBg.png";
 
   static const girl = "assets/images/girl.png";
   static const article = "assets/images/article.png";

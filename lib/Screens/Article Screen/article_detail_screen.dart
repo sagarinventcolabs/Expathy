@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../Common Widgets/custom_scaffold.dart';
 import '../../Common Widgets/elevated_button_widget.dart';
 import '../../Common Widgets/text_widget.dart';
@@ -11,6 +10,7 @@ import '../../Widgets/gradient_background_widget.dart';
 import '../../Widgets/info_widget.dart';
 import '../../Widgets/toolbar_widget.dart';
 import '../Therapists Screen/therapists_detail_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ArticleDetailScreen extends StatelessWidget {
   const ArticleDetailScreen({Key? key}) : super(key: key);
@@ -69,8 +69,8 @@ class ArticleDetailScreen extends StatelessWidget {
                     ),
                   ),
                   heightGap(16),
-                  const TextWidget(
-                    text: 'Article',
+                  TextWidget(
+                    text: AppLocalizations.of(context)!.articles,
                     fontSize: 18,
                     color: AppColors.white,
                     fontFamily: AppFonts.poppins,

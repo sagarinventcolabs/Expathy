@@ -14,6 +14,7 @@ import '../../Utils/app_fonts.dart';
 import '../../Utils/app_images.dart';
 import '../../Utils/helper_methods.dart';
 import '../../Widgets/toolbar_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({Key? key}) : super(key: key);
@@ -78,16 +79,18 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
-                                  const Center(
+                                  Center(
                                     child: TextWidget(
-                                        text: 'Forgot Password',
+                                        text: AppLocalizations.of(context)!
+                                            .forgotPassword,
                                         fontSize: 24,
                                         fontWeight: FontWeight.w500,
                                         fontFamily: AppFonts.poppins),
                                   ),
                                   heightGap(28),
                                   TextFormFieldWidget(
-                                    hintText: 'Email',
+                                    hintText:
+                                        AppLocalizations.of(context)!.email,
                                     keyboardType: TextInputType.emailAddress,
                                     controller: emailController,
                                     validator: (value) {
@@ -110,11 +113,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                               horizontal:
                                                   deviceWidth(context) * 0.10),
                                           child: ElevatedButtonWidget(
-                                              onPressed: () {
-                                                callForgotPasswordApi(
-                                                    authProvider: authProvider);
-                                              },
-                                              text: 'Send OTP'),
+                                            onPressed: () {
+                                              callForgotPasswordApi(
+                                                  authProvider: authProvider);
+                                            },
+                                            text: AppLocalizations.of(context)!
+                                                .sendOtp,
+                                          ),
                                         ),
                                   heightGap(20),
                                   /*conditionWidget(

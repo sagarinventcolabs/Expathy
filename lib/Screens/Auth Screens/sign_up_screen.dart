@@ -15,6 +15,7 @@ import '../../Utils/app_fonts.dart';
 import '../../Utils/app_images.dart';
 import '../../Widgets/svg_picture.dart';
 import '../Setting Screens/personal_information_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -81,9 +82,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
-                                  const Center(
+                                  Center(
                                     child: TextWidget(
-                                      text: 'Sign Up',
+                                      text:
+                                          AppLocalizations.of(context)!.signUp,
                                       color: AppColors.black,
                                       fontSize: 28,
                                       fontFamily: AppFonts.poppins,
@@ -92,7 +94,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   ),
                                   heightGap(16),
                                   TextFormFieldWidget(
-                                    hintText: 'User Name',
+                                    hintText:
+                                        AppLocalizations.of(context)!.userName,
                                     controller: userNameController,
                                     validator: (value) {
                                       if (value!.isEmpty) {
@@ -103,7 +106,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   ),
                                   heightGap(16),
                                   TextFormFieldWidget(
-                                    hintText: 'Email',
+                                    hintText:
+                                        AppLocalizations.of(context)!.email,
                                     keyboardType: TextInputType.emailAddress,
                                     controller: emailController,
                                     validator: (value) {
@@ -118,7 +122,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   ),
                                   heightGap(16),
                                   TextFormFieldWidget(
-                                    hintText: 'Password',
+                                    hintText:
+                                        AppLocalizations.of(context)!.password,
                                     controller: passwordController,
                                     obscureText: passwordObSecure,
                                     isPassword: true,
@@ -136,7 +141,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   ),
                                   heightGap(16),
                                   TextFormFieldWidget(
-                                    hintText: 'Confirm Password',
+                                    hintText: AppLocalizations.of(context)!
+                                        .confirmPassword,
                                     controller: confirmPasswordController,
                                     obscureText: confirmPasswordObSecure,
                                     isPassword: true,
@@ -158,14 +164,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   ),
                                   heightGap(20),
                                   conditionWidget(
-                                      title: 'I have read and accept the',
-                                      heading: 'Term and Conditions.',
+                                      title: AppLocalizations.of(context)!
+                                          .iHaveReadAndAcceptThe,
+                                      heading: AppLocalizations.of(context)!
+                                          .termAndConditions,
                                       key: const Key('1'),
                                       navigateToTermsAndCondition: true),
                                   heightGap(16),
                                   conditionWidget(
-                                      title: 'I have read and accept the',
-                                      heading: 'Privacy Policy.',
+                                      title: AppLocalizations.of(context)!
+                                          .iHaveReadAndAcceptThe,
+                                      heading: AppLocalizations.of(context)!
+                                          .privacyPolicy,
                                       key: const Key('2'),
                                       navigateToPrivacyPolicy: true),
                                   heightGap(20),
@@ -178,16 +188,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                               horizontal:
                                                   deviceWidth(context) * 0.10),
                                           child: ElevatedButtonWidget(
-                                              onPressed: () async {
-                                                await callSignUpApi(
-                                                    authProvider: authProvider);
-                                              },
-                                              text: 'Sign Up'),
+                                            onPressed: () async {
+                                              await callSignUpApi(
+                                                  authProvider: authProvider);
+                                            },
+                                            text: AppLocalizations.of(context)!
+                                                .signUp,
+                                          ),
                                         ),
                                   heightGap(16),
                                   conditionWidget(
-                                      title: 'Already have an account?',
-                                      heading: 'Login',
+                                      title: AppLocalizations.of(context)!
+                                          .alreadyHaveAnAccount,
+                                      heading:
+                                          AppLocalizations.of(context)!.login,
                                       navigateToLogin: true,
                                       showCheckBox: false,
                                       textAlign: TextAlign.center,

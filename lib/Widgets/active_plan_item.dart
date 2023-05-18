@@ -1,12 +1,11 @@
 import 'package:expathy/Utils/helper_methods.dart';
 import 'package:flutter/material.dart';
-
 import '../Common Widgets/elevated_button_widget.dart';
 import '../Common Widgets/text_widget.dart';
 import '../Screens/Package Screen/plan_package_screen.dart';
 import '../Utils/app_colors.dart';
 import '../Utils/app_fonts.dart';
-import '../Utils/app_strings.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ActivePlanItem extends StatefulWidget {
   final bool isFreePlan;
@@ -115,7 +114,7 @@ class _ActivePlanItemState extends State<ActivePlanItem> {
                     );
                   },
                   primary: AppColors.yellow,
-                  text: AppStrings.upgrade,
+                  text: AppLocalizations.of(context)!.upgrade,
                 ),
               ],
             ),

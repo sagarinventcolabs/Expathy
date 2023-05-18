@@ -10,6 +10,7 @@ import '../../Utils/app_images.dart';
 import '../../Utils/helper_methods.dart';
 import '../../Widgets/svg_picture.dart';
 import '../../Widgets/toolbar_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class InviteScreen extends StatefulWidget {
   const InviteScreen({Key? key}) : super(key: key);
@@ -84,9 +85,10 @@ class _InviteScreenState extends State<InviteScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              const Center(
+                              Center(
                                 child: TextWidget(
-                                  text: 'Invite Friends',
+                                  text: AppLocalizations.of(context)!
+                                      .inviteFriends,
                                   color: AppColors.black,
                                   fontSize: 24,
                                   fontFamily: AppFonts.poppins,
@@ -116,9 +118,9 @@ class _InviteScreenState extends State<InviteScreen> {
                                       vertical: 20.0),
                                   child: Column(
                                     children: [
-                                      const TextWidget(
-                                        text:
-                                            'Share your code with your friends',
+                                      TextWidget(
+                                        text: AppLocalizations.of(context)!
+                                            .shareYourCodeWithYourFriends,
                                         color: AppColors.black,
                                         fontSize: 17,
                                         fontFamily: AppFonts.tajawal,
@@ -156,10 +158,10 @@ class _InviteScreenState extends State<InviteScreen> {
                                 ),
                               ),
                               heightGap(20),
-                              const Padding(
+                              Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 10.0),
                                 child: TextWidget(
-                                  text: 'Invite by',
+                                  text: AppLocalizations.of(context)!.inviteBy,
                                   color: AppColors.black,
                                   fontSize: 18,
                                   fontFamily: AppFonts.poppins,

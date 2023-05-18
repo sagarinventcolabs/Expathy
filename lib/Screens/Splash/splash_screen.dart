@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:expathy/Common%20Widgets/custom_scaffold.dart';
 import 'package:expathy/Screens/Auth%20Screens/prehome_screen.dart';
 import 'package:expathy/Screens/Walkthrough%20Screens/tutorial_screen.dart';
@@ -7,7 +8,6 @@ import 'package:expathy/Utils/app_images.dart';
 import 'package:expathy/Utils/helper_methods.dart';
 import 'package:expathy/Widgets/svg_picture.dart';
 import 'package:flutter/material.dart';
-
 import '../../Utils/app_strings.dart';
 import '../../main.dart';
 import '../Bottom Bar Screen/bottom_bar_screen.dart';
@@ -27,8 +27,13 @@ class _SplashScreenState extends State<SplashScreen> {
     Future.delayed(
       const Duration(seconds: 5),
       () {
+        log('${sharedPrefs?.getBool(AppStrings.isLogin)}');
+        log('${sharedPrefs?.getBool(AppStrings.isQuestionSubmit)}');
+        log('${sharedPrefs?.getBool(AppStrings.isHaveOneTherapists)}');
         if (sharedPrefs?.getBool(AppStrings.isLogin) ?? false) {
+          log('1');
           if (sharedPrefs?.getBool(AppStrings.isQuestionSubmit) != true) {
+            log('2');
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -38,6 +43,7 @@ class _SplashScreenState extends State<SplashScreen> {
             );
           } else if (sharedPrefs?.getBool(AppStrings.isHaveOneTherapists) !=
               true) {
+            log('3');
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
@@ -46,6 +52,7 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
             );
           } else {
+            log('4');
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -54,13 +61,16 @@ class _SplashScreenState extends State<SplashScreen> {
             );
           }
         } else {
+          log('5');
           if (sharedPrefs?.getBool(AppStrings.isFirstTimeOnApp) ?? true) {
+            log('6');
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => const TutorialScreen(),
               ),
             );
           } else {
+            log('7');
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => const PreHomeScreen(),

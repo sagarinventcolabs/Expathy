@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:expathy/Providers/Question%20Provider/question_provider.dart';
 import 'package:expathy/Providers/User%20Provider/user_provider.dart';
 import 'package:flutter/cupertino.dart';
@@ -163,15 +164,6 @@ class _FirstQuestionScreenState extends State<FirstQuestionScreen> {
                         ),
                         InkWell(
                             onTap: () {
-                              /* sharedPrefs?.clear();
-                              sharedPrefs?.setBool(
-                                  AppStrings.isFirstTimeOnApp, false);
-                              Navigator.of(context).pushAndRemoveUntil(
-                                MaterialPageRoute(
-                                  builder: (context) => const PreHomeScreen(),
-                                ),
-                                (route) => false,
-                              );*/
                               logOut(context: context);
                             },
                             child: const Icon(Icons.logout,
@@ -315,6 +307,8 @@ class _FirstQuestionScreenState extends State<FirstQuestionScreen> {
     setState(() {
       isProfileUpdate = true;
     });
+    log('selectedLanguageCode $selectedLanguageCode');
+    log('selectedLanguageId $selectedLanguageId');
     await context.read<UserProvider>().updateProfileApi(
           language: selectedLanguageCode ?? '',
           languageId: selectedLanguageId ?? '',

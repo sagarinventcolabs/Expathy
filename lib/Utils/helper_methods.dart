@@ -110,7 +110,16 @@ Future<void> showWarningDialog(
 }
 
 Future<void> logOut({BuildContext? context}) async {
-  sharedPrefs?.clear();
+  sharedPrefs?.remove(AppStrings.isFreePlan);
+  sharedPrefs?.remove(AppStrings.token);
+  sharedPrefs?.remove(AppStrings.userName);
+  sharedPrefs?.remove(AppStrings.email);
+  sharedPrefs?.remove(AppStrings.rememberMeEmail);
+  sharedPrefs?.remove(AppStrings.rememberMePassword);
+  sharedPrefs?.remove(AppStrings.deviceOs);
+  sharedPrefs?.remove(AppStrings.isLogin);
+  sharedPrefs?.remove(AppStrings.isQuestionSubmit);
+  sharedPrefs?.remove(AppStrings.isHaveOneTherapists);
   sharedPrefs?.setBool(AppStrings.isFirstTimeOnApp, false);
   Navigator.of(context!).pushAndRemoveUntil(
     MaterialPageRoute(

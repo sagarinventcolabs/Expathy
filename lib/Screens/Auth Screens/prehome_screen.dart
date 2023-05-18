@@ -10,6 +10,7 @@ import '../../Utils/app_colors.dart';
 import '../../Utils/app_fonts.dart';
 import '../../Utils/app_images.dart';
 import '../../Widgets/svg_picture.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PreHomeScreen extends StatefulWidget {
   const PreHomeScreen({Key? key}) : super(key: key);
@@ -61,7 +62,8 @@ class _PreHomeScreenState extends State<PreHomeScreen> {
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 containerItem(
-                                  text: 'Sign up with Email',
+                                  text: AppLocalizations.of(context)!
+                                      .signUpWithEmail,
                                   textColor: AppColors.blue,
                                   iconColor: AppColors.blue,
                                   icon: Icons.email_outlined,
@@ -78,24 +80,29 @@ class _PreHomeScreenState extends State<PreHomeScreen> {
                                 divider(),
                                 heightGap(20),
                                 containerItem(
-                                  text: 'Sign up with Google',
+                                  text: AppLocalizations.of(context)!
+                                      .signUpWithGoogle,
                                   image: AppImages.google,
                                   onTap: () {},
                                 ),
                                 heightGap(30),
                                 containerItem(
-                                    text: 'Sign up with Apple',
+                                    text: AppLocalizations.of(context)!
+                                        .signUpWithApple,
                                     image: AppImages.apple,
                                     onTap: () {}),
                                 heightGap(30),
                                 containerItem(
-                                    text: 'Sign up with Facebook',
+                                    text: AppLocalizations.of(context)!
+                                        .signUpWithFacebook,
                                     image: AppImages.facebookCircle,
                                     onTap: () {}),
                                 heightGap(40),
                                 conditionWidget(
-                                    title: 'Already have an account?',
-                                    heading: 'Login',
+                                    title: AppLocalizations.of(context)!
+                                        .alreadyHaveAnAccount,
+                                    heading:
+                                        AppLocalizations.of(context)!.login,
                                     showCheckBox: false,
                                     textAlign: TextAlign.center,
                                     decoration: TextDecoration.underline),
@@ -162,30 +169,33 @@ class _PreHomeScreenState extends State<PreHomeScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text.rich(
-          textAlign: textAlign,
-          TextSpan(
-            style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                fontFamily: AppFonts.poppins,
-                color: AppColors.black),
-            children: [
-              TextSpan(
-                text: title ?? '',
-              ),
-              const WidgetSpan(child: SizedBox(width: 3)),
-              TextSpan(
-                text: heading ?? '',
-                style: TextStyle(color: AppColors.blue, decoration: decoration),
-                recognizer: TapGestureRecognizer()
-                  ..onTap = () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const LoginScreen(),
-                      )),
-              ),
-            ],
+        Expanded(
+          child: Text.rich(
+            textAlign: textAlign,
+            TextSpan(
+              style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                  fontFamily: AppFonts.poppins,
+                  color: AppColors.black),
+              children: [
+                TextSpan(
+                  text: title ?? '',
+                ),
+                const WidgetSpan(child: SizedBox(width: 3)),
+                TextSpan(
+                  text: heading ?? '',
+                  style:
+                      TextStyle(color: AppColors.blue, decoration: decoration),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LoginScreen(),
+                        )),
+                ),
+              ],
+            ),
           ),
         ),
       ],

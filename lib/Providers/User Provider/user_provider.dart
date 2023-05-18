@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:expathy/Models/common_model.dart';
 import 'package:expathy/Models/update_profile_model.dart';
 import 'package:expathy/Providers/Language%20Provider/language_provider.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,8 @@ import '../../Utils/helper_methods.dart';
 import '../../main.dart';
 
 class UserProvider with ChangeNotifier {
+  bool showLoadingIndicator = false;
+
   Future<UpdateProfileModel?> updateProfileApi(
       {String? language,
       String? languageId,
@@ -70,6 +73,50 @@ class UserProvider with ChangeNotifier {
       notifyListeners();
       return updateProfileResponse;
     }
+    return null;
+  }
+
+  Future<CommonModel?> deleteAccountApi({required BuildContext context}) async {
+    showLoadingIndicator = true;
+    notifyListeners();
+    final data = await RemoteService().callGetApi(
+      url: eDeleteAccount,
+    );
+    if (data != null) {
+      final deleteAccountResponse = CommonModel.fromJson(jsonDecode(data.body));
+      if (context.mounted) {
+        if (deleteAccountResponse.status == 200) {
+          showLoadingIndicator = false;
+          Navigator.of(context).pop();
+          showSnackBar(
+              isSuccess: false,
+              message: deleteAccountResponse.message,
+              context: context);
+        } else if (deleteAccountResponse.status == 404) {
+          showLoadingIndicator = false;
+          Navigator.of(context).pop();
+          showSnackBar(
+              isSuccess: false,
+              message: deleteAccountResponse.message,
+              context: context);
+        } else if (deleteAccountResponse.status == 400) {
+          showLoadingIndicator = false;
+          Navigator.of(context).pop();
+          showSnackBar(
+              isSuccess: false,
+              message: deleteAccountResponse.message,
+              context: context);
+        }
+      }
+      notifyListeners();
+      return deleteAccountResponse;
+    }
+    showLoadingIndicator = false;
+    if (context.mounted) {
+      Navigator.of(context).pop();
+    }
+
+    notifyListeners();
     return null;
   }
 }

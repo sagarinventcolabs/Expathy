@@ -10,12 +10,15 @@ import 'package:expathy/Widgets/horzontal_two_button_widget.dart';
 import 'package:expathy/Widgets/therapists_list_item.dart';
 import 'package:expathy/Widgets/toolbar_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import '../../Common Widgets/custom_future_builder.dart';
 import '../../Common Widgets/text_widget.dart';
 import '../../Providers/User Provider/user_provider.dart';
 import '../../Utils/app_fonts.dart';
+import '../../Utils/app_images.dart';
 import '../../Widgets/skeleton_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TherapistsListScreen extends StatefulWidget {
   final bool isFromHome;
@@ -97,7 +100,7 @@ class _TherapistsListScreenState extends State<TherapistsListScreen> {
                   ToolBarWidget(
                     iconColor: AppColors.white,
                     onTap: () {
-                      /* Navigator.of(context).pop();*/
+                      Navigator.of(context).pop();
                     },
                   ),
                 if (!widget.showBackButton)
@@ -126,8 +129,8 @@ class _TherapistsListScreenState extends State<TherapistsListScreen> {
                 heightGap(24),
                 InkWell(
                   onTap: () {},
-                  child: const TextWidget(
-                    text: 'Best matches for you',
+                  child: TextWidget(
+                    text: AppLocalizations.of(context)!.bestMatchesForYou,
                     textAlign: TextAlign.center,
                     fontSize: 28,
                     color: AppColors.white,
@@ -150,28 +153,35 @@ class _TherapistsListScreenState extends State<TherapistsListScreen> {
                       });
                     },
                     data: (snapshot) {
-                      return ListView.builder(
-                        itemCount: snapshot?.length,
-                        physics: const BouncingScrollPhysics(),
-                        itemBuilder: (context, index) {
-                          log(snapshot?[index].name ?? '');
-                          return TherapistsListItem(
-                            psychologist: snapshot?[index],
-                            isTherapistsSelecting: selectedIndex == index
-                                ? isTherapistsSelectUpdate
-                                : false,
-                            selectButtonPressed: () {
-                              if (widget.isFromHome) {
-                                Navigator.of(context).pop();
-                              } else {
-                                selectedIndex = index;
-                                callUpdateProfileApi(
-                                    therapistsId: snapshot?[index].id);
-                              }
-                            },
-                          );
-                        },
-                      );
+                      if (snapshot!.isEmpty) {
+                        return Center(
+                          child: Lottie.asset(AppImages.emptyJson,
+                              width: 300, height: 300),
+                        );
+                      } else {
+                        return ListView.builder(
+                          itemCount: snapshot.length,
+                          physics: const BouncingScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            log(snapshot[index].name ?? '');
+                            return TherapistsListItem(
+                              psychologist: snapshot[index],
+                              isTherapistsSelecting: selectedIndex == index
+                                  ? isTherapistsSelectUpdate
+                                  : false,
+                              selectButtonPressed: () {
+                                if (widget.isFromHome) {
+                                  Navigator.of(context).pop();
+                                } else {
+                                  selectedIndex = index;
+                                  callUpdateProfileApi(
+                                      therapistsId: snapshot[index].id);
+                                }
+                              },
+                            );
+                          },
+                        );
+                      }
                     },
                   ),
                 ),

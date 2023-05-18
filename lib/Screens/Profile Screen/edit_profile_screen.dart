@@ -10,6 +10,7 @@ import '../../Utils/app_images.dart';
 import '../../Utils/helper_methods.dart';
 import '../../Widgets/svg_picture.dart';
 import '../../Widgets/toolbar_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({Key? key}) : super(key: key);
@@ -79,20 +80,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                const Center(
+                                Center(
                                   child: TextWidget(
-                                      text: 'Personal Details',
+                                      text: AppLocalizations.of(context)!
+                                          .personalDetails,
                                       fontSize: 24,
                                       fontWeight: FontWeight.w500,
                                       fontFamily: AppFonts.poppins),
                                 ),
                                 heightGap(28),
-                                const TextFormFieldWidget(
-                                  hintText: 'User name',
+                                TextFormFieldWidget(
+                                  hintText:
+                                      AppLocalizations.of(context)!.userName,
                                 ),
                                 heightGap(16),
-                                const TextFormFieldWidget(
-                                  hintText: 'Email',
+                                TextFormFieldWidget(
+                                  hintText: AppLocalizations.of(context)!.email,
                                   keyboardType: TextInputType.emailAddress,
                                 ),
                                 heightGap(32),
@@ -100,7 +103,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   padding: EdgeInsets.symmetric(
                                       horizontal: deviceWidth(context) * 0.10),
                                   child: ElevatedButtonWidget(
-                                      onPressed: () {}, text: 'Save'),
+                                    onPressed: () {},
+                                    text: AppLocalizations.of(context)!.save,
+                                  ),
                                 ),
                                 heightGap(20),
                               ],

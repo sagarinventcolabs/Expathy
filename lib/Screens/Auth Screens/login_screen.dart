@@ -88,9 +88,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
-                                  const Center(
+                                  Center(
                                     child: TextWidget(
-                                      text: 'Login',
+                                      text: AppLocalizations.of(context)!.login,
                                       color: AppColors.black,
                                       fontSize: 28,
                                       fontFamily: AppFonts.poppins,
@@ -99,7 +99,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                   heightGap(16),
                                   TextFormFieldWidget(
-                                    hintText: 'Email',
+                                    hintText:
+                                        AppLocalizations.of(context)!.email,
                                     controller: emailController,
                                     keyboardType: TextInputType.emailAddress,
                                     validator: (value) {
@@ -114,7 +115,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                   heightGap(16),
                                   TextFormFieldWidget(
-                                    hintText: 'Password',
+                                    hintText:
+                                        AppLocalizations.of(context)!.password,
                                     controller: passwordController,
                                     obscureText: passwordObSecure,
                                     isPassword: true,
@@ -135,7 +137,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                     children: [
                                       Expanded(
                                         child: conditionWidget(
-                                          title: 'Remember Me',
+                                          title: AppLocalizations.of(context)!
+                                              .rememberMe,
                                         ),
                                       ),
                                       InkWell(
@@ -146,8 +149,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                                 const ForgotPasswordScreen(),
                                           ));
                                         },
-                                        child: const TextWidget(
-                                            text: 'Forgot Password?',
+                                        child: TextWidget(
+                                            text: AppLocalizations.of(context)!
+                                                .forgotPassword,
                                             color: AppColors.blue,
                                             decoration:
                                                 TextDecoration.underline),
@@ -187,8 +191,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                   heightGap(20),
                                   conditionWidget(
-                                      title: 'Don’t have account?',
-                                      heading: 'Create Account',
+                                      title: AppLocalizations.of(context)!
+                                          .doNotHaveAccount,
+                                      heading: AppLocalizations.of(context)!
+                                          .createAccount,
                                       showCheckBox: false,
                                       textAlign: TextAlign.center,
                                       decoration: TextDecoration.underline),

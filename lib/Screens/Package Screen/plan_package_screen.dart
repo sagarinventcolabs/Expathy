@@ -11,6 +11,7 @@ import '../../Common Widgets/text_widget.dart';
 import '../../Custom Painter /auth_screen_painter.dart';
 import '../../Utils/app_images.dart';
 import '../../Widgets/svg_picture.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PlanPackageScreen extends StatefulWidget {
   const PlanPackageScreen({Key? key}) : super(key: key);
@@ -46,207 +47,265 @@ class _PlanPackageScreenState extends State<PlanPackageScreen> {
     return DefaultTabController(
       length: 3,
       child: CustomScaffold(
-        body: SizedBox(
-          width: double.infinity,
-          height: double.infinity,
-          child: Stack(
-            children: [
-              CustomPaint(
-                size: Size(
-                    deviceWidth(context),
-                    (deviceHeight(context) * 0.60)
-                        .toDouble()), //You can Replace [WIDTH] with your desired width for Custom Paint and height will be calculated automatically
-                painter: AuthScreenPainter(),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 20.0, right: 22, left: 22),
-                child: Column(
-                  children: [
-                    heightGap(20),
-                    Row(
-                      children: [
-                        ToolBarWidget(
-                          onTap: () {
-                            Navigator.of(context).pop();
-                          },
-                          title: 'Packages',
-                        ),
-                      ],
-                    ),
-                    heightGap(12),
-                    SizedBox(
-                      width: deviceWidth(context) * 0.40,
-                      height: deviceHeight(context) * 0.15,
-                      child: const SvgPic(
-                        image: AppImages.logoMain,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                    heightGap(10),
-                    Container(
-                      height: 48,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        color: AppColors.white,
-                      ),
-                      child: TabBar(
-                        padding: const EdgeInsets.all(4),
-                        indicatorColor: Colors.transparent,
-                        labelColor: AppColors.white,
-                        unselectedLabelColor: AppColors.greyText,
-                        labelStyle: const TextStyle(
-                          fontSize: 18,
-                          fontFamily: AppFonts.poppins,
-                          fontWeight: FontWeight.w400,
-                        ),
-                        unselectedLabelStyle: const TextStyle(
-                          fontSize: 18,
-                          fontFamily: AppFonts.poppins,
-                          fontWeight: FontWeight.w400,
-                        ),
-                        indicator: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: AppColors.green,
-                        ),
-                        tabs: const [
-                          Tab(
-                            text: 'Bronze',
+        body: SafeArea(
+          child: SizedBox(
+            width: double.infinity,
+            height: double.infinity,
+            child: Stack(
+              children: [
+                CustomPaint(
+                  size: Size(
+                      deviceWidth(context),
+                      (deviceHeight(context) * 0.60)
+                          .toDouble()), //You can Replace [WIDTH] with your desired width for Custom Paint and height will be calculated automatically
+                  painter: AuthScreenPainter(),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.only(top: 20.0, right: 22, left: 22),
+                  child: Column(
+                    children: [
+                      //heightGap(20),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ToolBarWidget(
+                              onTap: () {
+                                Navigator.of(context).pop();
+                              },
+                              title: AppLocalizations.of(context)!.packages,
+                            ),
                           ),
-                          Tab(
-                            text: 'Gold',
+                          Container(
+                            width: deviceWidth(context) * 0.30,
+                            height: 40,
+                            decoration: BoxDecoration(
+                                color: AppColors.white,
+                                borderRadius: BorderRadius.circular(20)),
+                            child: DropdownButtonFormField(
+                              isDense: true,
+                              icon: const Icon(
+                                Icons.keyboard_arrow_down,
+                                color: AppColors.black,
+                              ),
+                              decoration: InputDecoration(
+                                contentPadding: const EdgeInsets.all(10),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: const BorderSide(
+                                      color: AppColors.checkBoxBorderColor,
+                                      width: 1),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: const BorderSide(
+                                      color: AppColors.checkBoxBorderColor,
+                                      width: 1),
+                                ),
+                                filled: true,
+                                fillColor: AppColors.white,
+                              ),
+                              value: dropdownValue,
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  dropdownValue = newValue!;
+                                });
+                              },
+                              items: <String>[
+                                'EURO',
+                                'IND',
+                                'USD',
+                                'DINAR'
+                              ].map<DropdownMenuItem<String>>((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: TextWidget(
+                                    text: '€ $value',
+                                    fontSize: 14,
+                                    fontFamily: AppFonts.poppins,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                );
+                              }).toList(),
+                            ),
                           ),
-                          Tab(
-                            text: 'Silver',
-                          )
                         ],
                       ),
-                    ),
-                    heightGap(16),
-                    Flexible(
-                      child: Container(
+                      heightGap(12),
+                      SizedBox(
+                        width: deviceWidth(context) * 0.40,
+                        height: deviceHeight(context) * 0.15,
+                        child: const SvgPic(
+                          image: AppImages.logoMain,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                      heightGap(10),
+                      Container(
+                        height: 48,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
                           color: AppColors.white,
                         ),
-                        child: TabBarView(
-                          children: [
-                            planItem(
-                                amount: '39.99',
-                                saveAmount: '100',
-                                session: '4'),
-                            planItem(
-                                amount: '29.99',
-                                saveAmount: '100',
-                                session: '24'),
-                            planItem(
-                                amount: '39.99',
-                                saveAmount: '100',
-                                session: '12'),
+                        child: TabBar(
+                          padding: const EdgeInsets.all(4),
+                          indicatorColor: Colors.transparent,
+                          labelColor: AppColors.white,
+                          unselectedLabelColor: AppColors.greyText,
+                          labelStyle: const TextStyle(
+                            fontSize: 18,
+                            fontFamily: AppFonts.poppins,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          unselectedLabelStyle: const TextStyle(
+                            fontSize: 18,
+                            fontFamily: AppFonts.poppins,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          indicator: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: AppColors.green,
+                          ),
+                          tabs: [
+                            Tab(
+                              text: AppLocalizations.of(context)!.bronze,
+                            ),
+                            Tab(
+                              text: AppLocalizations.of(context)!.gold,
+                            ),
+                            Tab(
+                              text: AppLocalizations.of(context)!.silver,
+                            )
                           ],
                         ),
                       ),
-                    ),
-                    heightGap(90),
-                  ],
-                ),
-              ),
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  decoration: const BoxDecoration(
-                      color: AppColors.white,
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20))),
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              TextWidget(
-                                text: '24 Sessions in 6 months',
-                                fontFamily: AppFonts.poppins,
-                                fontWeight: FontWeight.w400,
-                                fontSize: 14,
-                              ),
-                              TextWidget(
-                                text: '€ 719.16',
-                                fontFamily: AppFonts.poppins,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 22,
-                              ),
+                      heightGap(16),
+                      Flexible(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            color: AppColors.white,
+                          ),
+                          child: TabBarView(
+                            children: [
+                              planItem(
+                                  amount: '39.99',
+                                  saveAmount: '100',
+                                  session: '4'),
+                              planItem(
+                                  amount: '29.99',
+                                  saveAmount: '100',
+                                  session: '24'),
+                              planItem(
+                                  amount: '39.99',
+                                  saveAmount: '100',
+                                  session: '12'),
                             ],
                           ),
                         ),
-                        ElevatedButtonWidget(
-                            onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => const CheckoutScreen(),
-                              ));
-                            },
-                            text: 'Purchased'),
-                      ],
+                      ),
+                      heightGap(90),
+                    ],
+                  ),
+                ),
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                        color: AppColors.white,
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20),
+                            topRight: Radius.circular(20))),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: const [
+                                TextWidget(
+                                  text: '24 Sessions in 6 months',
+                                  fontFamily: AppFonts.poppins,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 14,
+                                ),
+                                TextWidget(
+                                  text: '€ 719.16',
+                                  fontFamily: AppFonts.poppins,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 22,
+                                ),
+                              ],
+                            ),
+                          ),
+                          ElevatedButtonWidget(
+                              onPressed: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => const CheckoutScreen(),
+                                ));
+                              },
+                              text: 'Purchased'),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-              Positioned(
-                top: 40,
-                right: 10,
-                child: Container(
-                  width: deviceWidth(context) * 0.30,
-                  height: 40,
-                  decoration: BoxDecoration(
-                      color: AppColors.white,
-                      borderRadius: BorderRadius.circular(20)),
-                  child: DropdownButtonFormField(
-                    isDense: true,
-                    icon: const Icon(
-                      Icons.keyboard_arrow_down,
-                      color: AppColors.black,
-                    ),
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.all(10),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: const BorderSide(
-                            color: AppColors.checkBoxBorderColor, width: 1),
+                /* Positioned(
+                  top: 0,
+                  right: 10,
+                  child: Container(
+                    width: deviceWidth(context) * 0.30,
+                    height: 40,
+                    decoration: BoxDecoration(
+                        color: AppColors.white,
+                        borderRadius: BorderRadius.circular(20)),
+                    child: DropdownButtonFormField(
+                      isDense: true,
+                      icon: const Icon(
+                        Icons.keyboard_arrow_down,
+                        color: AppColors.black,
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: const BorderSide(
-                            color: AppColors.checkBoxBorderColor, width: 1),
-                      ),
-                      filled: true,
-                      fillColor: AppColors.white,
-                    ),
-                    value: dropdownValue,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        dropdownValue = newValue!;
-                      });
-                    },
-                    items: <String>['EURO', 'IND', 'USD', 'DINAR']
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: TextWidget(
-                          text: '€ $value',
-                          fontSize: 14,
-                          fontFamily: AppFonts.poppins,
-                          fontWeight: FontWeight.w400,
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.all(10),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: const BorderSide(
+                              color: AppColors.checkBoxBorderColor, width: 1),
                         ),
-                      );
-                    }).toList(),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: const BorderSide(
+                              color: AppColors.checkBoxBorderColor, width: 1),
+                        ),
+                        filled: true,
+                        fillColor: AppColors.white,
+                      ),
+                      value: dropdownValue,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          dropdownValue = newValue!;
+                        });
+                      },
+                      items: <String>['EURO', 'IND', 'USD', 'DINAR']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: TextWidget(
+                            text: '€ $value',
+                            fontSize: 14,
+                            fontFamily: AppFonts.poppins,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        );
+                      }).toList(),
+                    ),
                   ),
-                ),
-              ),
-            ],
+                ),*/
+              ],
+            ),
           ),
         ),
       ),

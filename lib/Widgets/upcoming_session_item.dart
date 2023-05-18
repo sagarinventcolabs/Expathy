@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../Utils/app_colors.dart';
 import '../Utils/helper_methods.dart';
 import 'horzontal_two_button_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class UpComingSessionItem extends StatelessWidget {
   final Function() postponePressed;
@@ -48,9 +49,9 @@ class UpComingSessionItem extends StatelessWidget {
             ),
             heightGap(10),
             HorizontalTwoButtonWidget(
-              text1: 'Cancel',
+              text1: AppLocalizations.of(context)!.cancel,
               text1Tap: cancelPressed,
-              text2: 'Postpone',
+              text2: AppLocalizations.of(context)!.postpone,
               text2Tap: postponePressed,
             ),
           ],

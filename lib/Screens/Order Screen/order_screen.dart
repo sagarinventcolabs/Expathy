@@ -14,6 +14,7 @@ import '../../Utils/app_images.dart';
 import '../../Widgets/gradient_background_widget.dart';
 import '../../Widgets/toolbar_widget.dart';
 import '../Package Screen/plan_package_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class OrderScreen extends StatefulWidget {
   const OrderScreen({Key? key}) : super(key: key);
@@ -44,7 +45,7 @@ class _OrderScreenState extends State<OrderScreen> {
                   child: ToolBarWidget(
                     onTap: () {},
                     showArrowIcon: false,
-                    title: 'Orders',
+                    title: AppLocalizations.of(context)!.orders,
                   ),
                 ),
                 heightGap(24),
@@ -52,7 +53,7 @@ class _OrderScreenState extends State<OrderScreen> {
                   height: 55,
                   child: AppBar(
                     backgroundColor: AppColors.white,
-                    bottom: const TabBar(
+                    bottom: TabBar(
                       labelColor: AppColors.yellow,
                       unselectedLabelColor: AppColors.black,
                       indicatorColor: AppColors.yellow,
@@ -60,10 +61,14 @@ class _OrderScreenState extends State<OrderScreen> {
                       indicatorWeight: 4,
                       tabs: [
                         Tab(
-                          text: 'Upcoming',
+                          text: AppLocalizations.of(context)!.upcoming,
                         ),
-                        Tab(text: 'Completed'),
-                        Tab(text: 'Cancelled'),
+                        Tab(
+                          text: AppLocalizations.of(context)!.completed,
+                        ),
+                        Tab(
+                          text: AppLocalizations.of(context)!.cancelled,
+                        ),
                       ],
                     ),
                   ),
