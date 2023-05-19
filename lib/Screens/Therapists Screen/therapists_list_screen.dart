@@ -88,104 +88,107 @@ class _TherapistsListScreenState extends State<TherapistsListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScaffold(
-      body: SafeArea(
-        child: GradientBackgroundWidget(
-          child: Padding(
-            padding: const EdgeInsets.only(
-                left: 16.0, right: 16.0, top: 20.0, bottom: 0.0),
-            child: Column(
-              children: [
-                if (widget.showBackButton)
-                  ToolBarWidget(
-                    iconColor: AppColors.white,
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
+    return WillPopScope(
+      onWillPop: () => Future.value(widget.isFromHome ? true : false),
+      child: CustomScaffold(
+        body: SafeArea(
+          child: GradientBackgroundWidget(
+            child: Padding(
+              padding: const EdgeInsets.only(
+                  left: 16.0, right: 16.0, top: 20.0, bottom: 0.0),
+              child: Column(
+                children: [
+                  if (widget.showBackButton)
+                    ToolBarWidget(
+                      iconColor: AppColors.white,
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  if (!widget.showBackButton)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        InkWell(
+                            onTap: () {
+                              /* sharedPrefs?.clear();
+                              sharedPrefs?.setBool(
+                                  AppStrings.isFirstTimeOnApp, false);
+                              Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                  builder: (context) => const PreHomeScreen(),
+                                ),
+                                (route) => false,
+                              );*/
+                              logOut(context: context);
+                            },
+                            child: const Icon(
+                              Icons.logout,
+                              color: AppColors.white,
+                            )),
+                      ],
+                    ),
+                  heightGap(24),
+                  InkWell(
+                    onTap: () {},
+                    child: TextWidget(
+                      text: AppLocalizations.of(context)!.bestMatchesForYou,
+                      textAlign: TextAlign.center,
+                      fontSize: 28,
+                      color: AppColors.white,
+                      fontFamily: AppFonts.poppins,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                if (!widget.showBackButton)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      InkWell(
-                          onTap: () {
-                            /* sharedPrefs?.clear();
-                            sharedPrefs?.setBool(
-                                AppStrings.isFirstTimeOnApp, false);
-                            Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(
-                                builder: (context) => const PreHomeScreen(),
-                              ),
-                              (route) => false,
-                            );*/
-                            logOut(context: context);
-                          },
-                          child: const Icon(
-                            Icons.logout,
-                            color: AppColors.white,
-                          )),
-                    ],
+                  heightGap(25),
+                  Expanded(
+                    child: CustomFutureBuilder<List<PsychologistList>?>(
+                      loaderWidget: loadingShimmer(),
+                      future: psychologistsListFuture,
+                      noInternetOnPressed: () {
+                        setState(() {
+                          psychologistsListFuture = context
+                              .read<PsychologistsProvider>()
+                              .fetchPsychologistsListApi(
+                                context: context,
+                              );
+                        });
+                      },
+                      data: (snapshot) {
+                        if (snapshot!.isEmpty) {
+                          return Center(
+                            child: Lottie.asset(AppImages.emptyJson,
+                                width: 300, height: 300),
+                          );
+                        } else {
+                          return ListView.builder(
+                            itemCount: snapshot.length,
+                            physics: const BouncingScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              log(snapshot[index].name ?? '');
+                              return TherapistsListItem(
+                                psychologist: snapshot[index],
+                                isTherapistsSelecting: selectedIndex == index
+                                    ? isTherapistsSelectUpdate
+                                    : false,
+                                selectButtonPressed: () {
+                                  if (widget.isFromHome) {
+                                    Navigator.of(context).pop();
+                                  } else {
+                                    selectedIndex = index;
+                                    callUpdateProfileApi(
+                                        therapistsId: snapshot[index].id);
+                                  }
+                                },
+                              );
+                            },
+                          );
+                        }
+                      },
+                    ),
                   ),
-                heightGap(24),
-                InkWell(
-                  onTap: () {},
-                  child: TextWidget(
-                    text: AppLocalizations.of(context)!.bestMatchesForYou,
-                    textAlign: TextAlign.center,
-                    fontSize: 28,
-                    color: AppColors.white,
-                    fontFamily: AppFonts.poppins,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                heightGap(25),
-                Expanded(
-                  child: CustomFutureBuilder<List<PsychologistList>?>(
-                    loaderWidget: loadingShimmer(),
-                    future: psychologistsListFuture,
-                    noInternetOnPressed: () {
-                      setState(() {
-                        psychologistsListFuture = context
-                            .read<PsychologistsProvider>()
-                            .fetchPsychologistsListApi(
-                              context: context,
-                            );
-                      });
-                    },
-                    data: (snapshot) {
-                      if (snapshot!.isEmpty) {
-                        return Center(
-                          child: Lottie.asset(AppImages.emptyJson,
-                              width: 300, height: 300),
-                        );
-                      } else {
-                        return ListView.builder(
-                          itemCount: snapshot.length,
-                          physics: const BouncingScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            log(snapshot[index].name ?? '');
-                            return TherapistsListItem(
-                              psychologist: snapshot[index],
-                              isTherapistsSelecting: selectedIndex == index
-                                  ? isTherapistsSelectUpdate
-                                  : false,
-                              selectButtonPressed: () {
-                                if (widget.isFromHome) {
-                                  Navigator.of(context).pop();
-                                } else {
-                                  selectedIndex = index;
-                                  callUpdateProfileApi(
-                                      therapistsId: snapshot[index].id);
-                                }
-                              },
-                            );
-                          },
-                        );
-                      }
-                    },
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

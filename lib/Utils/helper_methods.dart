@@ -114,8 +114,8 @@ Future<void> logOut({BuildContext? context}) async {
   sharedPrefs?.remove(AppStrings.token);
   sharedPrefs?.remove(AppStrings.userName);
   sharedPrefs?.remove(AppStrings.email);
-  sharedPrefs?.remove(AppStrings.rememberMeEmail);
-  sharedPrefs?.remove(AppStrings.rememberMePassword);
+  //sharedPrefs?.remove(AppStrings.rememberMeEmail);
+  //sharedPrefs?.remove(AppStrings.rememberMePassword);
   sharedPrefs?.remove(AppStrings.deviceOs);
   sharedPrefs?.remove(AppStrings.isLogin);
   sharedPrefs?.remove(AppStrings.isQuestionSubmit);

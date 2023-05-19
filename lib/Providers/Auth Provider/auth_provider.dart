@@ -107,7 +107,8 @@ class AuthProvider with ChangeNotifier {
           sharedPrefs?.setBool(AppStrings.isHaveOneTherapists,
               loginResponse.data?.user?.isHaveTherapists ?? false);
           context.read<LanguageProvider>().changeLanguage(
-                languageCode: loginResponse.data?.user?.language.toString(),
+                languageCode:
+                    loginResponse.data?.user?.language.toString() ?? 'en',
               );
 
           if (loginResponse.data?.user?.isQuestionSubmit != null &&

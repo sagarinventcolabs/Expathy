@@ -101,5 +101,6 @@
   "changeLanguage": "تغيير اللغة" ,
   "change": "تغيير",
   "areYouSureToDeleteAccount": "هل أنت متأكد من حذف الحساب؟",
-  "sendOtp":"أرسل OTP"
+  "sendOtp":"أرسل OTP",
+  "areYouSureToLogOut":"هل أنت متأكد من تسجيل الخروج"
 }

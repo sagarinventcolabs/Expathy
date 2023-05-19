@@ -41,7 +41,6 @@ class InfoWidget extends StatelessWidget {
                   children: [
                     TextWidget(
                       text: name ?? '',
-                      textAlign: TextAlign.center,
                       fontSize: 18,
                       fontFamily: AppFonts.poppins,
                       fontWeight: FontWeight.w500,
@@ -53,7 +52,6 @@ class InfoWidget extends StatelessWidget {
                 ),
                 TextWidget(
                   text: type ?? '',
-                  textAlign: TextAlign.center,
                   fontSize: 14,
                   color: AppColors.greyText,
                   fontFamily: AppFonts.poppins,
@@ -62,7 +60,6 @@ class InfoWidget extends StatelessWidget {
                 heightGap(5),
                 TextWidget(
                   text: description ?? '',
-                  textAlign: TextAlign.center,
                   fontSize: 13,
                   maxLines: 1,
                   color: AppColors.black,

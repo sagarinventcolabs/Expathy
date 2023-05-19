@@ -101,5 +101,6 @@
   "changeLanguage": "भाषा बदलें",
   "change": "बदलें",
   "areYouSureToDeleteAccount": "क्या आप वाकई खाता हटाना चाहते हैं?",
-    "sendOtp":"OTP भेजें"
+  "sendOtp":"OTP भेजें",
+  "areYouSureToLogOut":"क्या आप सुनिश्चित हैं कि लॉग आउट करें"
 }

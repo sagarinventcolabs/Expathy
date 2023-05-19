@@ -101,5 +101,6 @@
   "changeLanguage":"Change Language",
   "change":"Change",
   "areYouSureToDeleteAccount":"Are you sure to DELETE Account?",
-  "sendOtp":"Send OTP"
+  "sendOtp":"Send OTP",
+  "areYouSureToLogOut":"Are you sure to Log out"
 }

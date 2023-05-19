@@ -123,6 +123,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                     validator: (value) {
                                       if (value!.isEmpty) {
                                         return 'Please enter password';
+                                      } else if (value.length < 6) {
+                                        return 'Please enter minimum 6 digit password';
                                       }
                                       return null;
                                     },

@@ -101,5 +101,6 @@
   "changeLanguage":"Cambiar idioma",
   "change":"Cambiar",
   "areYouSureToDeleteAccount":"¿Está seguro de ELIMINAR la cuenta?",
-    "sendOtp":"Enviar OTP"
+  "sendOtp":"Enviar OTP",
+  "areYouSureToLogOut":"Estas segura de cerrar sesión"
 }

@@ -6,8 +6,10 @@ import 'package:expathy/Screens/Setting%20Screens/invite_friends_screen.dart';
 import 'package:expathy/Screens/Setting%20Screens/manage_notification_screen.dart';
 import 'package:expathy/Screens/Setting%20Screens/personal_information_screen.dart';
 import 'package:expathy/Utils/app_images.dart';
+import 'package:expathy/Utils/app_strings.dart';
 import 'package:expathy/Utils/helper_methods.dart';
 import 'package:expathy/Widgets/svg_picture.dart';
+import 'package:expathy/main.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -45,55 +47,58 @@ class ProfileScreen extends StatelessWidget {
                     title: AppLocalizations.of(context)!.profile,
                   ),
                   heightGap(20),
-                  Stack(
-                    children: [
-                      Container(
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: AppColors.white),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 16.0, horizontal: 16),
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
-                                TextWidget(
-                                  text: 'Olivia Rhye',
-                                  fontSize: 20,
-                                  fontFamily: AppFonts.poppins,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                TextWidget(
-                                  text: 'olivia@untitledui.com',
-                                  fontSize: 18,
-                                  fontFamily: AppFonts.poppins,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ]),
-                        ),
-                      ),
-                      Positioned(
-                        top: 16,
-                        right: 16,
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const EditProfileScreen(),
-                            ));
-                          },
-                          child: Container(
-                            width: 36,
-                            height: 36,
-                            decoration: BoxDecoration(
-                                color: AppColors.green,
-                                borderRadius: BorderRadius.circular(100)),
-                            child:
-                                const Icon(Icons.edit, color: AppColors.white),
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        color: AppColors.white),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 16.0, horizontal: 16),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  TextWidget(
+                                    text: sharedPrefs
+                                            ?.getString(AppStrings.userName) ??
+                                        '',
+                                    fontSize: 20,
+                                    fontFamily: AppFonts.poppins,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  TextWidget(
+                                    text: sharedPrefs
+                                            ?.getString(AppStrings.email) ??
+                                        '',
+                                    fontSize: 18,
+                                    fontFamily: AppFonts.poppins,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ]),
                           ),
-                        ),
+                          InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => const EditProfileScreen(),
+                              ));
+                            },
+                            child: Container(
+                              width: 36,
+                              height: 36,
+                              decoration: BoxDecoration(
+                                  color: AppColors.green,
+                                  borderRadius: BorderRadius.circular(100)),
+                              child: const Icon(Icons.edit,
+                                  color: AppColors.white),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                   heightGap(10),
                   Container(
@@ -269,16 +274,55 @@ class ProfileScreen extends StatelessWidget {
                               title: AppLocalizations.of(context)!.logOut,
                               icon: AppImages.logoutIcon,
                               onTap: () {
-                                /* sharedPrefs?.clear();
-                                sharedPrefs?.setBool(
-                                    AppStrings.isFirstTimeOnApp, false);
-                                Navigator.of(context).pushAndRemoveUntil(
-                                  MaterialPageRoute(
-                                    builder: (context) => const PreHomeScreen(),
-                                  ),
-                                  (route) => false,
-                                );*/
-                                logOut(context: context);
+                                showDialog<void>(
+                                  context: context,
+                                  barrierDismissible:
+                                      true, // user must tap button!
+                                  builder: (BuildContext context) {
+                                    return Hero(
+                                      tag: '',
+                                      child: AlertDialog(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(12)),
+                                        content: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.stretch,
+                                            children: [
+                                              Column(
+                                                children: [
+                                                  TextWidget(
+                                                    text: AppLocalizations.of(
+                                                            context)!
+                                                        .areYouSureToLogOut,
+                                                    fontSize: 15,
+                                                    fontFamily:
+                                                        AppFonts.poppins,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ],
+                                              ),
+                                              heightGap(18),
+                                              HorizontalTwoButtonWidget(
+                                                text1: AppLocalizations.of(
+                                                        context)!
+                                                    .no,
+                                                text1Tap: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                text2: AppLocalizations.of(
+                                                        context)!
+                                                    .yes,
+                                                text2Tap: () {
+                                                  logOut(context: context);
+                                                },
+                                              ),
+                                            ]),
+                                      ),
+                                    );
+                                  },
+                                );
                               }),
                         ],
                       ),

@@ -101,5 +101,6 @@
   "changeLanguage":"Dili Değiştir",
   "change":"Değiştir",
   "areYouSureToDeleteAccount":"Hesabı SİLMEK istediğinizden emin misiniz?",
-    "sendOtp":"OTP gönder"
+  "sendOtp":"OTP gönder",
+  "areYouSureToLogOut":"Oturumu kapatacağınızdan emin misiniz?"
 }

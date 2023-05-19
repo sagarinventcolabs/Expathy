@@ -1,11 +1,16 @@
 import 'package:expathy/Common%20Widgets/text_widget.dart';
 import 'package:expathy/Utils/app_fonts.dart';
+import 'package:expathy/Utils/app_strings.dart';
+import 'package:expathy/main.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../Common Widgets/custom_scaffold.dart';
 import '../../Common Widgets/elevated_button_widget.dart';
 import '../../Common Widgets/text_form_field_widget.dart';
 import '../../Custom Painter /auth_screen_painter.dart';
+import '../../Providers/User Provider/user_provider.dart';
 import '../../Utils/app_images.dart';
 import '../../Utils/helper_methods.dart';
 import '../../Widgets/svg_picture.dart';
@@ -20,6 +25,18 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
+  final userNameController = TextEditingController();
+  final emailController = TextEditingController();
+  bool isProfileUpdate = false;
+
+  @override
+  void initState() {
+    userNameController
+      ..text = sharedPrefs?.getString(AppStrings.userName) ?? '';
+    emailController..text = sharedPrefs?.getString(AppStrings.email) ?? '';
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
@@ -92,20 +109,36 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 TextFormFieldWidget(
                                   hintText:
                                       AppLocalizations.of(context)!.userName,
+                                  controller: userNameController,
+                                  validator: (value) {
+                                    if (value!.isEmpty) {
+                                      return 'Please enter user name';
+                                    }
+                                    return null;
+                                  },
                                 ),
                                 heightGap(16),
                                 TextFormFieldWidget(
                                   hintText: AppLocalizations.of(context)!.email,
+                                  controller: emailController,
                                   keyboardType: TextInputType.emailAddress,
+                                  enabled: false,
                                 ),
                                 heightGap(32),
                                 Padding(
                                   padding: EdgeInsets.symmetric(
                                       horizontal: deviceWidth(context) * 0.10),
-                                  child: ElevatedButtonWidget(
-                                    onPressed: () {},
-                                    text: AppLocalizations.of(context)!.save,
-                                  ),
+                                  child: isProfileUpdate
+                                      ? const Center(
+                                          child: CupertinoActivityIndicator(),
+                                        )
+                                      : ElevatedButtonWidget(
+                                          onPressed: () {
+                                            callUpdateProfileApi();
+                                          },
+                                          text: AppLocalizations.of(context)!
+                                              .save,
+                                        ),
                                 ),
                                 heightGap(20),
                               ],
@@ -122,5 +155,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> callUpdateProfileApi() async {
+    setState(() {
+      isProfileUpdate = true;
+    });
+    await context.read<UserProvider>().updateProfileApi(
+          userName: userNameController.text.trim(),
+          isFromEditProfileScreen: true,
+          context: context,
+        );
+    setState(() {
+      isProfileUpdate = false;
+    });
   }
 }

@@ -130,6 +130,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     validator: (value) {
                                       if (value!.isEmpty) {
                                         return 'Please enter password';
+                                      } else if (value.length < 6) {
+                                        return 'Please enter minimum 6 digit password';
                                       }
                                       return null;
                                     },
@@ -168,6 +170,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           .iHaveReadAndAcceptThe,
                                       heading: AppLocalizations.of(context)!
                                           .termAndConditions,
+                                      decoration: TextDecoration.underline,
                                       key: const Key('1'),
                                       navigateToTermsAndCondition: true),
                                   heightGap(16),
@@ -176,6 +179,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           .iHaveReadAndAcceptThe,
                                       heading: AppLocalizations.of(context)!
                                           .privacyPolicy,
+                                      decoration: TextDecoration.underline,
                                       key: const Key('2'),
                                       navigateToPrivacyPolicy: true),
                                   heightGap(20),

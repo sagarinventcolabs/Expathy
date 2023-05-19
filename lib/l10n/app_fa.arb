@@ -101,5 +101,6 @@
   "changeLanguage":"Taal feroarje",
   "change": "Feroarje",
   "areYouSureToDeleteAccount": "Binne jo wis dat jo akkount WISJE?",
-    "sendOtp":"Stjoer OTP"
+  "sendOtp":"Stjoer OTP",
+  "areYouSureToLogOut":"آیا مطمئن هستید که از سیستم خارج می شوید"
 }

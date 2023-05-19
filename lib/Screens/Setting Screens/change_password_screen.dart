@@ -119,6 +119,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                       validator: (value) {
                                         if (value!.isEmpty) {
                                           return 'Please enter current password';
+                                        } else if (value.length < 6) {
+                                          return 'Please enter minimum 6 digit password';
                                         }
                                         return null;
                                       },
@@ -139,6 +141,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                     validator: (value) {
                                       if (value!.isEmpty) {
                                         return 'Please enter new password';
+                                      } else if (value.length < 6) {
+                                        return 'Please enter minimum 6 digit password';
                                       }
                                       return null;
                                     },

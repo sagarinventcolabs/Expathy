@@ -19,13 +19,17 @@ class UserProvider with ChangeNotifier {
   Future<UpdateProfileModel?> updateProfileApi(
       {String? language,
       String? languageId,
+      String? userName,
       String? therapistsId,
       bool isFromSelectTherapistScreen = false,
+      bool isFromChangeLanguageScreen = false,
+      bool isFromEditProfileScreen = false,
       required BuildContext context}) async {
     final data =
         await RemoteService().callPostApi(url: eUpdateProfile, jsonData: {
       "language": language,
       "languageId": languageId,
+      "name": userName,
       "therapists": therapistsId,
     });
     if (data != null) {
@@ -38,6 +42,10 @@ class UserProvider with ChangeNotifier {
               isSuccess: true,
               message: updateProfileResponse.message,
               context: context);
+          sharedPrefs?.setString(AppStrings.userName,
+              updateProfileResponse.data?.userName.toString() ?? '');
+          sharedPrefs?.setString(AppStrings.email,
+              updateProfileResponse.data?.email.toString() ?? '');
           context.read<LanguageProvider>().changeLanguage(
                 languageCode: updateProfileResponse.data?.language.toString(),
               );
@@ -50,6 +58,10 @@ class UserProvider with ChangeNotifier {
               ),
               (route) => false,
             );
+          } else if (isFromChangeLanguageScreen) {
+            Navigator.of(context).pop();
+          } else if (isFromEditProfileScreen) {
+            Navigator.of(context).pop();
           } else {
             Navigator.push(
               context,
