@@ -26,157 +26,169 @@ class OtpVerifyScreen extends StatefulWidget {
 class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
   String? otp;
   final _formKey = GlobalKey<FormState>();
-  bool isVerifyOtp = false;
 
   @override
   Widget build(BuildContext context) {
     AuthProvider authProvider =
         Provider.of<AuthProvider>(context, listen: false);
-    return CustomScaffold(
-      body: SafeArea(
-        child: SizedBox(
-          width: double.infinity,
-          height: double.infinity,
-          child: Stack(
-            children: [
-              CustomPaint(
-                size: Size(deviceWidth(context),
-                    (deviceHeight(context) * 0.50).toDouble()),
-                painter: AuthScreenPainter(),
-              ),
-              Column(
-                children: [
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(left: 16.0, right: 16, top: 20),
-                    child: ToolBarWidget(
-                      onTap: () {
-                        Navigator.of(context).pop();
-                      },
+    return WillPopScope(
+      onWillPop: () =>
+          Future.value(authProvider.showLoadingIndicator ? false : true),
+      child: CustomScaffold(
+        body: SafeArea(
+          child: SizedBox(
+            width: double.infinity,
+            height: double.infinity,
+            child: Stack(
+              children: [
+                CustomPaint(
+                  size: Size(deviceWidth(context),
+                      (deviceHeight(context) * 0.50).toDouble()),
+                  painter: AuthScreenPainter(),
+                ),
+                Column(
+                  children: [
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(left: 16.0, right: 16, top: 20),
+                      child: ToolBarWidget(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
                     ),
-                  ),
-                  Image.asset(
-                    AppImages.logo,
-                    width: deviceWidth(context) * 0.40,
-                    height: deviceHeight(context) * 0.15,
-                  ),
-                  Expanded(
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Card(
-                        shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(16),
-                                topLeft: Radius.circular(16))),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              top: 32.0, right: 16, left: 16),
-                          child: SingleChildScrollView(
-                            child: Form(
-                              key: _formKey,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  const Center(
-                                    child: TextWidget(
-                                        text: 'OTP Verification',
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.w500,
-                                        fontFamily: AppFonts.poppins),
-                                  ),
-                                  heightGap(28),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20.0),
-                                    child: PinCodeTextField(
-                                      length: 4,
-                                      obscureText: false,
-                                      animationType: AnimationType.fade,
-                                      cursorColor: AppColors.greyText,
-                                      cursorHeight: 10,
-                                      validator: (value) {
-                                        if (value!.isEmpty) {
-                                          return 'Please fill OTP';
-                                        } else if (value.length < 4) {
-                                          return 'OTP must be 4 digit';
-                                        }
-                                        return null;
-                                      },
-                                      textStyle: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w400,
-                                          fontFamily: AppFonts.poppins,
-                                          color: AppColors.greyText),
-                                      pinTheme: PinTheme(
-                                        shape: PinCodeFieldShape.box,
-                                        borderRadius: BorderRadius.circular(5),
-                                        fieldHeight: 45,
-                                        fieldWidth: 55,
-                                        activeFillColor: Colors.white,
-                                        selectedColor: AppColors.greyText,
-                                        selectedFillColor: AppColors.white,
-                                        inactiveFillColor: AppColors.white,
-                                        inactiveColor: AppColors.greyText,
-                                        activeColor: AppColors.greyText,
-                                        borderWidth: 0.5,
-                                        disabledColor: AppColors.greyText,
-                                      ),
-                                      animationDuration:
-                                          const Duration(milliseconds: 300),
-                                      enableActiveFill: true,
-                                      onCompleted: (v) {
-                                        log("Completed");
-                                      },
-                                      onChanged: (value) {
-                                        log(value);
-                                        setState(() {
-                                          otp = value;
-                                        });
-                                      },
-                                      beforeTextPaste: (text) {
-                                        log("Allowing to paste $text");
-                                        return true;
-                                      },
-                                      appContext: context,
+                    Image.asset(
+                      AppImages.logo,
+                      width: deviceWidth(context) * 0.40,
+                      height: deviceHeight(context) * 0.15,
+                    ),
+                    Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Card(
+                          shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(16),
+                                  topLeft: Radius.circular(16))),
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                                top: 32.0, right: 16, left: 16),
+                            child: SingleChildScrollView(
+                              child: Form(
+                                key: _formKey,
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    const Center(
+                                      child: TextWidget(
+                                          text: 'OTP Verification',
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.w500,
+                                          fontFamily: AppFonts.poppins),
                                     ),
-                                  ),
-                                  heightGap(32),
-                                  isVerifyOtp
-                                      ? const Center(
-                                          child: CupertinoActivityIndicator(),
-                                        )
-                                      : Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal:
-                                                  deviceWidth(context) * 0.10),
-                                          child: ElevatedButtonWidget(
-                                              onPressed: () async {
-                                                await callVerifyOtpApi(
-                                                    authProvider: authProvider);
-                                              },
-                                              text: 'Verify OTP'),
+                                    heightGap(28),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20.0),
+                                      child: PinCodeTextField(
+                                        length: 4,
+                                        obscureText: false,
+                                        animationType: AnimationType.fade,
+                                        cursorColor: AppColors.greyText,
+                                        cursorHeight: 10,
+                                        validator: (value) {
+                                          if (value!.isEmpty) {
+                                            return 'Please fill OTP';
+                                          } else if (value.length < 4) {
+                                            return 'OTP must be 4 digit';
+                                          }
+                                          return null;
+                                        },
+                                        textStyle: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400,
+                                            fontFamily: AppFonts.poppins,
+                                            color: AppColors.greyText),
+                                        pinTheme: PinTheme(
+                                          shape: PinCodeFieldShape.box,
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                          fieldHeight: 45,
+                                          fieldWidth: 55,
+                                          activeFillColor: Colors.white,
+                                          selectedColor: AppColors.greyText,
+                                          selectedFillColor: AppColors.white,
+                                          inactiveFillColor: AppColors.white,
+                                          inactiveColor: AppColors.greyText,
+                                          activeColor: AppColors.greyText,
+                                          borderWidth: 0.5,
+                                          disabledColor: AppColors.greyText,
                                         ),
-                                  heightGap(20),
-                                  /*  conditionWidget(
-                                      title: 'Already have an account?',
-                                      heading: 'Login',
-                                      navigateToLogin: true,
-                                      showCheckBox: false,
-                                      textAlign: TextAlign.center,
-                                      decoration: TextDecoration.underline),
-                                  heightGap(20),*/
-                                ],
+                                        animationDuration:
+                                            const Duration(milliseconds: 300),
+                                        enableActiveFill: true,
+                                        onCompleted: (v) {
+                                          log("Completed");
+                                        },
+                                        onChanged: (value) {
+                                          log(value);
+                                          setState(() {
+                                            otp = value;
+                                          });
+                                        },
+                                        beforeTextPaste: (text) {
+                                          log("Allowing to paste $text");
+                                          return true;
+                                        },
+                                        appContext: context,
+                                      ),
+                                    ),
+                                    heightGap(32),
+                                    Consumer<AuthProvider>(
+                                      builder: (context, value, child) {
+                                        return value.showLoadingIndicator
+                                            ? const Center(
+                                                child:
+                                                    CupertinoActivityIndicator(),
+                                              )
+                                            : Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal:
+                                                        deviceWidth(context) *
+                                                            0.10),
+                                                child: ElevatedButtonWidget(
+                                                    onPressed: () async {
+                                                      await callVerifyOtpApi(
+                                                          authProvider:
+                                                              authProvider);
+                                                    },
+                                                    text: 'Verify OTP'),
+                                              );
+                                      },
+                                    ),
+                                    heightGap(20),
+                                    /*  conditionWidget(
+                                        title: 'Already have an account?',
+                                        heading: 'Login',
+                                        navigateToLogin: true,
+                                        showCheckBox: false,
+                                        textAlign: TextAlign.center,
+                                        decoration: TextDecoration.underline),
+                                    heightGap(20),*/
+                                  ],
+                                ),
                               ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -185,25 +197,11 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
 
   Future<void> callVerifyOtpApi({required AuthProvider authProvider}) async {
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        isVerifyOtp = true;
-      });
       await authProvider.verifyOtpApi(
         context: context,
         email: authProvider.getEmail.toString(),
         otp: otp ?? '',
       );
-      /* Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) =>
-              const ChangePasswordScreen(makeSetPassword: true),
-        ),
-      );*/
-
-      setState(() {
-        isVerifyOtp = false;
-      });
     }
   }
 

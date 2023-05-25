@@ -43,33 +43,36 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: PageView(
-        controller: _pageController,
-        physics: const NeverScrollableScrollPhysics(),
-        children: List.generate(
-            bottomBarPages.length, (index) => bottomBarPages[index]),
+    return WillPopScope(
+      onWillPop: () => Future.value(false),
+      child: Scaffold(
+        body: PageView(
+          controller: _pageController,
+          physics: const NeverScrollableScrollPhysics(),
+          children: List.generate(
+              bottomBarPages.length, (index) => bottomBarPages[index]),
+        ),
+        extendBody: true,
+        bottomNavigationBar: (bottomBarPages.length <= maxCount)
+            ? AnimatedNotchBottomBar(
+                pageController: _pageController,
+                itemLabelStyle: const TextStyle(
+                    color: AppColors.checkBoxBorderColor,
+                    fontFamily: AppFonts.poppins,
+                    fontWeight: FontWeight.w400,
+                    fontSize: 12.7),
+                color: Colors.white,
+                showLabel: true,
+                notchColor: AppColors.yellow,
+                bottomBarItems: item,
+                onTap: (index) {
+                  _pageController.jumpToPage(
+                    index,
+                  );
+                },
+              )
+            : null,
       ),
-      extendBody: true,
-      bottomNavigationBar: (bottomBarPages.length <= maxCount)
-          ? AnimatedNotchBottomBar(
-              pageController: _pageController,
-              itemLabelStyle: const TextStyle(
-                  color: AppColors.checkBoxBorderColor,
-                  fontFamily: AppFonts.poppins,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 12.7),
-              color: Colors.white,
-              showLabel: true,
-              notchColor: AppColors.yellow,
-              bottomBarItems: item,
-              onTap: (index) {
-                _pageController.jumpToPage(
-                  index,
-                );
-              },
-            )
-          : null,
     );
   }
 

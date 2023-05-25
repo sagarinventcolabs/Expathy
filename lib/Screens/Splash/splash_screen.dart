@@ -27,9 +27,6 @@ class _SplashScreenState extends State<SplashScreen> {
     Future.delayed(
       const Duration(seconds: 5),
       () {
-        log('${sharedPrefs?.getBool(AppStrings.isLogin)}');
-        log('${sharedPrefs?.getBool(AppStrings.isQuestionSubmit)}');
-        log('${sharedPrefs?.getBool(AppStrings.isHaveOneTherapists)}');
         if (sharedPrefs?.getBool(AppStrings.isLogin) ?? false) {
           log('1');
           if (sharedPrefs?.getBool(AppStrings.isQuestionSubmit) != true) {

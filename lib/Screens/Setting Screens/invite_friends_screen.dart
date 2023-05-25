@@ -159,7 +159,8 @@ class _InviteScreenState extends State<InviteScreen> {
                               ),
                               heightGap(20),
                               Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 10.0),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10.0),
                                 child: TextWidget(
                                   text: AppLocalizations.of(context)!.inviteBy,
                                   color: AppColors.black,

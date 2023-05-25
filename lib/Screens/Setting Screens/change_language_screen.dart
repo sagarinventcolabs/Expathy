@@ -10,7 +10,6 @@ import '../../Common Widgets/text_widget.dart';
 import '../../Custom Painter /auth_screen_painter.dart';
 import '../../Models/flag_model.dart';
 import '../../Models/language_list_model.dart';
-import '../../Providers/Language Provider/language_provider.dart';
 import '../../Providers/Question Provider/question_provider.dart';
 import '../../Providers/User Provider/user_provider.dart';
 import '../../Utils/app_colors.dart';

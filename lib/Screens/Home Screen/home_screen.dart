@@ -1,6 +1,7 @@
 import 'package:expathy/Common%20Widgets/custom_scaffold.dart';
 import 'package:expathy/Common%20Widgets/elevated_button_widget.dart';
 import 'package:expathy/Screens/Article%20Screen/article_detail_screen.dart';
+import 'package:expathy/Screens/Articles%20Screen/all_articles_screen.dart';
 import 'package:expathy/Screens/Package%20Screen/plan_package_screen.dart';
 import 'package:expathy/Screens/Setting%20Screens/invite_friends_screen.dart';
 import 'package:expathy/Screens/Therapists%20Screen/therapists_list_screen.dart';
@@ -21,7 +22,9 @@ import '../../Common Widgets/text_widget.dart';
 import '../../Models/article_model.dart';
 import '../../Utils/app_colors.dart';
 import '../../Utils/app_fonts.dart';
+import '../../Utils/navigation_services.dart';
 import '../../Widgets/active_plan_item.dart';
+import '../../Widgets/article_item.dart';
 import '../Therapists Screen/therapists_detail_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -106,8 +109,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const TextWidget(
-                                  text: 'John,',
+                                TextWidget(
+                                  text:
+                                      '${sharedPrefs?.getString(AppStrings.userName) ?? ''}, ',
                                   textAlign: TextAlign.center,
                                   fontSize: 22,
                                   color: AppColors.white,
@@ -568,6 +572,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         ]),
                       ViewAllRowWidget(
                           text: AppLocalizations.of(context)!.articles,
+                          onViewAllPressed: () {
+                            NavigationServices.push(
+                                context: context,
+                                screen: const AllArticlesScreen());
+                          },
                           viewAllColor: AppColors.blue),
                       heightGap(8),
                       SizedBox(
@@ -588,7 +597,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 );
                               },
-                              child: Container(
+                              /*  child: Container(
                                 width: deviceWidth(context) * 0.70,
                                 margin: const EdgeInsets.only(right: 10),
                                 decoration: BoxDecoration(
@@ -649,7 +658,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                   ],
                                 ),
-                              ),
+                              ),*/
+                              child: ArticleItem(articleData: articleData),
                             );
                           },
                         ),
@@ -666,11 +676,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         InkWell(
                           onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => const InviteScreen(),
-                              ),
-                            );
+                            NavigationServices.push(
+                                context: context, screen: const InviteScreen());
                           },
                           child: const SvgPic(
                             image: AppImages.personPlus,

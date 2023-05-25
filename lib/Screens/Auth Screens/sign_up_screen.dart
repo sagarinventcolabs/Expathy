@@ -32,195 +32,227 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
   bool isTermsCheckBoxChecked = false;
   bool isPrivacyCheckBoxChecked = false;
-  bool passwordObSecure = true;
-  bool confirmPasswordObSecure = true;
-  bool isSignUp = false;
+
+  @override
+  void dispose() {
+    userNameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     AuthProvider authProvider =
         Provider.of<AuthProvider>(context, listen: false);
-    return CustomScaffold(
-      body: SafeArea(
-        child: SizedBox(
-          width: double.infinity,
-          height: double.infinity,
-          child: Stack(
-            children: [
-              CustomPaint(
-                size: Size(
-                    deviceWidth(context),
-                    (deviceHeight(context) * 0.50)
-                        .toDouble()), //You can Replace [WIDTH] with your desired width for Custom Paint and height will be calculated automatically
-                painter: AuthScreenPainter(),
-              ),
-              Column(
-                children: [
-                  SizedBox(
-                    width: deviceWidth(context) * 0.40,
-                    height: deviceHeight(context) * 0.15,
-                    child: const SvgPic(
-                      image: AppImages.logoMain,
-                      fit: BoxFit.contain,
+    return WillPopScope(
+      onWillPop: () =>
+          Future.value(authProvider.showLoadingIndicator ? false : true),
+      child: CustomScaffold(
+        body: SafeArea(
+          child: SizedBox(
+            width: double.infinity,
+            height: double.infinity,
+            child: Stack(
+              children: [
+                CustomPaint(
+                  size: Size(
+                      deviceWidth(context),
+                      (deviceHeight(context) * 0.50)
+                          .toDouble()), //You can Replace [WIDTH] with your desired width for Custom Paint and height will be calculated automatically
+                  painter: AuthScreenPainter(),
+                ),
+                Column(
+                  children: [
+                    SizedBox(
+                      width: deviceWidth(context) * 0.40,
+                      height: deviceHeight(context) * 0.15,
+                      child: const SvgPic(
+                        image: AppImages.logoMain,
+                        fit: BoxFit.contain,
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Card(
-                        shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(16),
-                                topLeft: Radius.circular(16))),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              top: 32.0, right: 16, left: 16),
-                          child: SingleChildScrollView(
-                            physics: const BouncingScrollPhysics(),
-                            child: Form(
-                              key: _formKey,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  Center(
-                                    child: TextWidget(
-                                      text:
-                                          AppLocalizations.of(context)!.signUp,
-                                      color: AppColors.black,
-                                      fontSize: 28,
-                                      fontFamily: AppFonts.poppins,
-                                      fontWeight: FontWeight.w600,
+                    Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Card(
+                          shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(16),
+                                  topLeft: Radius.circular(16))),
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                                top: 32.0, right: 16, left: 16),
+                            child: SingleChildScrollView(
+                              physics: const BouncingScrollPhysics(),
+                              child: Form(
+                                key: _formKey,
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    Center(
+                                      child: TextWidget(
+                                        text: AppLocalizations.of(context)!
+                                            .signUp,
+                                        color: AppColors.black,
+                                        fontSize: 28,
+                                        fontFamily: AppFonts.poppins,
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                     ),
-                                  ),
-                                  heightGap(16),
-                                  TextFormFieldWidget(
-                                    hintText:
-                                        AppLocalizations.of(context)!.userName,
-                                    controller: userNameController,
-                                    validator: (value) {
-                                      if (value!.isEmpty) {
-                                        return 'Please enter user name';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  heightGap(16),
-                                  TextFormFieldWidget(
-                                    hintText:
-                                        AppLocalizations.of(context)!.email,
-                                    keyboardType: TextInputType.emailAddress,
-                                    controller: emailController,
-                                    validator: (value) {
-                                      if (value!.isEmpty) {
-                                        return 'Please enter email';
-                                      } else if (!RegExp(emailPattern)
-                                          .hasMatch(value)) {
-                                        return 'Please enter valid email address';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  heightGap(16),
-                                  TextFormFieldWidget(
-                                    hintText:
-                                        AppLocalizations.of(context)!.password,
-                                    controller: passwordController,
-                                    obscureText: passwordObSecure,
-                                    isPassword: true,
-                                    validator: (value) {
-                                      if (value!.isEmpty) {
-                                        return 'Please enter password';
-                                      } else if (value.length < 6) {
-                                        return 'Please enter minimum 6 digit password';
-                                      }
-                                      return null;
-                                    },
-                                    onVisibilityIconTap: () {
-                                      setState(() {
-                                        passwordObSecure = !passwordObSecure;
-                                      });
-                                    },
-                                  ),
-                                  heightGap(16),
-                                  TextFormFieldWidget(
-                                    hintText: AppLocalizations.of(context)!
-                                        .confirmPassword,
-                                    controller: confirmPasswordController,
-                                    obscureText: confirmPasswordObSecure,
-                                    isPassword: true,
-                                    onVisibilityIconTap: () {
-                                      setState(() {
-                                        confirmPasswordObSecure =
-                                            !confirmPasswordObSecure;
-                                      });
-                                    },
-                                    validator: (value) {
-                                      if (value!.isEmpty) {
-                                        return 'Please enter confirm password';
-                                      } else if (passwordController.text !=
-                                          confirmPasswordController.text) {
-                                        return 'Confirm password not match with password';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  heightGap(20),
-                                  conditionWidget(
-                                      title: AppLocalizations.of(context)!
-                                          .iHaveReadAndAcceptThe,
-                                      heading: AppLocalizations.of(context)!
-                                          .termAndConditions,
-                                      decoration: TextDecoration.underline,
-                                      key: const Key('1'),
-                                      navigateToTermsAndCondition: true),
-                                  heightGap(16),
-                                  conditionWidget(
-                                      title: AppLocalizations.of(context)!
-                                          .iHaveReadAndAcceptThe,
-                                      heading: AppLocalizations.of(context)!
-                                          .privacyPolicy,
-                                      decoration: TextDecoration.underline,
-                                      key: const Key('2'),
-                                      navigateToPrivacyPolicy: true),
-                                  heightGap(20),
-                                  isSignUp
-                                      ? const Center(
-                                          child: CupertinoActivityIndicator(),
-                                        )
-                                      : Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal:
-                                                  deviceWidth(context) * 0.10),
-                                          child: ElevatedButtonWidget(
-                                            onPressed: () async {
-                                              await callSignUpApi(
-                                                  authProvider: authProvider);
-                                            },
-                                            text: AppLocalizations.of(context)!
-                                                .signUp,
-                                          ),
-                                        ),
-                                  heightGap(16),
-                                  conditionWidget(
-                                      title: AppLocalizations.of(context)!
-                                          .alreadyHaveAnAccount,
-                                      heading:
-                                          AppLocalizations.of(context)!.login,
-                                      navigateToLogin: true,
-                                      showCheckBox: false,
-                                      textAlign: TextAlign.center,
-                                      decoration: TextDecoration.underline),
-                                ],
+                                    heightGap(16),
+                                    TextFormFieldWidget(
+                                      hintText: AppLocalizations.of(context)!
+                                          .userName,
+                                      controller: userNameController,
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return 'Please enter user name';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    heightGap(16),
+                                    TextFormFieldWidget(
+                                      hintText:
+                                          AppLocalizations.of(context)!.email,
+                                      keyboardType: TextInputType.emailAddress,
+                                      controller: emailController,
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return 'Please enter email';
+                                        } else if (!RegExp(emailPattern)
+                                            .hasMatch(value)) {
+                                          return 'Please enter valid email address';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    heightGap(16),
+                                    Consumer<AuthProvider>(
+                                      builder: (context, value, child) {
+                                        return TextFormFieldWidget(
+                                          hintText:
+                                              AppLocalizations.of(context)!
+                                                  .password,
+                                          controller: passwordController,
+                                          obscureText:
+                                              value.passwordObSecureSignUp,
+                                          isPassword: true,
+                                          validator: (value) {
+                                            if (value!.isEmpty) {
+                                              return 'Please enter password';
+                                            } else if (value.length < 6) {
+                                              return 'Please enter minimum 6 digit password';
+                                            }
+                                            return null;
+                                          },
+                                          onVisibilityIconTap: () {
+                                            authProvider
+                                                .changeObSecureForSignUp(
+                                                    forPassword: true);
+                                          },
+                                        );
+                                      },
+                                    ),
+                                    heightGap(16),
+                                    Consumer<AuthProvider>(
+                                      builder: (context, value, child) {
+                                        return TextFormFieldWidget(
+                                          hintText:
+                                              AppLocalizations.of(context)!
+                                                  .confirmPassword,
+                                          controller: confirmPasswordController,
+                                          obscureText: value
+                                              .confirmPasswordObSecureSignup,
+                                          isPassword: true,
+                                          onVisibilityIconTap: () {
+                                            authProvider
+                                                .changeObSecureForSignUp();
+                                          },
+                                          validator: (value) {
+                                            if (value!.isEmpty) {
+                                              return 'Please enter confirm password';
+                                            } else if (passwordController
+                                                    .text !=
+                                                confirmPasswordController
+                                                    .text) {
+                                              return 'Confirm password not match with password';
+                                            }
+                                            return null;
+                                          },
+                                        );
+                                      },
+                                    ),
+                                    heightGap(20),
+                                    conditionWidget(
+                                        title: AppLocalizations.of(context)!
+                                            .iHaveReadAndAcceptThe,
+                                        heading: AppLocalizations.of(context)!
+                                            .termAndConditions,
+                                        decoration: TextDecoration.underline,
+                                        key: const Key('1'),
+                                        navigateToTermsAndCondition: true),
+                                    heightGap(16),
+                                    conditionWidget(
+                                        title: AppLocalizations.of(context)!
+                                            .iHaveReadAndAcceptThe,
+                                        heading: AppLocalizations.of(context)!
+                                            .privacyPolicy,
+                                        decoration: TextDecoration.underline,
+                                        key: const Key('2'),
+                                        navigateToPrivacyPolicy: true),
+                                    heightGap(20),
+                                    Consumer<AuthProvider>(
+                                      builder: (context, value, child) {
+                                        return value.showLoadingIndicator
+                                            ? const Center(
+                                                child:
+                                                    CupertinoActivityIndicator(),
+                                              )
+                                            : Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal:
+                                                        deviceWidth(context) *
+                                                            0.10),
+                                                child: ElevatedButtonWidget(
+                                                  onPressed: () async {
+                                                    await callSignUpApi(
+                                                        authProvider:
+                                                            authProvider);
+                                                  },
+                                                  text: AppLocalizations.of(
+                                                          context)!
+                                                      .signUp,
+                                                ),
+                                              );
+                                      },
+                                    ),
+                                    heightGap(16),
+                                    conditionWidget(
+                                        title: AppLocalizations.of(context)!
+                                            .alreadyHaveAnAccount,
+                                        heading:
+                                            AppLocalizations.of(context)!.login,
+                                        navigateToLogin: true,
+                                        showCheckBox: false,
+                                        textAlign: TextAlign.center,
+                                        decoration: TextDecoration.underline),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -240,9 +272,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
             message: 'please select privacy policy',
             isSuccess: false);
       } else {
-        setState(() {
-          isSignUp = true;
-        });
         await authProvider.signUpApi(
           email: emailController.text.trim(),
           userName: userNameController.text.trim().toString(),
@@ -251,16 +280,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
           loginType: 'Email',
           context: context,
         );
-        /* Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const QuestionAnswerScreen(),
-          ),
-        );*/
-
-        setState(() {
-          isSignUp = false;
-        });
       }
     }
   }

@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../Remote/api_config.dart';
 import '../../Remote/remote_service.dart';
+import '../../Utils/navigation_services.dart';
 import '../Language Provider/language_provider.dart';
 
 class AuthProvider with ChangeNotifier {
@@ -24,6 +25,11 @@ class AuthProvider with ChangeNotifier {
     _email = email;
   }
 
+  bool showLoadingIndicator = false;
+  bool passwordObSecureLogin = true;
+  bool passwordObSecureSignUp = true;
+  bool confirmPasswordObSecureSignup = true;
+
   Future<AuthModel?> signUpApi(
       {String? email,
       String? password,
@@ -31,6 +37,8 @@ class AuthProvider with ChangeNotifier {
       String? type,
       String? loginType,
       required BuildContext context}) async {
+    showLoadingIndicator = true;
+    notifyListeners();
     final data = await RemoteService().callPostApi(url: eSignUp, jsonData: {
       "email": email,
       "password": password,
@@ -60,12 +68,15 @@ class AuthProvider with ChangeNotifier {
               builder: (context) => const FirstQuestionScreen(),
             ),
           );
+          showLoadingIndicator = false;
         } else if (signUpResponse.status == 409) {
+          showLoadingIndicator = false;
           showSnackBar(
               isSuccess: false,
               message: signUpResponse.message,
               context: context);
         } else if (signUpResponse.status == 400) {
+          showLoadingIndicator = false;
           showSnackBar(
               isSuccess: false,
               message: signUpResponse.message,
@@ -75,6 +86,8 @@ class AuthProvider with ChangeNotifier {
       notifyListeners();
       return signUpResponse;
     }
+    showLoadingIndicator = false;
+    notifyListeners();
     return null;
   }
 
@@ -83,6 +96,8 @@ class AuthProvider with ChangeNotifier {
       required String password,
       required String type,
       required BuildContext context}) async {
+    showLoadingIndicator = true;
+    notifyListeners();
     final data = await RemoteService().callPostApi(url: eLogin, jsonData: {
       "email": email,
       "password": password,
@@ -137,12 +152,15 @@ class AuthProvider with ChangeNotifier {
               );
             }
           }
+          showLoadingIndicator = false;
         } else if (loginResponse.status == 404) {
+          showLoadingIndicator = false;
           showSnackBar(
               isSuccess: false,
               message: loginResponse.message,
               context: context);
         } else if (loginResponse.status == 400) {
+          showLoadingIndicator = false;
           showSnackBar(
               isSuccess: false,
               message: loginResponse.message,
@@ -152,6 +170,8 @@ class AuthProvider with ChangeNotifier {
       notifyListeners();
       return loginResponse;
     }
+    showLoadingIndicator = false;
+    notifyListeners();
     return null;
   }
 
@@ -198,6 +218,8 @@ class AuthProvider with ChangeNotifier {
       {required String email,
       required String otp,
       required BuildContext context}) async {
+    showLoadingIndicator = true;
+    notifyListeners();
     final data = await RemoteService().callPostApi(url: eVerifyOtp, jsonData: {
       "email": email,
       "otp": otp,
@@ -207,33 +229,37 @@ class AuthProvider with ChangeNotifier {
       log('api call response : ${otpVerifyResponse.toJson().toString()}');
       if (context.mounted) {
         if (otpVerifyResponse.status == 200) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  const ChangePasswordScreen(makeSetPassword: true),
-            ),
+          NavigationServices.pushReplacement(
+            context: context,
+            screen: const ChangePasswordScreen(makeSetPassword: true),
           );
+          showLoadingIndicator = false;
         } else if (otpVerifyResponse.status == 404) {
           showSnackBar(
               isSuccess: false,
               message: otpVerifyResponse.message,
               context: context);
+          showLoadingIndicator = false;
         } else if (otpVerifyResponse.status == 400) {
           showSnackBar(
               isSuccess: false,
               message: otpVerifyResponse.message,
               context: context);
+          showLoadingIndicator = false;
         }
       }
       notifyListeners();
       return otpVerifyResponse;
     }
+    showLoadingIndicator = false;
+    notifyListeners();
     return null;
   }
 
   Future<CommonModel?> forgotPasswordApi(
       {required String email, required BuildContext context}) async {
+    showLoadingIndicator = true;
+    notifyListeners();
     final data =
         await RemoteService().callPostApi(url: eForgotPassword, jsonData: {
       "email": email,
@@ -248,18 +274,23 @@ class AuthProvider with ChangeNotifier {
               isSuccess: true,
               message: forgotPasswordResponse.message,
               context: context);
-          Navigator.push(
+          NavigationServices.push(
+              context: context, screen: const OtpVerifyScreen());
+          /* Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => const OtpVerifyScreen(),
             ),
-          );
+          );*/
+          showLoadingIndicator = false;
         } else if (forgotPasswordResponse.status == 404) {
+          showLoadingIndicator = false;
           showSnackBar(
               isSuccess: false,
               message: forgotPasswordResponse.message,
               context: context);
         } else if (forgotPasswordResponse.status == 400) {
+          showLoadingIndicator = false;
           showSnackBar(
               isSuccess: false,
               message: forgotPasswordResponse.message,
@@ -269,6 +300,8 @@ class AuthProvider with ChangeNotifier {
       notifyListeners();
       return forgotPasswordResponse;
     }
+    showLoadingIndicator = false;
+    notifyListeners();
     return null;
   }
 
@@ -308,5 +341,19 @@ class AuthProvider with ChangeNotifier {
       return changePasswordResponse;
     }
     return null;
+  }
+
+  Future<void> changeObSecureForLogin() async {
+    passwordObSecureLogin = !passwordObSecureLogin;
+    notifyListeners();
+  }
+
+  Future<void> changeObSecureForSignUp({bool forPassword = false}) async {
+    if (forPassword) {
+      passwordObSecureSignUp = !passwordObSecureSignUp;
+    } else {
+      confirmPasswordObSecureSignup = !confirmPasswordObSecureSignup;
+    }
+    notifyListeners();
   }
 }

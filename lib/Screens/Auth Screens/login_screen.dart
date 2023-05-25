@@ -28,11 +28,9 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool isRememberMeCheckBoxChecked = false;
-  bool passwordObSecure = true;
   final _formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  bool isLogin = false;
 
   @override
   void initState() {
@@ -44,173 +42,200 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     AuthProvider authProvider =
         Provider.of<AuthProvider>(context, listen: false);
-    return CustomScaffold(
-      body: SafeArea(
-        child: SizedBox(
-          width: double.infinity,
-          height: double.infinity,
-          child: Stack(
-            children: [
-              CustomPaint(
-                size: Size(deviceWidth(context),
-                    (deviceHeight(context) * 0.50).toDouble()),
-                painter: AuthScreenPainter(),
-              ),
-              Column(
-                children: [
-                  SizedBox(
-                    width: deviceWidth(context) * 0.40,
-                    height: deviceHeight(context) * 0.15,
-                    child: const SvgPic(
-                      image: AppImages.logoMain,
-                      fit: BoxFit.contain,
+    return WillPopScope(
+      onWillPop: () =>
+          Future.value(authProvider.showLoadingIndicator ? false : true),
+      child: CustomScaffold(
+        body: SafeArea(
+          child: SizedBox(
+            width: double.infinity,
+            height: double.infinity,
+            child: Stack(
+              children: [
+                CustomPaint(
+                  size: Size(deviceWidth(context),
+                      (deviceHeight(context) * 0.50).toDouble()),
+                  painter: AuthScreenPainter(),
+                ),
+                Column(
+                  children: [
+                    SizedBox(
+                      width: deviceWidth(context) * 0.40,
+                      height: deviceHeight(context) * 0.15,
+                      child: const SvgPic(
+                        image: AppImages.logoMain,
+                        fit: BoxFit.contain,
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Card(
-                        shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(16),
-                                topLeft: Radius.circular(16))),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              top: 32.0, right: 16, left: 16),
-                          child: SingleChildScrollView(
-                            physics: const BouncingScrollPhysics(),
-                            child: Form(
-                              key: _formKey,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  Center(
-                                    child: TextWidget(
-                                      text: AppLocalizations.of(context)!.login,
-                                      color: AppColors.black,
-                                      fontSize: 28,
-                                      fontFamily: AppFonts.poppins,
-                                      fontWeight: FontWeight.w600,
+                    Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Card(
+                          shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(16),
+                                  topLeft: Radius.circular(16))),
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                                top: 32.0, right: 16, left: 16),
+                            child: SingleChildScrollView(
+                              physics: const BouncingScrollPhysics(),
+                              child: Form(
+                                key: _formKey,
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    Center(
+                                      child: TextWidget(
+                                        text:
+                                            AppLocalizations.of(context)!.login,
+                                        color: AppColors.black,
+                                        fontSize: 28,
+                                        fontFamily: AppFonts.poppins,
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                     ),
-                                  ),
-                                  heightGap(16),
-                                  TextFormFieldWidget(
-                                    hintText:
-                                        AppLocalizations.of(context)!.email,
-                                    controller: emailController,
-                                    keyboardType: TextInputType.emailAddress,
-                                    validator: (value) {
-                                      if (value!.isEmpty) {
-                                        return 'Please enter email';
-                                      } else if (!RegExp(emailPattern)
-                                          .hasMatch(value)) {
-                                        return 'Please enter valid email address';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  heightGap(16),
-                                  TextFormFieldWidget(
-                                    hintText:
-                                        AppLocalizations.of(context)!.password,
-                                    controller: passwordController,
-                                    obscureText: passwordObSecure,
-                                    isPassword: true,
-                                    validator: (value) {
-                                      if (value!.isEmpty) {
-                                        return 'Please enter password';
-                                      } else if (value.length < 6) {
-                                        return 'Please enter minimum 6 digit password';
-                                      }
-                                      return null;
-                                    },
-                                    onVisibilityIconTap: () {
-                                      setState(() {
-                                        passwordObSecure = !passwordObSecure;
-                                      });
-                                    },
-                                  ),
-                                  heightGap(20),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: conditionWidget(
-                                          title: AppLocalizations.of(context)!
-                                              .rememberMe,
+                                    heightGap(16),
+                                    TextFormFieldWidget(
+                                      hintText:
+                                          AppLocalizations.of(context)!.email,
+                                      controller: emailController,
+                                      keyboardType: TextInputType.emailAddress,
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return 'Please enter email';
+                                        } else if (!RegExp(emailPattern)
+                                            .hasMatch(value)) {
+                                          return 'Please enter valid email address';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    heightGap(16),
+                                    Consumer<AuthProvider>(
+                                      builder: (context, value, child) {
+                                        return TextFormFieldWidget(
+                                          hintText:
+                                              AppLocalizations.of(context)!
+                                                  .password,
+                                          controller: passwordController,
+                                          obscureText:
+                                              value.passwordObSecureLogin,
+                                          isPassword: true,
+                                          validator: (value) {
+                                            if (value!.isEmpty) {
+                                              return 'Please enter password';
+                                            } else if (value.length < 6) {
+                                              return 'Please enter minimum 6 digit password';
+                                            }
+                                            return null;
+                                          },
+                                          onVisibilityIconTap: () {
+                                            authProvider
+                                                .changeObSecureForLogin();
+                                          },
+                                        );
+                                      },
+                                    ),
+                                    heightGap(20),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: conditionWidget(
+                                            title: AppLocalizations.of(context)!
+                                                .rememberMe,
+                                          ),
                                         ),
-                                      ),
-                                      InkWell(
-                                        onTap: () {
-                                          Navigator.of(context)
-                                              .push(MaterialPageRoute(
-                                            builder: (context) =>
-                                                const ForgotPasswordScreen(),
-                                          ));
-                                        },
-                                        child: TextWidget(
-                                            text: AppLocalizations.of(context)!
-                                                .forgotPassword,
-                                            color: AppColors.blue,
-                                            decoration:
-                                                TextDecoration.underline),
-                                      ),
-                                    ],
-                                  ),
-                                  heightGap(20),
-                                  isLogin
-                                      ? const Center(
-                                          child: CupertinoActivityIndicator(),
-                                        )
-                                      : Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal:
-                                                  deviceWidth(context) * 0.10),
-                                          child: ElevatedButtonWidget(
-                                              onPressed: () async {
-                                                await callLoginApi(
-                                                    authProvider: authProvider);
-                                              },
+                                        InkWell(
+                                          onTap: () {
+                                            Navigator.of(context)
+                                                .push(MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const ForgotPasswordScreen(),
+                                            ));
+                                          },
+                                          child: TextWidget(
                                               text:
                                                   AppLocalizations.of(context)!
-                                                      .login),
+                                                      .forgotPassword,
+                                              color: AppColors.blue,
+                                              decoration:
+                                                  TextDecoration.underline),
                                         ),
-                                  heightGap(20),
-                                  divider(),
-                                  heightGap(20),
-                                  Row(
-                                    children: [
-                                      socialContainer(image: AppImages.google),
-                                      widthGap(10),
-                                      socialContainer(image: AppImages.apple),
-                                      widthGap(10),
-                                      socialContainer(
-                                          image: AppImages.facebook),
-                                    ],
-                                  ),
-                                  heightGap(20),
-                                  conditionWidget(
-                                      title: AppLocalizations.of(context)!
-                                          .doNotHaveAccount,
-                                      heading: AppLocalizations.of(context)!
-                                          .createAccount,
-                                      showCheckBox: false,
-                                      textAlign: TextAlign.center,
-                                      decoration: TextDecoration.underline),
-                                ],
+                                      ],
+                                    ),
+                                    heightGap(20),
+                                    Consumer<AuthProvider>(
+                                      builder: (context, value, child) {
+                                        return value.showLoadingIndicator
+                                            ? const Center(
+                                                child:
+                                                    CupertinoActivityIndicator(),
+                                              )
+                                            : Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal:
+                                                        deviceWidth(context) *
+                                                            0.10),
+                                                child: ElevatedButtonWidget(
+                                                    onPressed: () async {
+                                                      await callLoginApi(
+                                                          authProvider:
+                                                              authProvider);
+                                                    },
+                                                    text: AppLocalizations.of(
+                                                            context)!
+                                                        .login),
+                                              );
+                                      },
+                                    ),
+                                    heightGap(20),
+                                    divider(),
+                                    heightGap(20),
+                                    Row(
+                                      children: [
+                                        socialContainer(
+                                            image: AppImages.google),
+                                        widthGap(10),
+                                        socialContainer(image: AppImages.apple),
+                                        widthGap(10),
+                                        socialContainer(
+                                            image: AppImages.facebook),
+                                      ],
+                                    ),
+                                    heightGap(20),
+                                    conditionWidget(
+                                        title: AppLocalizations.of(context)!
+                                            .doNotHaveAccount,
+                                        heading: AppLocalizations.of(context)!
+                                            .createAccount,
+                                        showCheckBox: false,
+                                        textAlign: TextAlign.center,
+                                        decoration: TextDecoration.underline),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -225,24 +250,12 @@ class _LoginScreenState extends State<LoginScreen> {
         sharedPrefs?.setString(
             AppStrings.rememberMePassword, passwordController.text);
       }
-      setState(() {
-        isLogin = true;
-      });
       await authProvider.loginApi(
         email: emailController.text.trim(),
         password: passwordController.text,
         type: 'Expact',
         context: context,
       );
-      /*Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const QuestionAnswerScreen(),
-        ),
-      );*/
-      setState(() {
-        isLogin = false;
-      });
     }
   }
 

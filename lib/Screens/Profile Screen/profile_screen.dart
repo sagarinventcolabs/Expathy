@@ -17,6 +17,7 @@ import '../../Common Widgets/custom_scaffold.dart';
 import '../../Common Widgets/text_widget.dart';
 import '../../Utils/app_colors.dart';
 import '../../Utils/app_fonts.dart';
+import '../../Utils/navigation_services.dart';
 import '../../Widgets/gradient_background_widget.dart';
 import '../../Widgets/horzontal_two_button_widget.dart';
 import '../../Widgets/toolbar_widget.dart';
@@ -115,19 +116,18 @@ class ProfileScreen extends StatelessWidget {
                                   AppLocalizations.of(context)!.changePassword,
                               icon: AppImages.lockIcon,
                               onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) =>
-                                      const ChangePasswordScreen(),
-                                ));
+                                NavigationServices.push(
+                                    context: context,
+                                    screen: const ChangePasswordScreen());
                               }),
                           tileWidget(
                               title:
                                   AppLocalizations.of(context)!.inviteFriends,
                               icon: AppImages.personIcon,
                               onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => const InviteScreen(),
-                                ));
+                                NavigationServices.push(
+                                    context: context,
+                                    screen: const InviteScreen());
                               }),
                           divider(),
                           tileWidget(
@@ -135,63 +135,61 @@ class ProfileScreen extends StatelessWidget {
                                   AppLocalizations.of(context)!.changeLanguage,
                               icon: AppImages.languageIcon,
                               onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) =>
-                                      const ChangeLanguageScreen(),
-                                ));
+                                NavigationServices.push(
+                                    context: context,
+                                    screen: const ChangeLanguageScreen());
                               }),
                           tileWidget(
                               title: AppLocalizations.of(context)!
                                   .manageNotification,
                               icon: AppImages.notiIcon,
                               onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) =>
-                                      const ManageNotificationScreen(),
-                                ));
+                                NavigationServices.push(
+                                    context: context,
+                                    screen: const ManageNotificationScreen());
                               }),
                           divider(),
                           tileWidget(
                               title: AppLocalizations.of(context)!.aboutUs,
                               icon: AppImages.aboutIcon,
                               onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) =>
-                                      const PersonalInformationScreen(
-                                          type: 'About Us'),
-                                ));
+                                NavigationServices.push(
+                                  context: context,
+                                  screen: const PersonalInformationScreen(
+                                      type: 'About Us'),
+                                );
                               }),
                           tileWidget(
                               title: AppLocalizations.of(context)!
                                   .cancellationPolicy,
                               icon: AppImages.policyIcon,
                               onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) =>
-                                      const PersonalInformationScreen(
-                                          type: 'Cancellation Policy'),
-                                ));
+                                NavigationServices.push(
+                                  context: context,
+                                  screen: const PersonalInformationScreen(
+                                      type: 'Cancellation Policy'),
+                                );
                               }),
                           tileWidget(
                               title:
                                   AppLocalizations.of(context)!.privacyPolicy,
                               icon: AppImages.privacyIcon,
                               onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) =>
-                                      const PersonalInformationScreen(
-                                          type: 'Privacy Policy'),
-                                ));
+                                NavigationServices.push(
+                                  context: context,
+                                  screen: const PersonalInformationScreen(
+                                      type: 'Privacy Policy'),
+                                );
                               }),
                           tileWidget(
                               title: AppLocalizations.of(context)!.termsOfUse,
                               icon: AppImages.termsIcon,
                               onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) =>
-                                      const PersonalInformationScreen(
-                                          type: 'Terms of Use'),
-                                ));
+                                NavigationServices.push(
+                                  context: context,
+                                  screen: const PersonalInformationScreen(
+                                      type: 'Terms of Use'),
+                                );
                               }),
                           divider(),
                           tileWidget(

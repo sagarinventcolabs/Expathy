@@ -1,5 +1,6 @@
 import 'package:expathy/Common%20Widgets/custom_scaffold.dart';
 import 'package:expathy/Common%20Widgets/text_widget.dart';
+import 'package:expathy/Screens/Articles%20Screen/all_articles_screen.dart';
 import 'package:expathy/Screens/Package%20Screen/plan_package_screen.dart';
 import 'package:expathy/Utils/app_images.dart';
 import 'package:expathy/Widgets/gradient_background_widget.dart';
@@ -14,6 +15,7 @@ import '../../Models/article_model.dart';
 import '../../Utils/app_colors.dart';
 import '../../Utils/app_fonts.dart';
 import '../../Utils/helper_methods.dart';
+import '../../Widgets/article_item.dart';
 import '../../Widgets/horzontal_two_button_widget.dart';
 import '../../Widgets/info_widget.dart';
 import '../Article Screen/article_detail_screen.dart';
@@ -198,6 +200,13 @@ class _TherapistsDetailScreenState extends State<TherapistsDetailScreen> {
                   ViewAllRowWidget(
                       text: AppLocalizations.of(context)!.articles,
                       textColor: AppColors.black,
+                      onViewAllPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const AllArticlesScreen(),
+                          ),
+                        );
+                      },
                       viewAllColor: AppColors.blue),
                   heightGap(8),
                   SizedBox(
@@ -218,65 +227,7 @@ class _TherapistsDetailScreenState extends State<TherapistsDetailScreen> {
                               ),
                             );
                           },
-                          child: Container(
-                            width: deviceWidth(context) * 0.70,
-                            margin: const EdgeInsets.only(right: 10),
-                            decoration: BoxDecoration(
-                              color: AppColors.white,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: const BorderRadius.only(
-                                    topRight: Radius.circular(12),
-                                    topLeft: Radius.circular(12),
-                                  ),
-                                  child: SizedBox(
-                                    height: 150,
-                                    width: double.infinity,
-                                    child: Image.asset(
-                                      articleData.image ?? '',
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 10.0, right: 10.0, bottom: 10.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                          child: TextWidget(
-                                            text: articleData.description ?? '',
-                                            fontSize: 16,
-                                            maxLines: 3,
-                                            color: AppColors.black,
-                                            overflow: TextOverflow.ellipsis,
-                                            fontFamily: AppFonts.poppins,
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                        ),
-                                        heightGap(10),
-                                        TextWidget(
-                                          text: articleData.date ?? '',
-                                          fontSize: 12,
-                                          overflow: TextOverflow.ellipsis,
-                                          color: AppColors.greyText,
-                                          fontFamily: AppFonts.poppins,
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                          child: ArticleItem(articleData: articleData),
                         );
                       },
                     ),

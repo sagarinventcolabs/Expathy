@@ -31,9 +31,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   void initState() {
-    userNameController
-      ..text = sharedPrefs?.getString(AppStrings.userName) ?? '';
-    emailController..text = sharedPrefs?.getString(AppStrings.email) ?? '';
+    userNameController.text = sharedPrefs?.getString(AppStrings.userName) ?? '';
+    emailController.text = sharedPrefs?.getString(AppStrings.email) ?? '';
     super.initState();
   }
 

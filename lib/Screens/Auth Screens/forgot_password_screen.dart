@@ -26,120 +26,141 @@ class ForgotPasswordScreen extends StatefulWidget {
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
-  bool isSendOtp = false;
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     AuthProvider authProvider =
         Provider.of<AuthProvider>(context, listen: false);
-    return CustomScaffold(
-      body: SafeArea(
-        child: SizedBox(
-          width: double.infinity,
-          height: double.infinity,
-          child: Stack(
-            children: [
-              CustomPaint(
-                size: Size(
-                    deviceWidth(context),
-                    (deviceHeight(context) * 0.50)
-                        .toDouble()), //You can Replace [WIDTH] with your desired width for Custom Paint and height will be calculated automatically
-                painter: AuthScreenPainter(),
-              ),
-              Column(
-                children: [
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(left: 16.0, right: 16, top: 20),
-                    child: ToolBarWidget(
-                      onTap: () {
-                        Navigator.of(context).pop();
-                      },
+    return WillPopScope(
+      onWillPop: () =>
+          Future.value(authProvider.showLoadingIndicator ? false : true),
+      child: CustomScaffold(
+        body: SafeArea(
+          child: SizedBox(
+            width: double.infinity,
+            height: double.infinity,
+            child: Stack(
+              children: [
+                CustomPaint(
+                  size: Size(
+                      deviceWidth(context),
+                      (deviceHeight(context) * 0.50)
+                          .toDouble()), //You can Replace [WIDTH] with your desired width for Custom Paint and height will be calculated automatically
+                  painter: AuthScreenPainter(),
+                ),
+                Column(
+                  children: [
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(left: 16.0, right: 16, top: 20),
+                      child: ToolBarWidget(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
                     ),
-                  ),
-                  Image.asset(
-                    AppImages.logo,
-                    width: deviceWidth(context) * 0.40,
-                    height: deviceHeight(context) * 0.15,
-                  ),
-                  Expanded(
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Card(
-                        shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(16),
-                                topLeft: Radius.circular(16))),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              top: 32.0, right: 16, left: 16),
-                          child: SingleChildScrollView(
-                            child: Form(
-                              key: _formKey,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  Center(
-                                    child: TextWidget(
-                                        text: AppLocalizations.of(context)!
-                                            .forgotPassword,
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.w500,
-                                        fontFamily: AppFonts.poppins),
-                                  ),
-                                  heightGap(28),
-                                  TextFormFieldWidget(
-                                    hintText:
-                                        AppLocalizations.of(context)!.email,
-                                    keyboardType: TextInputType.emailAddress,
-                                    controller: emailController,
-                                    validator: (value) {
-                                      if (value!.isEmpty) {
-                                        return 'Please enter email';
-                                      } else if (!RegExp(emailPattern)
-                                          .hasMatch(value)) {
-                                        return 'Please enter valid email address';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  heightGap(32),
-                                  isSendOtp
-                                      ? const Center(
-                                          child: CupertinoActivityIndicator(),
-                                        )
-                                      : Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal:
-                                                  deviceWidth(context) * 0.10),
-                                          child: ElevatedButtonWidget(
-                                            onPressed: () {
-                                              callForgotPasswordApi(
-                                                  authProvider: authProvider);
-                                            },
-                                            text: AppLocalizations.of(context)!
-                                                .sendOtp,
-                                          ),
-                                        ),
-                                  heightGap(20),
-                                  /*conditionWidget(
-                                      title: 'Don’t have account?',
-                                      heading: 'Create Account',
-                                      showCheckBox: false,
-                                      textAlign: TextAlign.center,
-                                      decoration: TextDecoration.underline),
-                                  heightGap(20),*/
-                                ],
+                    Image.asset(
+                      AppImages.logo,
+                      width: deviceWidth(context) * 0.40,
+                      height: deviceHeight(context) * 0.15,
+                    ),
+                    Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Card(
+                          shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(16),
+                                  topLeft: Radius.circular(16))),
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                                top: 32.0, right: 16, left: 16),
+                            child: SingleChildScrollView(
+                              child: Form(
+                                key: _formKey,
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    Center(
+                                      child: TextWidget(
+                                          text: AppLocalizations.of(context)!
+                                              .forgotPassword,
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.w500,
+                                          fontFamily: AppFonts.poppins),
+                                    ),
+                                    heightGap(28),
+                                    TextFormFieldWidget(
+                                      hintText:
+                                          AppLocalizations.of(context)!.email,
+                                      keyboardType: TextInputType.emailAddress,
+                                      controller: emailController,
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return 'Please enter email';
+                                        } else if (!RegExp(emailPattern)
+                                            .hasMatch(value)) {
+                                          return 'Please enter valid email address';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    heightGap(32),
+                                    Consumer<AuthProvider>(
+                                      builder: (context, value, child) {
+                                        return value.showLoadingIndicator
+                                            ? const Center(
+                                                child:
+                                                    CupertinoActivityIndicator(),
+                                              )
+                                            : Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal:
+                                                        deviceWidth(context) *
+                                                            0.10),
+                                                child: ElevatedButtonWidget(
+                                                  onPressed: () {
+                                                    FocusScope.of(context)
+                                                        .unfocus();
+                                                    callForgotPasswordApi(
+                                                        authProvider:
+                                                            authProvider);
+                                                  },
+                                                  text: AppLocalizations.of(
+                                                          context)!
+                                                      .sendOtp,
+                                                ),
+                                              );
+                                      },
+                                    ),
+                                    heightGap(20),
+                                    /*conditionWidget(
+                                        title: 'Don’t have account?',
+                                        heading: 'Create Account',
+                                        showCheckBox: false,
+                                        textAlign: TextAlign.center,
+                                        decoration: TextDecoration.underline),
+                                    heightGap(20),*/
+                                  ],
+                                ),
                               ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -149,24 +170,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   Future<void> callForgotPasswordApi(
       {required AuthProvider authProvider}) async {
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        isSendOtp = true;
-      });
       authProvider.setEmail = emailController.text.toString();
       await authProvider.forgotPasswordApi(
         email: emailController.text.trim(),
         context: context,
       );
-      /* Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const OtpVerifyScreen(),
-        ),
-      );*/
-
-      setState(() {
-        isSendOtp = false;
-      });
     }
   }
 

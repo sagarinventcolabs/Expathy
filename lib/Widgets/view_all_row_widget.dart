@@ -9,11 +9,13 @@ class ViewAllRowWidget extends StatelessWidget {
   final String? text;
   final Color textColor;
   final Color viewAllColor;
+  final Function()? onViewAllPressed;
   const ViewAllRowWidget(
       {Key? key,
       this.text,
       this.textColor = AppColors.white,
-      this.viewAllColor = AppColors.white})
+      this.viewAllColor = AppColors.white,
+      this.onViewAllPressed})
       : super(key: key);
 
   @override
@@ -29,13 +31,16 @@ class ViewAllRowWidget extends StatelessWidget {
             fontWeight: FontWeight.w400,
           ),
         ),
-        TextWidget(
-          text: AppLocalizations.of(context)!.viewAll,
-          fontSize: 14,
-          color: viewAllColor,
-          decoration: TextDecoration.underline,
-          fontFamily: AppFonts.poppins,
-          fontWeight: FontWeight.w400,
+        InkWell(
+          onTap: onViewAllPressed,
+          child: TextWidget(
+            text: AppLocalizations.of(context)!.viewAll,
+            fontSize: 14,
+            color: viewAllColor,
+            decoration: TextDecoration.underline,
+            fontFamily: AppFonts.poppins,
+            fontWeight: FontWeight.w400,
+          ),
         ),
       ],
     );

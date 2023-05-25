@@ -59,6 +59,9 @@ class RemoteService {
           isSuccess: false,
           message:
               '${exceptionData['message'].toString()} ${exceptionData['status'].toString()}');
+      if (exceptionData['message'].toString() == 'jwt expired') {
+        logOut(context: navigatorKey!.currentContext);
+      }
     }
     log('Api Url : $BASE_URL$url');
 
@@ -94,6 +97,9 @@ class RemoteService {
           isSuccess: false,
           message:
               '${exceptionData['message'].toString()} ${exceptionData['status'].toString()}');
+      if (exceptionData['message'].toString() == 'jwt expired') {
+        logOut(context: navigatorKey!.currentContext);
+      }
     }
     log('Api Url : $BASE_URL$url');
     return responseJson;
@@ -115,8 +121,7 @@ class RemoteService {
       case 409:
         return response;
       case 500:
-        throw FetchDataException(
-            'Error 500 >>>> : ${response.body.toString()}');
+        throw FetchDataException(response.body.toString());
       default:
         throw FetchDataException(
             'Error occurred while Communication with Server with StatusCode : ${response.statusCode}');
