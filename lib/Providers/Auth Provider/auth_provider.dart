@@ -13,6 +13,7 @@ import 'package:expathy/Utils/helper_methods.dart';
 import 'package:expathy/main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../Models/personal_information_model.dart';
 import '../../Remote/api_config.dart';
 import '../../Remote/remote_service.dart';
 import '../../Utils/navigation_services.dart';
@@ -20,7 +21,9 @@ import '../Language Provider/language_provider.dart';
 
 class AuthProvider with ChangeNotifier {
   String? _email;
+
   String? get getEmail => _email;
+
   set setEmail(String? email) {
     _email = email;
   }
@@ -355,5 +358,35 @@ class AuthProvider with ChangeNotifier {
       confirmPasswordObSecureSignup = !confirmPasswordObSecureSignup;
     }
     notifyListeners();
+  }
+
+  Future<PersonalInfo?> getPersonalInfoApi(
+      {required BuildContext context,
+      required String slug,
+      required String type}) async {
+    final data = await RemoteService().callGetApi(
+      url: '$eGetContent/$slug/$type',
+    );
+    if (data != null) {
+      final personalInfoModel =
+          PersonalInformationModel.fromJson(jsonDecode(data.body));
+      if (context.mounted) {
+        if (personalInfoModel.status == 200) {
+        } else if (personalInfoModel.status == 404) {
+          showSnackBar(
+              isSuccess: false,
+              message: personalInfoModel.message,
+              context: context);
+        } else if (personalInfoModel.status == 400) {
+          showSnackBar(
+              isSuccess: false,
+              message: personalInfoModel.message,
+              context: context);
+        }
+      }
+      notifyListeners();
+      return personalInfoModel.data;
+    }
+    return null;
   }
 }

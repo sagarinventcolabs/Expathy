@@ -8,7 +8,7 @@ class NavigationServices {
           pageBuilder: (context, animation, anotherAnimation) {
             return screen;
           },
-          transitionDuration: const Duration(milliseconds: 300),
+          transitionDuration: const Duration(milliseconds: 400),
           transitionsBuilder: (context, animation, anotherAnimation, child) {
             animation =
                 CurvedAnimation(curve: Curves.easeIn, parent: animation);
@@ -31,7 +31,7 @@ class NavigationServices {
           pageBuilder: (context, animation, anotherAnimation) {
             return screen;
           },
-          transitionDuration: const Duration(milliseconds: 300),
+          transitionDuration: const Duration(milliseconds: 400),
           transitionsBuilder: (context, animation, anotherAnimation, child) {
             animation =
                 CurvedAnimation(curve: Curves.easeIn, parent: animation);
@@ -53,7 +53,7 @@ class NavigationServices {
           pageBuilder: (context, animation, anotherAnimation) {
             return screen;
           },
-          transitionDuration: const Duration(milliseconds: 300),
+          transitionDuration: const Duration(milliseconds: 400),
           transitionsBuilder: (context, animation, anotherAnimation, child) {
             animation =
                 CurvedAnimation(curve: Curves.easeIn, parent: animation);

@@ -31,7 +31,7 @@ class _SplashScreenState extends State<SplashScreen> {
           log('1');
           if (sharedPrefs?.getBool(AppStrings.isQuestionSubmit) != true) {
             log('2');
-            Navigator.push(
+            Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                 builder: (context) =>
@@ -61,14 +61,14 @@ class _SplashScreenState extends State<SplashScreen> {
           log('5');
           if (sharedPrefs?.getBool(AppStrings.isFirstTimeOnApp) ?? true) {
             log('6');
-            Navigator.of(context).push(
+            Navigator.of(context).pushReplacement(
               MaterialPageRoute(
                 builder: (context) => const TutorialScreen(),
               ),
             );
           } else {
             log('7');
-            Navigator.of(context).push(
+            Navigator.of(context).pushReplacement(
               MaterialPageRoute(
                 builder: (context) => const PreHomeScreen(),
               ),

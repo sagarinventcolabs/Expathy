@@ -2,6 +2,7 @@ import 'package:expathy/Widgets/svg_picture.dart';
 import 'package:flutter/material.dart';
 
 import '../Common Widgets/text_widget.dart';
+import '../Remote/api_config.dart';
 import '../Utils/app_colors.dart';
 import '../Utils/app_fonts.dart';
 import '../Utils/app_images.dart';
@@ -12,7 +13,9 @@ class InfoWidget extends StatelessWidget {
   final String? type;
   final String? description;
   final bool showGreenIcon;
+  final String? imageUrl;
   final Function() onTap;
+
   const InfoWidget({
     Key? key,
     this.name,
@@ -20,6 +23,7 @@ class InfoWidget extends StatelessWidget {
     this.description,
     this.showGreenIcon = true,
     required this.onTap,
+    this.imageUrl,
   }) : super(key: key);
 
   @override
@@ -28,10 +32,7 @@ class InfoWidget extends StatelessWidget {
       onTap: onTap,
       child: Row(
         children: [
-          const CircleAvatar(
-            radius: 35,
-            backgroundImage: AssetImage(AppImages.girl),
-          ),
+          circleImage(url: '$IMAGE_URL${imageUrl ?? ''}'),
           widthGap(12),
           Expanded(
             child: Column(

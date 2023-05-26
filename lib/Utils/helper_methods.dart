@@ -1,7 +1,9 @@
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:expathy/Utils/app_fonts.dart';
 import 'package:expathy/Utils/app_strings.dart';
 import 'package:expathy/main.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import '../Common Widgets/text_widget.dart';
@@ -126,6 +128,41 @@ Future<void> logOut({BuildContext? context}) async {
       builder: (context) => const PreHomeScreen(),
     ),
     (route) => false,
+  );
+}
+
+Widget circleImage({String? url}) {
+  return CachedNetworkImage(
+    width: 75,
+    height: 75,
+    imageUrl: url ?? '',
+    imageBuilder: (context, imageProvider) => Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(100),
+        image: DecorationImage(
+          image: imageProvider,
+          fit: BoxFit.cover,
+        ),
+      ),
+    ),
+    placeholder: (context, url) => Container(
+      decoration: BoxDecoration(
+        border: Border.all(width: 1, color: AppColors.borderColor),
+        borderRadius: BorderRadius.circular(100),
+      ),
+      child: const Center(child: CupertinoActivityIndicator()),
+    ),
+    errorWidget: (context, url, error) => Container(
+      decoration: BoxDecoration(
+        border: Border.all(width: 1, color: AppColors.borderColor),
+        borderRadius: BorderRadius.circular(100),
+      ),
+      child: const Center(
+          child: Icon(
+        Icons.person,
+        color: AppColors.green,
+      )),
+    ),
   );
 }
 

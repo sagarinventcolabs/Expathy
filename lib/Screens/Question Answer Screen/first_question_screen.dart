@@ -19,6 +19,7 @@ import '../../Widgets/skeleton_widget.dart';
 
 class FirstQuestionScreen extends StatefulWidget {
   final bool showLogoutDialog;
+
   const FirstQuestionScreen({Key? key, this.showLogoutDialog = false})
       : super(key: key);
 
@@ -42,43 +43,8 @@ class _FirstQuestionScreenState extends State<FirstQuestionScreen> {
         .fetchLanguageListApi(
           context: context,
         )
-        .whenComplete(() {
-      /*  if (widget.showLogoutDialog) {
-        _showDialog();
-      }*/
-    });
+        .whenComplete(() {});
   }
-
-  /*_showDialog() async {
-    await Future.delayed(const Duration(milliseconds: 50));
-    if (context.mounted) {
-      await showWarningDialog(
-          context: context,
-          barrierDismissible: false,
-          radius: 16,
-          title: 'Logout',
-          content: 'Do you want to logout?',
-          widget: [
-            HorizontalTwoButtonWidget(
-              text1: 'No',
-              text2: 'Yes',
-              text1Tap: () {
-                Navigator.of(context).pop();
-              },
-              text2Tap: () {
-                sharedPrefs?.clear();
-                sharedPrefs?.setBool(AppStrings.isFirstTimeOnApp, false);
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                    builder: (context) => const PreHomeScreen(),
-                  ),
-                  (route) => false,
-                );
-              },
-            )
-          ]);
-    }
-  }*/
 
   @override
   Widget build(BuildContext context) {

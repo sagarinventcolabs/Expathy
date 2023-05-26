@@ -1,3 +1,5 @@
+import 'package:expathy/Common%20Widgets/text_widget.dart';
+import 'package:expathy/Utils/app_fonts.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../Common Widgets/elevated_button_widget.dart';
@@ -11,6 +13,7 @@ class TherapistsListItem extends StatelessWidget {
   final PsychologistList? psychologist;
   final Function()? selectButtonPressed;
   final bool isTherapistsSelecting;
+
   const TherapistsListItem(
       {Key? key,
       this.psychologist,
@@ -29,21 +32,50 @@ class TherapistsListItem extends StatelessWidget {
         child:
             Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           InfoWidget(
-            /*  name: 'Norma Warren',
-            type: 'Biopsychologists',*/
             name: psychologist?.name ?? '',
-            type: psychologist?.type ?? '',
+            type: psychologist?.psychologistType?.name ?? '',
+            imageUrl: psychologist?.profilePic ?? '',
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => const TherapistsDetailScreen(),
+                builder: (context) =>
+                    TherapistsDetailScreen(psychologist: psychologist),
               ));
             },
             showGreenIcon: false,
-            // description: 'Vestibsfevulum semwe acssscv fre porttitor...',
             description: psychologist?.description ?? '',
           ),
           heightGap(12),
-          expertiseButton(),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: psychologist?.areaOfExperties?.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 4 / 1,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10),
+            itemBuilder: (context, index) {
+              return Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                    color: AppColors.yellowLight),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Center(
+                    child: FittedBox(
+                      fit: BoxFit.contain,
+                      child: TextWidget(
+                        text: psychologist?.areaOfExperties?[index].name ?? '',
+                        fontFamily: AppFonts.poppins,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
           heightGap(12),
           isTherapistsSelecting
               ? const Center(

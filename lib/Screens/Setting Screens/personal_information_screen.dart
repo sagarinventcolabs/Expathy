@@ -1,17 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:provider/provider.dart';
+import '../../Common Widgets/custom_future_builder.dart';
 import '../../Common Widgets/custom_scaffold.dart';
 import '../../Common Widgets/text_widget.dart';
 import '../../Custom Painter /auth_screen_painter.dart';
+import '../../Models/personal_information_model.dart';
+import '../../Providers/Auth Provider/auth_provider.dart';
 import '../../Utils/app_fonts.dart';
 import '../../Utils/app_images.dart';
 import '../../Utils/helper_methods.dart';
+import '../../Widgets/skeleton_widget.dart';
 import '../../Widgets/svg_picture.dart';
 import '../../Widgets/toolbar_widget.dart';
 
-class PersonalInformationScreen extends StatelessWidget {
+class PersonalInformationScreen extends StatefulWidget {
   final String type;
+
   const PersonalInformationScreen({Key? key, required this.type})
       : super(key: key);
+
+  @override
+  State<PersonalInformationScreen> createState() =>
+      _PersonalInformationScreenState();
+}
+
+class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
+  late Future<PersonalInfo?> personalInfoFuture;
+
+  @override
+  void initState() {
+    personalInfoFuture = context.read<AuthProvider>().getPersonalInfoApi(
+          context: context,
+          type: 'Psychologist',
+          slug: widget.type == 'About Us'
+              ? 'about_us'
+              : widget.type == 'Privacy Policy'
+                  ? 'privacy_policy'
+                  : widget.type == 'Cancellation Policy'
+                      ? 'cancel'
+                      : 'term',
+        );
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,14 +53,10 @@ class PersonalInformationScreen extends StatelessWidget {
           height: double.infinity,
           child: Stack(
             children: [
-              /*const SvgPic(
-                image: AppImages.signUpHeader,
-              ),*/
               CustomPaint(
-                size: Size(
-                    deviceWidth(context),
-                    (deviceHeight(context) * 0.50)
-                        .toDouble()), //You can Replace [WIDTH] with your desired width for Custom Paint and height will be calculated automatically
+                size: Size(deviceWidth(context),
+                    (deviceHeight(context) * 0.50).toDouble()),
+                //You can Replace [WIDTH] with your desired width for Custom Paint and height will be calculated automatically
                 painter: AuthScreenPainter(),
               ),
               Column(
@@ -75,20 +102,39 @@ class PersonalInformationScreen extends StatelessWidget {
                               children: [
                                 Center(
                                   child: TextWidget(
-                                    text: type,
+                                    text: widget.type,
                                     fontSize: 24,
                                     fontFamily: AppFonts.poppins,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
                                 heightGap(20),
-                                const TextWidget(
-                                  text:
-                                      'Vestibulum tempus imperdiet sem ac porttitor. Vivamus pulvinar commodo orci, suscipit porttitor velit elementum non. Fusce nec pellentesque erat, id lobortis nunc. Donec dui leo, ultrices quis turpis nec, sollicitudin sodales tortor. Aenean dapibus magna quam, id tincidunt quam placerat consequat. Nulla eu laoreet ex. Vestibulum nec vulputate turpis, id euismod orci. Phasellus consectetur tortor est. Donec lectus ex, rhoncus ac consequat at, viverra sit amet sem. Aliquam sed vestibulum nibh. Phasellus ut lorem pharetra, placerat urna id, tincidunt quam. Praesent non ex congue, tristique risus quis, blandit purus. Sed tristique sapien .',
-                                  fontSize: 16,
-                                  textAlign: TextAlign.justify,
-                                  fontFamily: AppFonts.poppins,
-                                  fontWeight: FontWeight.w400,
+                                CustomFutureBuilder<PersonalInfo?>(
+                                  loaderWidget: loadingShimmer(),
+                                  future: personalInfoFuture,
+                                  noInternetOnPressed: () {
+                                    setState(() {
+                                      personalInfoFuture = context
+                                          .read<AuthProvider>()
+                                          .getPersonalInfoApi(
+                                            context: context,
+                                            type: 'Psychologist',
+                                            slug: widget.type == 'About Us'
+                                                ? 'about_us'
+                                                : widget.type ==
+                                                        'Privacy Policy'
+                                                    ? 'privacy_policy'
+                                                    : widget.type ==
+                                                            'Cancellation Policy'
+                                                        ? 'cancel'
+                                                        : 'term',
+                                          );
+                                    });
+                                  },
+                                  data: (snapshot) {
+                                    return Html(
+                                        data: snapshot?.description ?? '');
+                                  },
                                 ),
                               ],
                             ),
@@ -103,6 +149,38 @@ class PersonalInformationScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget loadingShimmer() {
+    return ListView.builder(
+      itemCount: 9,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 10.0),
+          child: Column(
+            children: [
+              shimmerEffect(
+                widget: const SkeletonWidget(
+                  radius: 0,
+                  height: 40,
+                  width: double.infinity,
+                ),
+              ),
+              heightGap(10),
+              shimmerEffect(
+                widget: const SkeletonWidget(
+                  radius: 0,
+                  height: 200,
+                  width: double.infinity,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

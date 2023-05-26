@@ -191,6 +191,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                                             0.10),
                                                 child: ElevatedButtonWidget(
                                                     onPressed: () async {
+                                                      FocusScope.of(context)
+                                                          .unfocus();
                                                       await callLoginApi(
                                                           authProvider:
                                                               authProvider);

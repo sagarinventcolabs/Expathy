@@ -12,6 +12,7 @@ import 'package:lottie/lottie.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../Common Widgets/elevated_button_widget.dart';
 import '../../Models/article_model.dart';
+import '../../Models/pyschologist_list_model.dart';
 import '../../Utils/app_colors.dart';
 import '../../Utils/app_fonts.dart';
 import '../../Utils/helper_methods.dart';
@@ -22,7 +23,9 @@ import '../Article Screen/article_detail_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TherapistsDetailScreen extends StatefulWidget {
-  const TherapistsDetailScreen({Key? key}) : super(key: key);
+  final PsychologistList? psychologist;
+
+  const TherapistsDetailScreen({Key? key, this.psychologist}) : super(key: key);
 
   @override
   State<TherapistsDetailScreen> createState() => _TherapistsDetailScreenState();
@@ -105,15 +108,17 @@ class _TherapistsDetailScreenState extends State<TherapistsDetailScreen> {
                       child: Column(
                         children: [
                           InfoWidget(
-                            name: 'Norma Warren',
-                            type: 'Biopsychologists',
-                            description:
+                            name: widget.psychologist?.name ?? 'Norma Warren',
+                            type: widget.psychologist?.psychologistType?.name ??
+                                'Biopsychologists',
+                            description: widget.psychologist?.description ??
                                 'Vestibsfevulum semwe acssscv fre porttitor...',
+                            imageUrl: widget.psychologist?.profilePic ?? '',
                             onTap: () {
-                              Navigator.of(context).push(MaterialPageRoute(
+                              /* Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) =>
                                     const TherapistsDetailScreen(),
-                              ));
+                              ));*/
                             },
                           ),
                           heightGap(10),
@@ -159,9 +164,45 @@ class _TherapistsDetailScreenState extends State<TherapistsDetailScreen> {
                                 AppLocalizations.of(context)!.areasOfExpertise,
                           ),
                           heightGap(10),
-                          expertiseButton(),
-                          heightGap(10),
-                          expertiseButton(),
+                          GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount:
+                                widget.psychologist?.areaOfExperties?.length ??
+                                    2,
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                    childAspectRatio: 4 / 1,
+                                    crossAxisSpacing: 10,
+                                    mainAxisSpacing: 10),
+                            itemBuilder: (context, index) {
+                              return Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(30),
+                                    color: AppColors.yellowLight),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  child: Center(
+                                    child: FittedBox(
+                                      fit: BoxFit.contain,
+                                      child: TextWidget(
+                                        text: widget
+                                                .psychologist
+                                                ?.areaOfExperties?[index]
+                                                .name ??
+                                            'Social Psychologist',
+                                        fontFamily: AppFonts.poppins,
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                           heightGap(30),
                           UnderLineText(
                             text: AppLocalizations.of(context)!.education,
@@ -170,9 +211,14 @@ class _TherapistsDetailScreenState extends State<TherapistsDetailScreen> {
                           ListView.separated(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
-                            itemCount: 2,
+                            itemCount:
+                                widget.psychologist?.education?.length ?? 1,
                             itemBuilder: (context, index) {
-                              return educationItem();
+                              return educationItem(
+                                  university: widget.psychologist
+                                      ?.education?[index].university,
+                                  graduationType: widget.psychologist
+                                      ?.education?[index].graduationType);
                             },
                             separatorBuilder:
                                 (BuildContext context, int index) {
@@ -184,8 +230,8 @@ class _TherapistsDetailScreenState extends State<TherapistsDetailScreen> {
                             text: AppLocalizations.of(context)!.about,
                           ),
                           heightGap(12),
-                          const TextWidget(
-                            text:
+                          TextWidget(
+                            text: widget.psychologist?.description ??
                                 'Donec vitae mi vulputate, suscipit urna in, malesuada nisl. Pellentesque laoreet pretium nisl, et pulvinar massa eleifend sed. Curabitur maximus mollis diam, vel varius sapien suscipit eget. Cras sollicitudin Read more',
                             fontSize: 14,
                             color: AppColors.greyText,
@@ -242,7 +288,7 @@ class _TherapistsDetailScreenState extends State<TherapistsDetailScreen> {
     );
   }
 
-  Widget educationItem() {
+  Widget educationItem({String? university, String? graduationType}) {
     return Row(children: [
       Image.asset(AppImages.education),
       widthGap(10),
@@ -250,15 +296,15 @@ class _TherapistsDetailScreenState extends State<TherapistsDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const TextWidget(
-              text: 'Education',
+            TextWidget(
+              text: university ?? 'Education',
               fontSize: 16,
               fontFamily: AppFonts.poppins,
               fontWeight: FontWeight.w500,
             ),
             heightGap(6),
-            const TextWidget(
-              text: 'Psychology Undergraduate',
+            TextWidget(
+              text: graduationType ?? 'Psychology Undergraduate',
               fontSize: 14,
               color: AppColors.greyText,
               fontFamily: AppFonts.poppins,
@@ -500,7 +546,8 @@ class _TherapistsDetailScreenState extends State<TherapistsDetailScreen> {
                             Navigator.of(context).pop();
                             showDialog<void>(
                               context: context,
-                              barrierDismissible: true, // user must tap button!
+                              barrierDismissible: true,
+                              // user must tap button!
                               builder: (BuildContext context) {
                                 return AlertDialog(
                                   shape: RoundedRectangleBorder(
