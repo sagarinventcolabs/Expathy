@@ -35,13 +35,14 @@ class _QuestionAnswerScreenState extends State<QuestionAnswerScreen> {
   Question? questionData;
   String? questionId;
   bool isQuestionsSubmitting = false;
+  String? selectedAnswer;
 
   @override
   void initState() {
     questionsListFuture =
         context.read<QuestionProvider>().fetchQuestionsListApi(
-              context: context,
-            );
+          context: context,
+        );
     super.initState();
   }
 
@@ -78,20 +79,20 @@ class _QuestionAnswerScreenState extends State<QuestionAnswerScreen> {
                                 },
                                 child: questionIndex == 0
                                     ? const SizedBox(
-                                        width: 65,
-                                      )
+                                  width: 65,
+                                )
                                     : Container(
-                                        width: 65,
-                                        height: 65,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(100),
-                                          color: AppColors.white,
-                                        ),
-                                        child: const Icon(
-                                          Icons.arrow_back,
-                                        ),
-                                      ),
+                                  width: 65,
+                                  height: 65,
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                    BorderRadius.circular(100),
+                                    color: AppColors.white,
+                                  ),
+                                  child: const Icon(
+                                    Icons.arrow_back,
+                                  ),
+                                ),
                               ),
                               Flexible(
                                 child: Row(
@@ -151,20 +152,20 @@ class _QuestionAnswerScreenState extends State<QuestionAnswerScreen> {
                               ),
                               isQuestionsSubmitting
                                   ? const Center(
-                                      child: CupertinoActivityIndicator(
-                                          color: AppColors.white),
-                                    )
+                                child: CupertinoActivityIndicator(
+                                    color: AppColors.white),
+                              )
                                   : ElevatedButtonWidget(
-                                      onPressed: () async {
-                                        context
-                                            .read<QuestionProvider>()
-                                            .addSelectedQuestion();
-                                        await callSubmitQuestionAnswerApi();
-                                      },
-                                      height: 48,
-                                      text: 'Complete',
-                                      primary: AppColors.white,
-                                      textColor: AppColors.black),
+                                  onPressed: () async {
+                                    context
+                                        .read<QuestionProvider>()
+                                        .addSelectedQuestion();
+                                    await callSubmitQuestionAnswerApi();
+                                  },
+                                  height: 48,
+                                  text: 'Complete',
+                                  primary: AppColors.white,
+                                  textColor: AppColors.black),
                             ],
                           ),
                         ),
@@ -192,8 +193,8 @@ class _QuestionAnswerScreenState extends State<QuestionAnswerScreen> {
                           questionsListFuture = context
                               .read<QuestionProvider>()
                               .fetchQuestionsListApi(
-                                context: context,
-                              );
+                            context: context,
+                          );
                         });
                       },
                       data: (snapshot) {
@@ -245,7 +246,7 @@ class _QuestionAnswerScreenState extends State<QuestionAnswerScreen> {
                                                 bottom: 10.0),
                                             child: InkWell(
                                               onTap: () {
-                                                setState(() {
+                                                /* setState(() {
                                                   answer.isSelected =
                                                       !answer.isSelected;
                                                 });
@@ -257,28 +258,56 @@ class _QuestionAnswerScreenState extends State<QuestionAnswerScreen> {
                                                 } else {
                                                   questionData?.selectedAnswer
                                                       .add(answer.option ?? '');
+                                                }*/
+
+                                                if (answer.multiple) {
+                                                  if (questionData!
+                                                      .selectedAnswer
+                                                      .contains(
+                                                      answer.option)) {
+                                                    questionData?.selectedAnswer
+                                                        .remove(answer.option ??
+                                                        '');
+                                                  } else {
+                                                    questionData?.selectedAnswer
+                                                        .add(answer.option ??
+                                                        '');
+                                                  }
+                                                } else {
+                                                  setState(() {
+                                                    selectedAnswer =
+                                                        answer.id.toString();
+                                                  });
+                                                  questionData?.selectedAnswer
+                                                      .clear();
+                                                  questionData?.selectedAnswer
+                                                      .add(answer.option ?? '');
+                                                  print(questionData
+                                                      ?.selectedAnswer
+                                                      .toString());
                                                 }
                                               },
                                               borderRadius:
-                                                  BorderRadius.circular(30),
+                                              BorderRadius.circular(30),
                                               child: Container(
                                                 width: double.infinity,
                                                 height: 40,
                                                 decoration: BoxDecoration(
                                                   borderRadius:
-                                                      BorderRadius.circular(30),
+                                                  BorderRadius.circular(30),
                                                   color:
-                                                      answer.isSelected == true
-                                                          ? AppColors.yellow
-                                                          : AppColors.white,
+                                                  selectedAnswer == answer.id
+                                                      .toString() /*answer.isSelected == true*/
+                                                      ? AppColors.yellow
+                                                      : AppColors.white,
                                                   border: Border.all(
                                                       width: 1,
                                                       color:
-                                                          answer.isSelected ==
-                                                                  true
-                                                              ? AppColors.black
-                                                              : AppColors
-                                                                  .borderColor),
+                                                      answer.isSelected ==
+                                                          true
+                                                          ? AppColors.black
+                                                          : AppColors
+                                                          .borderColor),
                                                 ),
                                                 child: Center(
                                                   child: TextWidget(
@@ -286,11 +315,11 @@ class _QuestionAnswerScreenState extends State<QuestionAnswerScreen> {
                                                     textAlign: TextAlign.center,
                                                     fontSize: 14,
                                                     color: answer.isSelected ==
-                                                            true
+                                                        true
                                                         ? AppColors.white
                                                         : AppColors.black,
                                                     fontFamily:
-                                                        AppFonts.poppins,
+                                                    AppFonts.poppins,
                                                     fontWeight: FontWeight.w500,
                                                   ),
                                                 ),
@@ -305,7 +334,7 @@ class _QuestionAnswerScreenState extends State<QuestionAnswerScreen> {
                               if (questionData!.options!.isEmpty)
                                 const Padding(
                                   padding:
-                                      EdgeInsets.symmetric(horizontal: 15.0),
+                                  EdgeInsets.symmetric(horizontal: 15.0),
                                   child: TextFormFieldWidget(
                                     filled: true,
                                     borderRadius: 30,
@@ -336,7 +365,9 @@ class _QuestionAnswerScreenState extends State<QuestionAnswerScreen> {
     });
     await context.read<QuestionProvider>().submitQuestionAnswerApi(
         selectedQuestionList:
-            context.read<QuestionProvider>().selectedQuestionList,
+        context
+            .read<QuestionProvider>()
+            .selectedQuestionList,
         context: context);
     setState(() {
       isQuestionsSubmitting = false;
@@ -395,8 +426,7 @@ class _QuestionAnswerScreenState extends State<QuestionAnswerScreen> {
   }
 
   void nextQuestion() {
-    if (questionIndex == questionList!.length - 1) {
-    } else {
+    if (questionIndex == questionList!.length - 1) {} else {
       setState(() {
         questionIndex++;
       });

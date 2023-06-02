@@ -9,6 +9,7 @@ import '../Utils/helper_methods.dart';
 class ArticleItem extends StatelessWidget {
   final ArticleModel? articleData;
   final bool isFromAllArticleScreen;
+
   const ArticleItem(
       {Key? key, this.articleData, this.isFromAllArticleScreen = false})
       : super(key: key);
@@ -16,7 +17,7 @@ class ArticleItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: isFromAllArticleScreen ? 0 : deviceWidth(context) * 0.70,
+      width: isFromAllArticleScreen ? 0 : deviceWidth(context) * 0.55,
       margin: const EdgeInsets.only(right: 10),
       decoration: BoxDecoration(
         color: AppColors.white,
@@ -82,7 +83,7 @@ class ArticleItem extends StatelessWidget {
               topLeft: Radius.circular(12),
             ),
             child: SizedBox(
-              height: 150,
+              height: 120,
               width: double.infinity,
               child: Image.asset(
                 articleData?.image ?? '',
@@ -98,7 +99,7 @@ class ArticleItem extends StatelessWidget {
               children: [
                 TextWidget(
                   text: articleData?.description ?? '',
-                  fontSize: 16,
+                  fontSize: 14,
                   maxLines: 3,
                   color: AppColors.black,
                   overflow: TextOverflow.ellipsis,
@@ -108,7 +109,7 @@ class ArticleItem extends StatelessWidget {
                 heightGap(10),
                 TextWidget(
                   text: articleData?.date ?? '',
-                  fontSize: 12,
+                  fontSize: 11,
                   overflow: TextOverflow.ellipsis,
                   color: AppColors.greyText,
                   fontFamily: AppFonts.poppins,

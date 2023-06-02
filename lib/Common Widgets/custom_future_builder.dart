@@ -8,9 +8,10 @@ import '../Utils/app_images.dart';
 class CustomFutureBuilder<T> extends StatelessWidget {
   final Widget Function(T data) data;
   final Widget loaderWidget;
-  final Future<T> future;
+  final Future<T>? future;
   final Function()? noInternetOnPressed;
   final Function(bool loading)? onLoading;
+
   const CustomFutureBuilder({
     Key? key,
     required this.future,
@@ -19,6 +20,7 @@ class CustomFutureBuilder<T> extends StatelessWidget {
     this.onLoading,
     this.noInternetOnPressed,
   }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<T>(

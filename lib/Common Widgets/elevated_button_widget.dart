@@ -20,6 +20,7 @@ class ElevatedButtonWidget extends StatelessWidget {
   final double height;
   final FontWeight fontWeight;
   final bool showBorder;
+
   const ElevatedButtonWidget({
     Key? key,
     required this.onPressed,
@@ -32,7 +33,7 @@ class ElevatedButtonWidget extends StatelessWidget {
     this.textColor = AppColors.white,
     this.offset = 5.5,
     this.showArrow = false,
-    this.height = 55,
+    this.height = 42,
     this.fontWeight = FontWeight.w500,
     this.primary = AppColors.green,
     this.showBorder = false,

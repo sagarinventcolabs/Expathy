@@ -107,8 +107,10 @@ class Options {
   String? id;
   String? option;
   bool isSelected = false;
+  bool multiple = false;
 
-  Options({this.id, this.option, required this.isSelected});
+  Options(
+      {this.id, this.option, required this.isSelected, required this.multiple});
 
   Options.fromJson(Map<String, dynamic> json) {
     id = json["_id"];

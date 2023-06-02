@@ -580,7 +580,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           viewAllColor: AppColors.blue),
                       heightGap(8),
                       SizedBox(
-                        height: 270,
+                        height: 220,
                         child: ListView.builder(
                           scrollDirection: Axis.horizontal,
                           itemCount: articleList.length,
@@ -886,7 +886,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             Navigator.of(context).pop();
                             showDialog<void>(
                               context: context,
-                              barrierDismissible: true, // user must tap button!
+                              barrierDismissible: true,
+                              // user must tap button!
                               builder: (BuildContext context) {
                                 return AlertDialog(
                                   shape: RoundedRectangleBorder(
@@ -941,7 +942,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             Navigator.of(context).pop();
                             showDialog<void>(
                               context: context,
-                              barrierDismissible: true, // user must tap button!
+                              barrierDismissible: true,
+                              // user must tap button!
                               builder: (BuildContext context) {
                                 return AlertDialog(
                                   shape: RoundedRectangleBorder(
