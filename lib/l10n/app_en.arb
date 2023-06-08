@@ -102,5 +102,8 @@
   "change":"Change",
   "areYouSureToDeleteAccount":"Are you sure to DELETE Account?",
   "sendOtp":"Send OTP",
+  "applyDiscount":"Apply Discount",
+  "enterCode":"Enter code",
+  "apply":"Apply",
   "areYouSureToLogOut":"Are you sure to Log out"
 }

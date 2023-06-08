@@ -102,5 +102,8 @@
   "change":"Αλλαγή",
   "areYouSureToDeleteAccount":"Είστε βέβαιοι ότι θέλετε να ΔΙΑΓΡΑΨΕΤΕ Λογαριασμό;",
   "sendOtp":"Αποστολή OTP",
+  "applyDiscount":"Εφαρμόστε Έκπτωση",
+  "enterCode":"Εισάγετε τον κωδικό",
+  "apply":"Ισχύουν",
   "areYouSureToLogOut":"Είστε βέβαιοι ότι θα αποσυνδεθείτε"
 }

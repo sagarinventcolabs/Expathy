@@ -71,8 +71,10 @@ void showSnackBar({
 
 Widget shimmerEffect({required Widget widget}) {
   return Shimmer.fromColors(
-    baseColor: Colors.grey.shade500,
-    highlightColor: Colors.grey.shade400,
+    /* baseColor: Colors.grey.shade500,
+    highlightColor: Colors.grey.shade400,*/
+    baseColor: AppColors.shimmerBaseColor,
+    highlightColor: Colors.white,
     child: widget,
   );
 }
@@ -109,6 +111,10 @@ Future<void> showWarningDialog(
       );
     },
   );
+}
+
+Future<void> closeKeyBoard({required BuildContext context}) async {
+  FocusScope.of(context).unfocus();
 }
 
 Future<void> logOut({BuildContext? context}) async {

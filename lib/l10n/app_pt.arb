@@ -102,5 +102,8 @@
   "change": "Mudar",
   "areYouSureToDeleteAccount": "Tem certeza que deseja EXCLUIR a conta?",
   "sendOtp": "Enviar OTP",
+  "applyDiscount":"Aplicar desconto",
+  "enterCode":"Coloque o código",
+  "apply":"Aplicar",
   "areYouSureToLogOut":"Tem certeza que deseja sair"
 }

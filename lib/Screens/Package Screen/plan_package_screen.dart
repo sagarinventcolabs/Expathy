@@ -1,15 +1,20 @@
 import 'package:expathy/Common%20Widgets/custom_scaffold.dart';
 import 'package:expathy/Common%20Widgets/elevated_button_widget.dart';
 import 'package:expathy/Models/benefits_model.dart';
+import 'package:expathy/Providers/Subscription%20Provider/subscription_provider.dart';
 import 'package:expathy/Screens/Checkout%20Screen/checkout_screen.dart';
 import 'package:expathy/Utils/app_colors.dart';
 import 'package:expathy/Utils/app_fonts.dart';
 import 'package:expathy/Utils/helper_methods.dart';
+import 'package:expathy/Utils/navigation_services.dart';
 import 'package:expathy/Widgets/toolbar_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../Common Widgets/text_widget.dart';
 import '../../Custom Painter /auth_screen_painter.dart';
 import '../../Utils/app_images.dart';
+import '../../Widgets/skeleton_widget.dart';
 import '../../Widgets/svg_picture.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -20,7 +25,8 @@ class PlanPackageScreen extends StatefulWidget {
   State<PlanPackageScreen> createState() => _PlanPackageScreenState();
 }
 
-class _PlanPackageScreenState extends State<PlanPackageScreen> {
+class _PlanPackageScreenState extends State<PlanPackageScreen>
+    with SingleTickerProviderStateMixin {
   List<BenefitsModel> benefitsList = [
     BenefitsModel(
       heading: 'Cancel & Reschedule',
@@ -39,11 +45,28 @@ class _PlanPackageScreenState extends State<PlanPackageScreen> {
       description: '50 minutes for video session',
     ),
   ];
-
   String dropdownValue = 'EURO';
+  TabController? tabController;
+
+  @override
+  void initState() {
+    context
+        .read<SubscriptionProvider>()
+        .fetchSubscriptionListApi(context: context);
+    tabController = TabController(length: 3, vsync: this);
+    tabController?.addListener(_getActiveTabIndex);
+    super.initState();
+  }
+
+  void _getActiveTabIndex() {
+    context
+        .read<SubscriptionProvider>()
+        .filterPlan(index: tabController?.index ?? 0);
+  }
 
   @override
   Widget build(BuildContext context) {
+    final subscriptionProvider = context.read<SubscriptionProvider>();
     return DefaultTabController(
       length: 3,
       child: CustomScaffold(
@@ -54,10 +77,9 @@ class _PlanPackageScreenState extends State<PlanPackageScreen> {
             child: Stack(
               children: [
                 CustomPaint(
-                  size: Size(
-                      deviceWidth(context),
-                      (deviceHeight(context) * 0.60)
-                          .toDouble()), //You can Replace [WIDTH] with your desired width for Custom Paint and height will be calculated automatically
+                  size: Size(deviceWidth(context),
+                      (deviceHeight(context) * 0.60).toDouble()),
+                  //You can Replace [WIDTH] with your desired width for Custom Paint and height will be calculated automatically
                   painter: AuthScreenPainter(),
                 ),
                 Padding(
@@ -115,12 +137,12 @@ class _PlanPackageScreenState extends State<PlanPackageScreen> {
                                 'EURO',
                                 'IND',
                                 'USD',
-                                'DINAR'
                               ].map<DropdownMenuItem<String>>((String value) {
                                 return DropdownMenuItem<String>(
                                   value: value,
                                   child: TextWidget(
-                                    text: '€ $value',
+                                    text:
+                                        '${value == 'EURO' ? '€' : value == 'IND' ? '₹' : '\$'} $value',
                                     fontSize: 14,
                                     fontFamily: AppFonts.poppins,
                                     fontWeight: FontWeight.w400,
@@ -141,44 +163,79 @@ class _PlanPackageScreenState extends State<PlanPackageScreen> {
                         ),
                       ),
                       heightGap(10),
-                      Container(
-                        height: 48,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          color: AppColors.white,
-                        ),
-                        child: TabBar(
-                          padding: const EdgeInsets.all(4),
-                          indicatorColor: Colors.transparent,
-                          labelColor: AppColors.white,
-                          unselectedLabelColor: AppColors.greyText,
-                          labelStyle: const TextStyle(
-                            fontSize: 18,
-                            fontFamily: AppFonts.poppins,
-                            fontWeight: FontWeight.w400,
-                          ),
-                          unselectedLabelStyle: const TextStyle(
-                            fontSize: 18,
-                            fontFamily: AppFonts.poppins,
-                            fontWeight: FontWeight.w400,
-                          ),
-                          indicator: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: AppColors.green,
-                          ),
-                          tabs: [
-                            Tab(
-                              text: AppLocalizations.of(context)!.bronze,
+                      Consumer<SubscriptionProvider>(
+                        builder: (context, value, child) {
+                          return Container(
+                            height: 48,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              color: AppColors.white,
                             ),
-                            Tab(
-                              text: AppLocalizations.of(context)!.gold,
+                            child: TabBar(
+                              controller: tabController,
+                              padding: const EdgeInsets.all(4),
+                              indicatorColor: Colors.transparent,
+                              labelColor: AppColors.white,
+                              unselectedLabelColor: AppColors.greyText,
+                              onTap: (value) {
+                                subscriptionProvider.filterPlan(index: value);
+                              },
+                              labelStyle: const TextStyle(
+                                fontSize: 18,
+                                fontFamily: AppFonts.poppins,
+                                fontWeight: FontWeight.w400,
+                              ),
+                              unselectedLabelStyle: const TextStyle(
+                                fontSize: 18,
+                                fontFamily: AppFonts.poppins,
+                                fontWeight: FontWeight.w400,
+                              ),
+                              indicator: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                color: value.fetchingSubscription
+                                    ? AppColors.white
+                                    : AppColors.green,
+                              ),
+                              tabs: [
+                                value.fetchingSubscription
+                                    ? shimmerEffect(
+                                        widget: const SkeletonWidget(
+                                        radius: 12,
+                                        height: 48,
+                                        width: double.infinity,
+                                      ))
+                                    : Tab(
+                                        text: AppLocalizations.of(context)!
+                                            .bronze,
+                                      ),
+                                value.fetchingSubscription
+                                    ? shimmerEffect(
+                                        widget: const SkeletonWidget(
+                                        radius: 12,
+                                        height: 48,
+                                        width: double.infinity,
+                                      ))
+                                    : Tab(
+                                        text:
+                                            AppLocalizations.of(context)!.gold,
+                                      ),
+                                value.fetchingSubscription
+                                    ? shimmerEffect(
+                                        widget: const SkeletonWidget(
+                                        radius: 12,
+                                        height: 48,
+                                        width: double.infinity,
+                                      ))
+                                    : Tab(
+                                        text: AppLocalizations.of(context)!
+                                            .silver,
+                                      )
+                              ],
                             ),
-                            Tab(
-                              text: AppLocalizations.of(context)!.silver,
-                            )
-                          ],
-                        ),
+                          );
+                        },
                       ),
+
                       heightGap(16),
                       Flexible(
                         child: Container(
@@ -186,21 +243,32 @@ class _PlanPackageScreenState extends State<PlanPackageScreen> {
                             borderRadius: BorderRadius.circular(12),
                             color: AppColors.white,
                           ),
-                          child: TabBarView(
-                            children: [
-                              planItem(
-                                  amount: '39.99',
-                                  saveAmount: '100',
-                                  session: '4'),
-                              planItem(
-                                  amount: '29.99',
-                                  saveAmount: '100',
-                                  session: '24'),
-                              planItem(
-                                  amount: '39.99',
-                                  saveAmount: '100',
-                                  session: '12'),
-                            ],
+                          child: Consumer<SubscriptionProvider>(
+                            builder: (context, value, child) {
+                              final plan = value.plan;
+                              return value.fetchingSubscription
+                                  ? loadingShimmer()
+                                  : TabBarView(
+                                      controller: tabController,
+                                      children: [
+                                        planItem(
+                                          amount: plan?.price.toString(),
+                                          saveAmount: '100',
+                                          session: plan?.session.toString(),
+                                        ),
+                                        planItem(
+                                          amount: plan?.price.toString(),
+                                          saveAmount: '100',
+                                          session: plan?.session.toString(),
+                                        ),
+                                        planItem(
+                                          amount: plan?.price.toString(),
+                                          saveAmount: '100',
+                                          session: plan?.session.toString(),
+                                        ),
+                                      ],
+                                    );
+                            },
                           ),
                         ),
                       ),
@@ -212,45 +280,89 @@ class _PlanPackageScreenState extends State<PlanPackageScreen> {
                   bottom: 0,
                   left: 0,
                   right: 0,
-                  child: Container(
-                    decoration: const BoxDecoration(
-                        color: AppColors.white,
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            topRight: Radius.circular(20))),
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
-                                TextWidget(
-                                  text: '24 Sessions in 6 months',
-                                  fontFamily: AppFonts.poppins,
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 14,
+                  child: Consumer<SubscriptionProvider>(
+                    builder: (context, value, child) {
+                      final plan = value.plan;
+                      return Container(
+                        decoration: const BoxDecoration(
+                            color: AppColors.white,
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(20),
+                                topRight: Radius.circular(20))),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: value.fetchingSubscription
+                              ? Row(
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          shimmerEffect(
+                                            widget: const SkeletonWidget(
+                                              radius: 0,
+                                              height: 10,
+                                            ),
+                                          ),
+                                          heightGap(10),
+                                          shimmerEffect(
+                                            widget: const SkeletonWidget(
+                                              radius: 0,
+                                              height: 20,
+                                              width: 60,
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    widthGap(20),
+                                    Expanded(
+                                      child: shimmerEffect(
+                                        widget: const SkeletonWidget(
+                                          radius: 8,
+                                          height: 48,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : Row(
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          TextWidget(
+                                            text:
+                                                '${plan?.session ?? ''} Sessions in 1 months',
+                                            fontFamily: AppFonts.poppins,
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 14,
+                                          ),
+                                          TextWidget(
+                                            text:
+                                                '${dropdownValue == 'EURO' ? '€' : dropdownValue == 'IND' ? '₹' : '\$'} ${plan?.totalPrice ?? ''}',
+                                            fontFamily: AppFonts.poppins,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 22,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    ElevatedButtonWidget(
+                                        onPressed: () {
+                                          NavigationServices.push(
+                                              context: context,
+                                              screen: const CheckoutScreen());
+                                        },
+                                        text: 'Purchased'),
+                                  ],
                                 ),
-                                TextWidget(
-                                  text: '€ 719.16',
-                                  fontFamily: AppFonts.poppins,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 22,
-                                ),
-                              ],
-                            ),
-                          ),
-                          ElevatedButtonWidget(
-                              onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => const CheckoutScreen(),
-                                ));
-                              },
-                              text: 'Purchased'),
-                        ],
-                      ),
-                    ),
+                        ),
+                      );
+                    },
                   ),
                 ),
                 /* Positioned(
@@ -327,19 +439,23 @@ class _PlanPackageScreenState extends State<PlanPackageScreen> {
               child: Column(
                 children: [
                   Row(mainAxisSize: MainAxisSize.min, children: [
-                    const TextWidget(
-                      text: '€',
+                    TextWidget(
+                      text: dropdownValue == 'EURO'
+                          ? '€'
+                          : dropdownValue == 'IND'
+                              ? '₹'
+                              : '\$',
                       fontSize: 42,
                       fontWeight: FontWeight.w600,
                       fontFamily: AppFonts.poppins,
                     ),
-                    /* TextWidget(
+                    TextWidget(
                       text: amount ?? '',
                       fontSize: 42,
                       fontWeight: FontWeight.w600,
                       fontFamily: AppFonts.poppins,
-                    )*/
-                    Column(children: [
+                    )
+                    /*  Column(children: [
                       RichText(
                         text: TextSpan(
                           style: const TextStyle(
@@ -368,7 +484,7 @@ class _PlanPackageScreenState extends State<PlanPackageScreen> {
                           ],
                         ),
                       )
-                    ]),
+                    ]),*/
                   ]),
                   const TextWidget(
                     text: 'per session',
@@ -465,6 +581,27 @@ class _PlanPackageScreenState extends State<PlanPackageScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget loadingShimmer() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20),
+      child: ListView.separated(
+        itemCount: 10,
+        itemBuilder: (context, index) {
+          return shimmerEffect(
+            widget: const SkeletonWidget(
+              radius: 8,
+              height: 60,
+              width: double.infinity,
+            ),
+          );
+        },
+        separatorBuilder: (BuildContext context, int index) {
+          return heightGap(10);
+        },
       ),
     );
   }

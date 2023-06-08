@@ -40,7 +40,7 @@ class RemoteService {
         'Authorization': 'Bearer ${authToken ?? ""}',
       };
       final response =
-          await http.get(Uri.parse('$BASE_URL$url'), headers: header);
+      await http.get(Uri.parse('$BASE_URL$url'), headers: header);
       log('Api response >>> : ${response.body.toString()}');
       log('Api response >>> : ${response.statusCode.toString()}');
       responseJson = _returnResponse(response);
@@ -58,7 +58,8 @@ class RemoteService {
           context: navigatorKey!.currentContext,
           isSuccess: false,
           message:
-              '${exceptionData['message'].toString()} ${exceptionData['status'].toString()}');
+          '${exceptionData['message'].toString()} ${exceptionData['status']
+              .toString()}');
       if (exceptionData['message'].toString() == 'jwt expired') {
         logOut(context: navigatorKey!.currentContext);
       }
@@ -67,6 +68,49 @@ class RemoteService {
 
     return responseJson;
   }
+
+  Future<http.Response?> callPutApi({
+    required String url,
+  }) async {
+    http.Response? responseJson;
+    try {
+      var authToken = await getAuthToken();
+      var osType = await getOsType();
+      var header = <String, String>{
+        'Content-Type': 'application/json',
+        'device_type': osType ?? 'mobile',
+        'Authorization': 'Bearer ${authToken ?? ""}',
+      };
+      final response =
+      await http.put(Uri.parse('$BASE_URL$url'), headers: header);
+      log('Api response >>> : ${response.body.toString()}');
+      log('Api response >>> : ${response.statusCode.toString()}');
+      responseJson = _returnResponse(response);
+      log('Api header : $header');
+    } on SocketException catch (exception) {
+      showSnackBar(
+          context: navigatorKey!.currentContext,
+          isSuccess: false,
+          message: exception.message.toString());
+      throw NoInternetException('No Internet');
+    } catch (e) {
+      log('main catch error $e');
+      final exceptionData = jsonDecode(e.toString());
+      showSnackBar(
+          context: navigatorKey!.currentContext,
+          isSuccess: false,
+          message:
+          '${exceptionData['message'].toString()} ${exceptionData['status']
+              .toString()}');
+      if (exceptionData['message'].toString() == 'jwt expired') {
+        logOut(context: navigatorKey!.currentContext);
+      }
+    }
+    log('Api Url : $BASE_URL$url');
+
+    return responseJson;
+  }
+
 
   Future<http.Response?> callPostApi({
     required String url,
@@ -96,7 +140,8 @@ class RemoteService {
           context: navigatorKey!.currentContext,
           isSuccess: false,
           message:
-              '${exceptionData['message'].toString()} ${exceptionData['status'].toString()}');
+          '${exceptionData['message'].toString()} ${exceptionData['status']
+              .toString()}');
       if (exceptionData['message'].toString() == 'jwt expired') {
         logOut(context: navigatorKey!.currentContext);
       }
@@ -124,7 +169,8 @@ class RemoteService {
         throw FetchDataException(response.body.toString());
       default:
         throw FetchDataException(
-            'Error occurred while Communication with Server with StatusCode : ${response.statusCode}');
+            'Error occurred while Communication with Server with StatusCode : ${response
+                .statusCode}');
     }
   }
 }

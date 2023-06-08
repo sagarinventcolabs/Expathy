@@ -1,4 +1,5 @@
 import 'package:expathy/Utils/helper_methods.dart';
+import 'package:expathy/Utils/navigation_services.dart';
 import 'package:flutter/material.dart';
 import '../Common Widgets/elevated_button_widget.dart';
 import '../Common Widgets/text_widget.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ActivePlanItem extends StatefulWidget {
   final bool isFreePlan;
+
   const ActivePlanItem({Key? key, this.isFreePlan = true}) : super(key: key);
 
   @override
@@ -107,11 +109,8 @@ class _ActivePlanItemState extends State<ActivePlanItem> {
                   ),
                 ElevatedButtonWidget(
                   onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const PlanPackageScreen(),
-                      ),
-                    );
+                    NavigationServices.push(
+                        context: context, screen: const PlanPackageScreen());
                   },
                   primary: AppColors.yellow,
                   text: AppLocalizations.of(context)!.upgrade,

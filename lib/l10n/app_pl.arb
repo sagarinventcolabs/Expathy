@@ -102,5 +102,8 @@
   "change": "Zmiana",
   "areYouSureToDeleteAccount": "Czy na pewno USUNĄĆ konto?",
   "sendOtp": "Wyślij hasło jednorazowe",
+  "applyDiscount":"Zastosuj rabat",
+  "enterCode":"Wprowadź kod",
+  "apply":"Stosować",
   "areYouSureToLogOut":"Czy na pewno chcesz się wylogować"
 }

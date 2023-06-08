@@ -102,5 +102,8 @@
   "change": "Ändern",
   "areYouSureToDeleteAccount": "Sind Sie sicher, dass Sie das Konto LÖSCHEN?",
   "sendOtp": "OTP senden",
+  "applyDiscount":"Rabatt anwenden",
+  "enterCode":"Code eingeben",
+  "apply":"Anwenden",
   "areYouSureToLogOut":"Sind Sie sicher, dass Sie sich abmelden?"
 }

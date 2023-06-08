@@ -102,5 +102,8 @@
    "change":"Промяна",
    "areYouSureToDeleteAccount": "Сигурни ли сте, че ИЗТРИВАТЕ акаунта?",
    "sendOtp":"Изпращане на OTP",
+   "applyDiscount":"Прилагане на отстъпка",
+   "enterCode":"Въведете кода",
+   "apply":"Приложи",
    "areYouSureToLogOut":"Сигурни ли сте, че излизате"
 }

@@ -1,3 +1,4 @@
+import 'package:expathy/Utils/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class SkeletonWidget extends StatelessWidget {
@@ -10,6 +11,7 @@ class SkeletonWidget extends StatelessWidget {
   final double? leftMargin;
   final double? rightMargin;
   final Widget? child;
+
   const SkeletonWidget(
       {Key? key,
       this.radius,
@@ -19,7 +21,8 @@ class SkeletonWidget extends StatelessWidget {
       this.topMargin,
       this.bottomMargin,
       this.leftMargin,
-      this.rightMargin, this.child})
+      this.rightMargin,
+      this.child})
       : super(key: key);
 
   @override
@@ -34,7 +37,7 @@ class SkeletonWidget extends StatelessWidget {
           bottom: bottomMargin ?? 0.0),
       padding: EdgeInsets.all(padding ?? 0.0),
       decoration: BoxDecoration(
-          color: Colors.black,
+          color: AppColors.borderColor,
           borderRadius: BorderRadius.circular(radius ?? 0.0)),
       child: child,
     );

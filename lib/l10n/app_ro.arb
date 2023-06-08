@@ -102,5 +102,8 @@
   "change": "Schimbare",
   "areYouSureToDeleteAccount": "Sunteți sigur că ȘTERGEȚI contul?",
   "sendOtp": "Trimite OTP",
+  "applyDiscount":"Aplică Reducerea",
+  "enterCode":"Introdu codul",
+  "apply":"aplica",
   "areYouSureToLogOut":"Sunteți sigur că vă deconectați"
 }

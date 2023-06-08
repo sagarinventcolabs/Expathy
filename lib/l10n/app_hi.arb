@@ -102,5 +102,8 @@
   "change": "बदलें",
   "areYouSureToDeleteAccount": "क्या आप वाकई खाता हटाना चाहते हैं?",
   "sendOtp":"OTP भेजें",
+  "applyDiscount":"छूट लागू करें",
+  "enterCode":"कोड दर्ज करें",
+  "apply":"आवेदन करना",
   "areYouSureToLogOut":"क्या आप सुनिश्चित हैं कि लॉग आउट करें"
 }

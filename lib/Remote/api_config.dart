@@ -14,6 +14,8 @@ String eForgotPassword = 'app/auth/forget-password';
 String eUpdateProfile = 'app/user/update-profile';
 String eChangePassword = 'app/user/change-password';
 String eDeleteAccount = 'app/user/delete-account';
+String eGetPsychologistDetail = 'app/user/get-psychologist-detail';
+String eApplyDiscount = 'app/user/apply-discount';
 
 ///common
 String eLanguageList = 'common/language-list';
@@ -23,3 +25,6 @@ String eQuestionList = 'app/question/question-list';
 String ePsychologistList = 'app/user/psychologist-list';
 String eSubmitQuestionAnswer = 'app/question/submit-question-answer';
 String eGetContent = 'common/get-content';
+
+///psychologist
+String eSubscriptionList = 'app/psychologist/subscription-list';

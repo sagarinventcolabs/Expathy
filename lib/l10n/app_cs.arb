@@ -102,5 +102,8 @@
   "change":"Změna",
   "areYouSureToDeleteAccount":"Opravdu chcete VYMAZAT účet?",
   "sendOtp":"Odeslat jednorázové heslo",
+  "applyDiscount":"Uplatněte slevu",
+  "enterCode":"Zadejte kód",
+  "apply":"Aplikovat",
   "areYouSureToLogOut":"Jste si jisti, že se odhlásíte?"
 }

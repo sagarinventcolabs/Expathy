@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class NavigationServices {
   static Future<void> push(
-      {BuildContext? context, required Widget screen}) async {
-    Navigator.of(context!).push(
+      {required BuildContext context, required Widget screen}) async {
+    Navigator.of(context).push(
       PageRouteBuilder(
           pageBuilder: (context, animation, anotherAnimation) {
             return screen;

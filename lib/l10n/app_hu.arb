@@ -102,5 +102,8 @@
   "change":"Változás",
   "areYouSureToDeleteAccount":"Biztosan TÖRLÉS FIÓKOT?",
   "sendOtp":"OTP küldése",
+  "applyDiscount":"Kedvezmény alkalmazása",
+  "enterCode":"Írja be a kódot",
+  "apply":"Alkalmaz",
   "areYouSureToLogOut":"Biztosan kijelentkezik"
 }

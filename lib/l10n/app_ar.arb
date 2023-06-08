@@ -102,5 +102,8 @@
   "change": "تغيير",
   "areYouSureToDeleteAccount": "هل أنت متأكد من حذف الحساب؟",
   "sendOtp":"أرسل OTP",
+  "applyDiscount":"تطبيق الخصم",
+  "enterCode":"ادخل الرمز",
+  "apply":"يتقدم",
   "areYouSureToLogOut":"هل أنت متأكد من تسجيل الخروج"
 }

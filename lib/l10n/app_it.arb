@@ -102,5 +102,8 @@
   "change":"Modifica",
   "areYouSureToDeleteAccount":"Sei sicuro di CANCELLARE l'account?",
   "sendOtp":"Invia OTP",
+  "applyDiscount":"Applica lo sconto",
+  "enterCode":"Inserisci il codice",
+  "apply":"Fare domanda a",
   "areYouSureToLogOut":"Sei sicuro di uscire"
 }

@@ -102,5 +102,8 @@
   "change":"Promijeniti",
   "areYouSureToDeleteAccount": "Jeste li sigurni da IZBRIŠETE račun?",
   "sendOtp":"Pošalji OTP",
+  "applyDiscount":"Primijeni popust",
+  "enterCode":"Unesite kod",
+  "apply":"primijeniti",
   "areYouSureToLogOut":"Jeste li sigurni da se odjavljujete"
 }

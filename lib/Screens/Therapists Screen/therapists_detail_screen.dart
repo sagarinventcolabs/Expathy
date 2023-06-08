@@ -1,5 +1,6 @@
 import 'package:expathy/Common%20Widgets/custom_scaffold.dart';
 import 'package:expathy/Common%20Widgets/text_widget.dart';
+import 'package:expathy/Providers/Psychologists%20Provider/psychologists_provider.dart';
 import 'package:expathy/Screens/Articles%20Screen/all_articles_screen.dart';
 import 'package:expathy/Screens/Package%20Screen/plan_package_screen.dart';
 import 'package:expathy/Utils/app_images.dart';
@@ -9,6 +10,7 @@ import 'package:expathy/Widgets/underline_text_widget.dart';
 import 'package:expathy/Widgets/view_all_row_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../Common Widgets/elevated_button_widget.dart';
 import '../../Models/article_model.dart';
@@ -68,6 +70,14 @@ class _TherapistsDetailScreenState extends State<TherapistsDetailScreen> {
       date: '4 April 2023, Tuesday',
     ),
   ];
+
+  @override
+  void initState() {
+    context.read<PsychologistsProvider>().fetchPsychologistsDetailApi(
+        context: context,
+        psychologistId: widget.psychologist?.id.toString() ?? '');
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -256,7 +266,7 @@ class _TherapistsDetailScreenState extends State<TherapistsDetailScreen> {
                       viewAllColor: AppColors.blue),
                   heightGap(8),
                   SizedBox(
-                    height: 270,
+                    height: 220,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: articleList.length,

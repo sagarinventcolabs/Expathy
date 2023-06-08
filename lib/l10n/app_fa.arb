@@ -102,5 +102,8 @@
   "change": "Feroarje",
   "areYouSureToDeleteAccount": "Binne jo wis dat jo akkount WISJE?",
   "sendOtp":"Stjoer OTP",
+  "applyDiscount":"Oanfreegje koarting",
+  "enterCode":"Fier koade yn",
+  "apply":"Tapasse",
   "areYouSureToLogOut":"آیا مطمئن هستید که از سیستم خارج می شوید"
 }

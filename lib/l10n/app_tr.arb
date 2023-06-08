@@ -102,5 +102,8 @@
   "change":"Değiştir",
   "areYouSureToDeleteAccount":"Hesabı SİLMEK istediğinizden emin misiniz?",
   "sendOtp":"OTP gönder",
+  "applyDiscount":"İndirim Uygula",
+  "enterCode":"Kodu girin",
+  "apply":"Uygula",
   "areYouSureToLogOut":"Oturumu kapatacağınızdan emin misiniz?"
 }
