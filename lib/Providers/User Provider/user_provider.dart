@@ -1,10 +1,14 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 import 'package:expathy/Models/common_model.dart';
 import 'package:expathy/Models/update_profile_model.dart';
 import 'package:expathy/Providers/Language%20Provider/language_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../Models/dashboard_model.dart';
+import '../../Models/get_profile_model.dart';
+import '../../Models/image_upload_model.dart';
 import '../../Remote/api_config.dart';
 import '../../Remote/remote_service.dart';
 import '../../Screens/Bottom Bar Screen/bottom_bar_screen.dart';
@@ -15,12 +19,20 @@ import '../../main.dart';
 
 class UserProvider with ChangeNotifier {
   bool showLoadingIndicator = false;
+  bool dashboardFetching = false;
+  DashboardModel? dashboardData;
+  bool profileLoading = false;
+  GetProfileModel? profileData;
+  bool profileImageUploading = false;
+  String? profileImageUrl;
 
   Future<UpdateProfileModel?> updateProfileApi(
       {String? language,
       String? languageId,
       String? userName,
       String? therapistsId,
+      String? profilePic,
+      String? age,
       bool isFromSelectTherapistScreen = false,
       bool isFromChangeLanguageScreen = false,
       bool isFromEditProfileScreen = false,
@@ -31,6 +43,8 @@ class UserProvider with ChangeNotifier {
       "languageId": languageId,
       "name": userName,
       "therapists": therapistsId,
+      "profilePic": profilePic,
+      "age": age,
     });
     if (data != null) {
       final updateProfileResponse =
@@ -100,6 +114,7 @@ class UserProvider with ChangeNotifier {
         if (deleteAccountResponse.status == 200) {
           showLoadingIndicator = false;
           Navigator.of(context).pop();
+          logOut(context: context);
           showSnackBar(
               isSuccess: false,
               message: deleteAccountResponse.message,
@@ -128,6 +143,112 @@ class UserProvider with ChangeNotifier {
       Navigator.of(context).pop();
     }
 
+    notifyListeners();
+    return null;
+  }
+
+  Future<DashboardModel?> dashboardApi(
+      {required BuildContext context,
+      String? lat,
+      String? long,
+      String? address}) async {
+    dashboardFetching = true;
+    final data = await RemoteService().callGetApi(
+      url: '$eDashboard?latitude=26&longitude=25&address=bjhhvvvvvv',
+    );
+    if (data != null) {
+      final dashboardResponse = DashboardModel.fromJson(jsonDecode(data.body));
+      if (context.mounted) {
+        if (dashboardResponse.status == 200) {
+          dashboardData = dashboardResponse;
+          showSnackBar(message: dashboardResponse.statusText, context: context);
+        } else if (dashboardResponse.status == 404) {
+          showSnackBar(
+              isSuccess: false,
+              message: dashboardResponse.statusText,
+              context: context);
+        } else if (dashboardResponse.status == 400) {
+          showSnackBar(
+              isSuccess: false,
+              message: dashboardResponse.statusText,
+              context: context);
+        }
+      }
+      dashboardFetching = false;
+      notifyListeners();
+      return dashboardResponse;
+    }
+    dashboardFetching = false;
+    notifyListeners();
+    return null;
+  }
+
+  Future<ImageUploadModel?> imageUploadApi(
+      {required BuildContext context, required File file}) async {
+    profileImageUploading = true;
+    notifyListeners();
+    final data = await RemoteService().callMultipartApi(
+      url: eImageUpload,
+      requestBody: {},
+      file: file,
+      fileParamName: 'image',
+    );
+    if (data != null) {
+      final imageUploadResponse =
+          ImageUploadModel.fromJson(jsonDecode(data.body));
+      if (context.mounted) {
+        if (imageUploadResponse.status == 200) {
+          profileImageUrl = imageUploadResponse.data?.upload;
+        } else if (imageUploadResponse.status == 404) {
+          showSnackBar(
+              isSuccess: false,
+              message: imageUploadResponse.message,
+              context: context);
+        } else if (imageUploadResponse.status == 400) {
+          showSnackBar(
+              isSuccess: false,
+              message: imageUploadResponse.message,
+              context: context);
+        }
+      }
+      profileImageUploading = false;
+      notifyListeners();
+      return imageUploadResponse;
+    }
+    profileImageUploading = false;
+    notifyListeners();
+    return null;
+  }
+
+  Future<GetProfileModel?> getProfileApi(
+      {required BuildContext context}) async {
+    profileLoading = true;
+    final data = await RemoteService().callGetApi(
+      url: eGetProfile,
+    );
+    if (data != null) {
+      final getProfileModel = GetProfileModel.fromJson(jsonDecode(data.body));
+      if (context.mounted) {
+        if (getProfileModel.status == 200) {
+          profileData = getProfileModel;
+          profileImageUrl = getProfileModel.data?.profilePic;
+        } else if (getProfileModel.status == 404) {
+          showSnackBar(
+              isSuccess: false,
+              message: getProfileModel.message,
+              context: context);
+        } else if (getProfileModel.status == 400) {
+          showSnackBar(
+              isSuccess: false,
+              message: getProfileModel.message,
+              context: context);
+        }
+      }
+      profileLoading = false;
+      notifyListeners();
+      return getProfileModel;
+    }
+    profileLoading = false;
     notifyListeners();
     return null;
   }

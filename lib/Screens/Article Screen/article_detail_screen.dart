@@ -1,3 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:expathy/Models/dashboard_model.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../Common Widgets/custom_scaffold.dart';
 import '../../Common Widgets/elevated_button_widget.dart';
@@ -13,7 +16,9 @@ import '../Therapists Screen/therapists_detail_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ArticleDetailScreen extends StatelessWidget {
-  const ArticleDetailScreen({Key? key}) : super(key: key);
+  final Articles? article;
+
+  const ArticleDetailScreen({Key? key, this.article}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +92,7 @@ class ArticleDetailScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          ClipRRect(
+                          /* ClipRRect(
                             borderRadius: BorderRadius.circular(12),
                             child: SizedBox(
                               width: double.infinity,
@@ -97,24 +102,56 @@ class ArticleDetailScreen extends StatelessWidget {
                                 fit: BoxFit.cover,
                               ),
                             ),
+                          ),*/
+                          CachedNetworkImage(
+                            height: 150,
+                            imageUrl: article?.image ?? '',
+                            imageBuilder: (context, imageProvider) => Container(
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: imageProvider,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            placeholder: (context, url) => Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    width: 1, color: AppColors.borderColor),
+                                borderRadius: BorderRadius.circular(100),
+                              ),
+                              child: const Center(
+                                  child: CupertinoActivityIndicator()),
+                            ),
+                            errorWidget: (context, url, error) => Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    width: 1, color: AppColors.borderColor),
+                                borderRadius: BorderRadius.circular(100),
+                              ),
+                              child: const Center(
+                                  child: Icon(
+                                Icons.person,
+                                color: AppColors.green,
+                              )),
+                            ),
                           ),
-                          const TextWidget(
-                            text:
-                                'From Panic to Peace: A Guide to Navigating and Conquering Panic Attacks',
+                          TextWidget(
+                            text: article?.content ?? '',
                             fontSize: 16,
                             fontFamily: AppFonts.poppins,
                             fontWeight: FontWeight.w500,
                           ),
                           heightGap(6),
-                          const TextWidget(
-                            text: '4 April 2023, Tuesday',
+                          TextWidget(
+                            text: article?.createdAt ?? '',
                             fontSize: 12,
                             fontFamily: AppFonts.poppins,
                             fontWeight: FontWeight.w400,
                           ),
                           heightGap(10),
-                          const TextWidget(
-                            text: 'Demystifying Panic Attacks',
+                          TextWidget(
+                            text: article?.title ?? '',
                             fontSize: 19,
                             fontFamily: AppFonts.poppins,
                             fontWeight: FontWeight.w500,

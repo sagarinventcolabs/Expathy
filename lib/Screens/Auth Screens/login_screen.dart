@@ -38,6 +38,12 @@ class _LoginScreenState extends State<LoginScreen> {
         sharedPrefs?.getString(AppStrings.rememberMeEmail) ?? '';
     passwordController.text =
         sharedPrefs?.getString(AppStrings.rememberMePassword) ?? '';
+    if (AppStrings.rememberMeEmail != null ||
+        AppStrings.rememberMeEmail != '') {
+      setState(() {
+        isRememberMeCheckBoxChecked = true;
+      });
+    }
     super.initState();
   }
 
@@ -51,7 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     AuthProvider authProvider =
-        Provider.of<AuthProvider>(context, listen: false);
+    Provider.of<AuthProvider>(context, listen: false);
     return WillPopScope(
       onWillPop: () =>
           Future.value(authProvider.showLoadingIndicator ? false : true),
@@ -95,12 +101,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                 key: _formKey,
                                 child: Column(
                                   crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
+                                  CrossAxisAlignment.stretch,
                                   children: [
                                     Center(
                                       child: TextWidget(
                                         text:
-                                            AppLocalizations.of(context)!.login,
+                                        AppLocalizations.of(context)!.login,
                                         color: AppColors.black,
                                         fontSize: 28,
                                         fontFamily: AppFonts.poppins,
@@ -110,7 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     heightGap(16),
                                     TextFormFieldWidget(
                                       hintText:
-                                          AppLocalizations.of(context)!.email,
+                                      AppLocalizations.of(context)!.email,
                                       controller: emailController,
                                       keyboardType: TextInputType.emailAddress,
                                       validator: (value) {
@@ -128,11 +134,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                       builder: (context, value, child) {
                                         return TextFormFieldWidget(
                                           hintText:
-                                              AppLocalizations.of(context)!
-                                                  .password,
+                                          AppLocalizations.of(context)!
+                                              .password,
                                           controller: passwordController,
                                           obscureText:
-                                              value.passwordObSecureLogin,
+                                          value.passwordObSecureLogin,
                                           isPassword: true,
                                           validator: (value) {
                                             if (value!.isEmpty) {
@@ -163,16 +169,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                             Navigator.of(context)
                                                 .push(MaterialPageRoute(
                                               builder: (context) =>
-                                                  const ForgotPasswordScreen(),
+                                              const ForgotPasswordScreen(),
                                             ));
                                           },
                                           child: TextWidget(
                                               text:
-                                                  AppLocalizations.of(context)!
-                                                      .forgotPassword,
+                                              AppLocalizations.of(context)!
+                                                  .forgotPassword,
                                               color: AppColors.blue,
                                               decoration:
-                                                  TextDecoration.underline),
+                                              TextDecoration.underline),
                                         ),
                                       ],
                                     ),
@@ -181,26 +187,26 @@ class _LoginScreenState extends State<LoginScreen> {
                                       builder: (context, value, child) {
                                         return value.showLoadingIndicator
                                             ? const Center(
-                                                child:
-                                                    CupertinoActivityIndicator(),
-                                              )
+                                          child:
+                                          CupertinoActivityIndicator(),
+                                        )
                                             : Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal:
-                                                        deviceWidth(context) *
-                                                            0.10),
-                                                child: ElevatedButtonWidget(
-                                                    onPressed: () async {
-                                                      FocusScope.of(context)
-                                                          .unfocus();
-                                                      await callLoginApi(
-                                                          authProvider:
-                                                              authProvider);
-                                                    },
-                                                    text: AppLocalizations.of(
-                                                            context)!
-                                                        .login),
-                                              );
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal:
+                                              deviceWidth(context) *
+                                                  0.10),
+                                          child: ElevatedButtonWidget(
+                                              onPressed: () async {
+                                                FocusScope.of(context)
+                                                    .unfocus();
+                                                await callLoginApi(
+                                                    authProvider:
+                                                    authProvider);
+                                              },
+                                              text: AppLocalizations.of(
+                                                  context)!
+                                                  .login),
+                                        );
                                       },
                                     ),
                                     heightGap(20),
@@ -275,13 +281,12 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget conditionWidget(
-      {bool showCheckBox = true,
-      String? title,
-      Key? key,
-      String? heading,
-      TextAlign textAlign = TextAlign.start,
-      TextDecoration decoration = TextDecoration.none}) {
+  Widget conditionWidget({bool showCheckBox = true,
+    String? title,
+    Key? key,
+    String? heading,
+    TextAlign textAlign = TextAlign.start,
+    TextDecoration decoration = TextDecoration.none}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -325,13 +330,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextSpan(
                   text: heading ?? '',
                   style:
-                      TextStyle(color: AppColors.blue, decoration: decoration),
+                  TextStyle(color: AppColors.blue, decoration: decoration),
                   recognizer: TapGestureRecognizer()
-                    ..onTap = () => Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const SignUpScreen(),
-                        )),
+                    ..onTap = () =>
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const SignUpScreen(),
+                            )),
                 ),
               ],
             ),

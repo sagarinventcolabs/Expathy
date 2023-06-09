@@ -38,7 +38,7 @@ class TherapistsListItem extends StatelessWidget {
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) =>
-                    TherapistsDetailScreen(psychologist: psychologist),
+                    TherapistsDetailScreen(psychologistId: psychologist?.id),
               ));
             },
             showGreenIcon: false,

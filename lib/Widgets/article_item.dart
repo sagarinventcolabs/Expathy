@@ -1,13 +1,16 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../Common Widgets/text_widget.dart';
 import '../Models/article_model.dart';
+import '../Models/dashboard_model.dart';
 import '../Utils/app_colors.dart';
 import '../Utils/app_fonts.dart';
 import '../Utils/helper_methods.dart';
 
 class ArticleItem extends StatelessWidget {
-  final ArticleModel? articleData;
+  final Articles? articleData;
   final bool isFromAllArticleScreen;
 
   const ArticleItem(
@@ -77,7 +80,7 @@ class ArticleItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          ClipRRect(
+          /*ClipRRect(
             borderRadius: const BorderRadius.only(
               topRight: Radius.circular(12),
               topLeft: Radius.circular(12),
@@ -85,10 +88,44 @@ class ArticleItem extends StatelessWidget {
             child: SizedBox(
               height: 120,
               width: double.infinity,
-              child: Image.asset(
+              child: Image.network(
                 articleData?.image ?? '',
                 fit: BoxFit.cover,
               ),
+            ),
+          ),*/
+          CachedNetworkImage(
+            height: 120,
+            imageUrl: articleData?.image ?? '',
+            imageBuilder: (context, imageProvider) => Container(
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.only(
+                  topRight: Radius.circular(12),
+                  topLeft: Radius.circular(12),
+                ),
+                image: DecorationImage(
+                  image: imageProvider,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            placeholder: (context, url) => Container(
+              decoration: BoxDecoration(
+                border: Border.all(width: 1, color: AppColors.borderColor),
+                borderRadius: BorderRadius.circular(100),
+              ),
+              child: const Center(child: CupertinoActivityIndicator()),
+            ),
+            errorWidget: (context, url, error) => Container(
+              decoration: BoxDecoration(
+                border: Border.all(width: 1, color: AppColors.borderColor),
+                borderRadius: BorderRadius.circular(100),
+              ),
+              child: const Center(
+                  child: Icon(
+                Icons.person,
+                color: AppColors.green,
+              )),
             ),
           ),
           Padding(
@@ -98,7 +135,7 @@ class ArticleItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TextWidget(
-                  text: articleData?.description ?? '',
+                  text: articleData?.content ?? '',
                   fontSize: 14,
                   maxLines: 3,
                   color: AppColors.black,
@@ -108,7 +145,7 @@ class ArticleItem extends StatelessWidget {
                 ),
                 heightGap(10),
                 TextWidget(
-                  text: articleData?.date ?? '',
+                  text: articleData?.createdAt ?? '',
                   fontSize: 11,
                   overflow: TextOverflow.ellipsis,
                   color: AppColors.greyText,

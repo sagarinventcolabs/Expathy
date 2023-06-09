@@ -1,5 +1,7 @@
 import 'package:expathy/Common%20Widgets/custom_scaffold.dart';
 import 'package:expathy/Common%20Widgets/elevated_button_widget.dart';
+import 'package:expathy/Providers/Auth%20Provider/auth_provider.dart';
+import 'package:expathy/Providers/User%20Provider/user_provider.dart';
 import 'package:expathy/Screens/Article%20Screen/article_detail_screen.dart';
 import 'package:expathy/Screens/Articles%20Screen/all_articles_screen.dart';
 import 'package:expathy/Screens/Package%20Screen/plan_package_screen.dart';
@@ -15,8 +17,12 @@ import 'package:expathy/Widgets/svg_picture.dart';
 import 'package:expathy/Widgets/upcoming_session_item.dart';
 import 'package:expathy/Widgets/view_all_row_widget.dart';
 import 'package:expathy/main.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../Common Widgets/text_widget.dart';
 import '../../Models/article_model.dart';
@@ -26,6 +32,7 @@ import '../../Utils/app_fonts.dart';
 import '../../Utils/navigation_services.dart';
 import '../../Widgets/active_plan_item.dart';
 import '../../Widgets/article_item.dart';
+import '../../Widgets/skeleton_widget.dart';
 import '../Therapists Screen/therapists_detail_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -48,34 +55,49 @@ class _HomeScreenState extends State<HomeScreen> {
     ArticleModel(
       image: AppImages.ar5,
       description:
-      'From Panic to Peace: A Guide to Navigating and Conquering Panic Attacks',
+          'From Panic to Peace: A Guide to Navigating and Conquering Panic Attacks',
       date: '4 April 2023, Tuesday',
     ),
     ArticleModel(
       image: AppImages.ar2,
       description:
-      'From Panic to Peace: A Guide to Navigating and Conquering Panic Attacks',
+          'From Panic to Peace: A Guide to Navigating and Conquering Panic Attacks',
       date: '4 April 2023, Tuesday',
     ),
     ArticleModel(
       image: AppImages.ar3,
       description:
-      'From Panic to Peace: A Guide to Navigating and Conquering Panic Attacks',
+          'From Panic to Peace: A Guide to Navigating and Conquering Panic Attacks',
       date: '4 April 2023, Tuesday',
     ),
     ArticleModel(
       image: AppImages.ar4,
       description:
-      'From Panic to Peace: A Guide to Navigating and Conquering Panic Attacks',
+          'From Panic to Peace: A Guide to Navigating and Conquering Panic Attacks',
       date: '4 April 2023, Tuesday',
     ),
     ArticleModel(
       image: AppImages.ar1,
       description:
-      'From Panic to Peace: A Guide to Navigating and Conquering Panic Attacks',
+          'From Panic to Peace: A Guide to Navigating and Conquering Panic Attacks',
       date: '4 April 2023, Tuesday',
     ),
   ];
+
+  @override
+  void initState() {
+    context.read<UserProvider>().dashboardApi(context: context);
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() async {
+    final hasPermission = await _handleLocationPermission();
+    if (hasPermission) {
+      await _getCurrentPosition();
+    }
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,519 +108,705 @@ class _HomeScreenState extends State<HomeScreen> {
           height: double.infinity,
           child: Padding(
             padding:
-            const EdgeInsets.only(right: 16.0, left: 16.0, bottom: 0.0),
+                const EdgeInsets.only(right: 16.0, left: 16.0, bottom: 0.0),
             child: SingleChildScrollView(
               clipBehavior: Clip.none,
               physics: const BouncingScrollPhysics(),
               child: Stack(
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Center(
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              width: deviceWidth(context) * 0.40,
-                              height: deviceHeight(context) * 0.15,
-                              child: const SvgPic(
-                                image: AppImages.logoMain,
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                            heightGap(20),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                  Consumer<UserProvider>(
+                    builder: (context, value, child) {
+                      final dashboardData = value.dashboardData?.data;
+                      return value.dashboardFetching
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                TextWidget(
-                                  text:
-                                  '${sharedPrefs?.getString(
-                                      AppStrings.userName) ?? ''}, ',
-                                  textAlign: TextAlign.center,
-                                  fontSize: 22,
-                                  color: AppColors.white,
-                                  fontFamily: AppFonts.poppins,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                Flexible(
-                                  child: TextWidget(
-                                    text: AppLocalizations.of(context)!
-                                        .weAreHereForYou,
-                                    textAlign: TextAlign.center,
-                                    fontSize: 22,
-                                    color: AppColors.white,
-                                    fontFamily: AppFonts.poppins,
-                                    fontWeight: FontWeight.w400,
+                                Center(
+                                  child: Column(
+                                    children: [
+                                      SizedBox(
+                                        width: deviceWidth(context) * 0.40,
+                                        height: deviceHeight(context) * 0.15,
+                                        child: const SvgPic(
+                                          image: AppImages.logoMain,
+                                          fit: BoxFit.contain,
+                                        ),
+                                      ),
+                                      heightGap(20),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          TextWidget(
+                                            text:
+                                                '${sharedPrefs?.getString(AppStrings.userName) ?? ''}, ',
+                                            textAlign: TextAlign.center,
+                                            fontSize: 22,
+                                            color: AppColors.white,
+                                            fontFamily: AppFonts.poppins,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                          Flexible(
+                                            child: TextWidget(
+                                              text:
+                                                  AppLocalizations.of(context)!
+                                                      .weAreHereForYou,
+                                              textAlign: TextAlign.center,
+                                              fontSize: 22,
+                                              color: AppColors.white,
+                                              fontFamily: AppFonts.poppins,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
                                 ),
+                                heightGap(24),
+                                ListView.separated(
+                                  itemCount: 10,
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemBuilder: (context, index) {
+                                    return shimmerEffect(
+                                      widget: const SkeletonWidget(
+                                        radius: 8,
+                                        height: 60,
+                                        width: double.infinity,
+                                      ),
+                                    );
+                                  },
+                                  separatorBuilder:
+                                      (BuildContext context, int index) {
+                                    return heightGap(10);
+                                  },
+                                ),
                               ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      heightGap(24),
-                      TextWidget(
-                        text: AppLocalizations.of(context)!.activePlan,
-                        fontSize: 18,
-                        color: AppColors.white,
-                        fontFamily: AppFonts.poppins,
-                        fontWeight: FontWeight.w400,
-                      ),
-                      heightGap(8),
-                      ActivePlanItem(
-                          isFreePlan:
-                          sharedPrefs?.getBool(AppStrings.isFreePlan) ??
-                              true),
-                      heightGap(24),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextWidget(
-                              text: AppLocalizations.of(context)!.yourTherapist,
-                              fontSize: 18,
-                              color: AppColors.white,
-                              fontFamily: AppFonts.poppins,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                          OutlinedButton.icon(
-                            onPressed: () {
-                              showDialog<void>(
-                                context: context,
-                                barrierDismissible:
-                                true, // user must tap button!
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    content: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                      children: [
-                                        Column(
-                                          children: [
-                                            Lottie.asset(AppImages.warningJson,
-                                                width: 120, height: 120),
-                                            heightGap(5),
-                                            const TextWidget(
-                                              text:
-                                              'Are you sure to change your therapist?',
-                                              fontSize: 20,
-                                              textAlign: TextAlign.center,
-                                              fontFamily: AppFonts.poppins,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ],
+                            )
+                          : Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Center(
+                                  child: Column(
+                                    children: [
+                                      SizedBox(
+                                        width: deviceWidth(context) * 0.40,
+                                        height: deviceHeight(context) * 0.15,
+                                        child: const SvgPic(
+                                          image: AppImages.logoMain,
+                                          fit: BoxFit.contain,
                                         ),
-                                        heightGap(18),
-                                        HorizontalTwoButtonWidget(
-                                          text1:
-                                          AppLocalizations.of(context)!.no,
-                                          text1Tap: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          text2:
-                                          AppLocalizations.of(context)!.yes,
-                                          text2Tap: () {
-                                            Navigator.of(context).pop();
-                                            Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                const TherapistsListScreen(
-                                                    isFromHome: true),
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              );
-                            },
-                            icon: const SvgPic(image: AppImages.reload),
-                            style: OutlinedButton.styleFrom(
-                              side: const BorderSide(
-                                  width: 1, color: AppColors.white),
-                            ),
-                            label: TextWidget(
-                              text: AppLocalizations.of(context)!.change,
-                              fontSize: 14,
-                              color: AppColors.white,
-                              fontFamily: AppFonts.poppins,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ],
-                      ),
-                      heightGap(15),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: AppColors.white,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12.0,
-                            vertical: 18,
-                          ),
-                          child: Column(
-                            children: [
-                              InfoWidget(
-                                name: 'Norma Warren',
-                                type: 'Biopsychologists',
-                                description:
-                                'Vestibsfevulum semwe acssscv fre porttitor...',
-                                onTap: () {
-                                  NavigationServices.push(context: context,
-                                      screen: TherapistsDetailScreen(
-                                          psychologist: PsychologistList(
-                                              id: '64708aa22c676d29322280f9')));
-                                },
-                              ),
-                              heightGap(10),
-                              expertiseButton(),
-                              heightGap(10),
-                              HorizontalTwoButtonWidget(
-                                text1: AppLocalizations.of(context)!
-                                    .freeSessionNow,
-                                text1Tap: () {
-                                  _bottomSheet(context: context);
-                                },
-                                text2: AppLocalizations.of(context)!
-                                    .bookFullSession,
-                                text2Tap: () {
-                                  _bottomSheet(
-                                      context: context,
-                                      navigateToPackageScreen: true);
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      heightGap(24),
-                      if (!(sharedPrefs?.getBool(AppStrings.isFreePlan) ??
-                          true))
-                        Column(children: [
-                          ViewAllRowWidget(
-                            text:
-                            AppLocalizations.of(context)!.upcomingSessions,
-                          ),
-                          heightGap(8),
-                          SizedBox(
-                            height: 185,
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: 5,
-                              clipBehavior: Clip.none,
-                              physics: const BouncingScrollPhysics(),
-                              itemBuilder: (context, index) {
-                                return UpComingSessionItem(
-                                  cancelPressed: () {
-                                    showDialog<void>(
-                                      context: context,
-                                      barrierDismissible:
-                                      true, // user must tap button!
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                            BorderRadius.circular(12),
+                                      ),
+                                      heightGap(20),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          TextWidget(
+                                            text:
+                                                '${sharedPrefs?.getString(AppStrings.userName) ?? ''}, ',
+                                            textAlign: TextAlign.center,
+                                            fontSize: 22,
+                                            color: AppColors.white,
+                                            fontFamily: AppFonts.poppins,
+                                            fontWeight: FontWeight.w600,
                                           ),
-                                          content: StatefulBuilder(
-                                            builder: (context, setState) {
-                                              return Column(
+                                          Flexible(
+                                            child: TextWidget(
+                                              text:
+                                                  AppLocalizations.of(context)!
+                                                      .weAreHereForYou,
+                                              textAlign: TextAlign.center,
+                                              fontSize: 22,
+                                              color: AppColors.white,
+                                              fontFamily: AppFonts.poppins,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                heightGap(24),
+                                TextWidget(
+                                  text:
+                                      AppLocalizations.of(context)!.activePlan,
+                                  fontSize: 18,
+                                  color: AppColors.white,
+                                  fontFamily: AppFonts.poppins,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                heightGap(8),
+                                ActivePlanItem(
+                                    isFreePlan: sharedPrefs
+                                            ?.getBool(AppStrings.isFreePlan) ??
+                                        true),
+                                heightGap(24),
+
+                                ///therapist
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: TextWidget(
+                                        text: AppLocalizations.of(context)!
+                                            .yourTherapist,
+                                        fontSize: 18,
+                                        color: AppColors.white,
+                                        fontFamily: AppFonts.poppins,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                    OutlinedButton.icon(
+                                      onPressed: () {
+                                        showDialog<void>(
+                                          context: context,
+                                          barrierDismissible:
+                                              true, // user must tap button!
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                              content: Column(
                                                 mainAxisSize: MainAxisSize.min,
                                                 crossAxisAlignment:
-                                                CrossAxisAlignment.stretch,
+                                                    CrossAxisAlignment.stretch,
                                                 children: [
                                                   Column(
                                                     children: [
                                                       Lottie.asset(
                                                           AppImages.warningJson,
-                                                          width: 100,
-                                                          height: 100),
+                                                          width: 120,
+                                                          height: 120),
                                                       heightGap(5),
-                                                      TextWidget(
-                                                        text: AppLocalizations
-                                                            .of(context)!
-                                                            .areYouSureToCancelTheSession,
-                                                        fontSize: 16,
+                                                      const TextWidget(
+                                                        text:
+                                                            'Are you sure to change your therapist?',
+                                                        fontSize: 20,
+                                                        textAlign:
+                                                            TextAlign.center,
                                                         fontFamily:
-                                                        AppFonts.poppins,
+                                                            AppFonts.poppins,
                                                         fontWeight:
-                                                        FontWeight.w500,
+                                                            FontWeight.w500,
                                                       ),
                                                     ],
                                                   ),
                                                   heightGap(18),
                                                   HorizontalTwoButtonWidget(
                                                     text1: AppLocalizations.of(
-                                                        context)!
+                                                            context)!
                                                         .no,
                                                     text1Tap: () {
                                                       Navigator.of(context)
                                                           .pop();
                                                     },
                                                     text2: AppLocalizations.of(
-                                                        context)!
+                                                            context)!
                                                         .yes,
                                                     text2Tap: () {
-                                                      setState(() {
-                                                        showDropDown = true;
-                                                      });
-                                                    },
-                                                  ),
-                                                  heightGap(18),
-                                                  const Divider(
-                                                    color: AppColors
-                                                        .checkBoxBorderColor,
-                                                    height: 2,
-                                                    indent: 10,
-                                                    endIndent: 10,
-                                                  ),
-                                                  if (showDropDown)
-                                                    Column(
-                                                        crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                        children: [
-                                                          heightGap(18),
-                                                          TextWidget(
-                                                            text: AppLocalizations
-                                                                .of(context)!
-                                                                .selectReason,
-                                                            fontSize: 14,
-                                                            fontFamily: AppFonts
-                                                                .poppins,
-                                                            fontWeight:
-                                                            FontWeight.w400,
-                                                          ),
-                                                          const TextWidget(
-                                                            text:
-                                                            'Donec vitae mi vulputate, suscipit urna in, malesuada nisl. Pellentesque laoreet pretium nisl, et pulvinar massa.',
-                                                            fontSize: 12,
-                                                            color: AppColors
-                                                                .greyText,
-                                                            fontFamily: AppFonts
-                                                                .poppins,
-                                                            fontWeight:
-                                                            FontWeight.w400,
-                                                          ),
-                                                          heightGap(18),
-                                                          DropdownButtonFormField(
-                                                            isDense: true,
-                                                            icon: const Icon(
-                                                              Icons
-                                                                  .keyboard_arrow_down,
-                                                              color: AppColors
-                                                                  .checkBoxBorderColor,
-                                                            ),
-                                                            decoration:
-                                                            InputDecoration(
-                                                              enabledBorder:
-                                                              OutlineInputBorder(
-                                                                borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                    10),
-                                                                borderSide: const BorderSide(
-                                                                    color: AppColors
-                                                                        .checkBoxBorderColor,
-                                                                    width: 1),
-                                                              ),
-                                                              focusedBorder:
-                                                              OutlineInputBorder(
-                                                                borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                    10),
-                                                                borderSide: const BorderSide(
-                                                                    color: AppColors
-                                                                        .checkBoxBorderColor,
-                                                                    width: 1),
-                                                              ),
-                                                              filled: true,
-                                                              fillColor: AppColors
-                                                                  .borderColor,
-                                                            ),
-                                                            value:
-                                                            dropdownValue,
-                                                            onChanged: (String?
-                                                            newValue) {
-                                                              setState(() {
-                                                                dropdownValue =
-                                                                newValue!;
-                                                                showChangeTherapistsOption =
-                                                                true;
-                                                              });
-                                                            },
-                                                            items: <String>[
-                                                              'reason1',
-                                                              'reason2',
-                                                              'reason3',
-                                                              'reason4'
-                                                            ].map<
-                                                                DropdownMenuItem<
-                                                                    String>>((
-                                                                String
-                                                                value) {
-                                                              return DropdownMenuItem<
-                                                                  String>(
-                                                                value: value,
-                                                                child:
-                                                                TextWidget(
-                                                                  text: value,
-                                                                  fontSize: 14,
-                                                                  fontFamily:
-                                                                  AppFonts
-                                                                      .poppins,
-                                                                  fontWeight:
-                                                                  FontWeight
-                                                                      .w400,
-                                                                ),
-                                                              );
-                                                            }).toList(),
-                                                          ),
-                                                        ]),
-                                                  if (showChangeTherapistsOption)
-                                                    Column(children: [
-                                                      const Divider(
-                                                        color: AppColors
-                                                            .checkBoxBorderColor,
-                                                        height: 2,
-                                                        indent: 10,
-                                                        endIndent: 10,
-                                                      ),
-                                                      heightGap(18),
-                                                      const TextWidget(
-                                                        text:
-                                                        'Do you want to change your therapist?',
-                                                        fontSize: 14,
-                                                        fontFamily:
-                                                        AppFonts.poppins,
-                                                        fontWeight:
-                                                        FontWeight.w400,
-                                                      ),
-                                                      heightGap(18),
-                                                      HorizontalTwoButtonWidget(
-                                                        text1:
-                                                        AppLocalizations.of(
-                                                            context)!
-                                                            .no,
-                                                        text1Tap: () {},
-                                                        text2:
-                                                        AppLocalizations.of(
-                                                            context)!
-                                                            .yes,
-                                                        text2Tap: () {},
-                                                      ),
-                                                    ]),
-                                                ],
-                                              );
-                                            },
-                                          ),
-                                        );
-                                      },
-                                    );
-                                  },
-                                  postponePressed: () {
-                                    showDialog<void>(
-                                      context: context,
-                                      barrierDismissible:
-                                      true, // user must tap button!
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                            BorderRadius.circular(12),
-                                          ),
-                                          content: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              crossAxisAlignment:
-                                              CrossAxisAlignment.stretch,
-                                              children: [
-                                                Column(
-                                                  children: [
-                                                    Lottie.asset(
-                                                        AppImages.worryJson,
-                                                        width: 100,
-                                                        height: 100),
-                                                    heightGap(5),
-                                                    const TextWidget(
-                                                      text: 'No worries,',
-                                                      color:
-                                                      AppColors.greenLight,
-                                                      fontSize: 24,
-                                                      fontFamily:
-                                                      AppFonts.poppins,
-                                                      fontWeight:
-                                                      FontWeight.w500,
-                                                    ),
-                                                    const TextWidget(
-                                                      text:
-                                                      'just select another timeslot',
-                                                      fontFamily:
-                                                      AppFonts.poppins,
-                                                      fontSize: 18,
-                                                      fontWeight:
-                                                      FontWeight.w400,
-                                                    ),
-                                                  ],
-                                                ),
-                                                heightGap(18),
-                                                ElevatedButtonWidget(
-                                                    onPressed: () {
                                                       Navigator.of(context)
                                                           .pop();
-                                                      _bottomSheet(
-                                                          context: context,
-                                                          showBookAgainText:
-                                                          true);
+                                                      Navigator.of(context)
+                                                          .push(
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              const TherapistsListScreen(
+                                                                  isFromHome:
+                                                                      true),
+                                                        ),
+                                                      );
                                                     },
-                                                    text: 'Select'),
-                                              ]),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          },
                                         );
                                       },
-                                    );
-                                  },
-                                );
-                              },
-                            ),
-                          ),
-                          heightGap(24),
-                        ]),
-                      ViewAllRowWidget(
-                          text: AppLocalizations.of(context)!.articles,
-                          onViewAllPressed: () {
-                            NavigationServices.push(
-                                context: context,
-                                screen: const AllArticlesScreen());
-                          },
-                          viewAllColor: AppColors.blue),
-                      heightGap(8),
-                      SizedBox(
-                        height: 220,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: articleList.length,
-                          physics: const BouncingScrollPhysics(),
-                          clipBehavior: Clip.none,
-                          itemBuilder: (context, index) {
-                            final articleData = articleList[index];
-                            return InkWell(
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                    const ArticleDetailScreen(),
+                                      icon:
+                                          const SvgPic(image: AppImages.reload),
+                                      style: OutlinedButton.styleFrom(
+                                        side: const BorderSide(
+                                            width: 1, color: AppColors.white),
+                                      ),
+                                      label: TextWidget(
+                                        text: AppLocalizations.of(context)!
+                                            .change,
+                                        fontSize: 14,
+                                        color: AppColors.white,
+                                        fontFamily: AppFonts.poppins,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                heightGap(15),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: AppColors.white,
+                                    borderRadius: BorderRadius.circular(12),
                                   ),
-                                );
-                              },
-                              /*  child: Container(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12.0,
+                                      vertical: 18,
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        InfoWidget(
+                                          imageUrl: dashboardData
+                                              ?.therapists?.profilePic,
+                                          name:
+                                              dashboardData?.therapists?.name ??
+                                                  '',
+                                          type:
+                                              dashboardData?.therapists?.type ??
+                                                  '',
+                                          description: dashboardData
+                                                  ?.therapists?.description ??
+                                              '',
+                                          onTap: () {
+                                            NavigationServices.push(
+                                                context: context,
+                                                screen: TherapistsDetailScreen(
+                                                    psychologistId:
+                                                        dashboardData
+                                                            ?.therapists?.sId));
+                                          },
+                                        ),
+                                        heightGap(10),
+                                        GridView.builder(
+                                          shrinkWrap: true,
+                                          physics:
+                                              const NeverScrollableScrollPhysics(),
+                                          itemCount: 2,
+                                          gridDelegate:
+                                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                                  crossAxisCount: 2,
+                                                  childAspectRatio: 4 / 1,
+                                                  crossAxisSpacing: 10,
+                                                  mainAxisSpacing: 10),
+                                          itemBuilder: (context, index) {
+                                            final areaOfExperties =
+                                                dashboardData?.therapists
+                                                    ?.areaOfExperties?[index];
+                                            return Container(
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(30),
+                                                  color: AppColors.yellowLight),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 8.0),
+                                                child: Center(
+                                                  child: FittedBox(
+                                                    fit: BoxFit.contain,
+                                                    child: TextWidget(
+                                                      text: areaOfExperties
+                                                              ?.name ??
+                                                          '',
+                                                      fontFamily:
+                                                          AppFonts.poppins,
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      fontSize: 13,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                        heightGap(10),
+                                        HorizontalTwoButtonWidget(
+                                          text1: AppLocalizations.of(context)!
+                                              .freeSessionNow,
+                                          text1Tap: () {
+                                            _bottomSheet(context: context);
+                                          },
+                                          text2: AppLocalizations.of(context)!
+                                              .bookFullSession,
+                                          text2Tap: () {
+                                            _bottomSheet(
+                                                context: context,
+                                                navigateToPackageScreen: true);
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                heightGap(24),
+                                if (!(sharedPrefs
+                                        ?.getBool(AppStrings.isFreePlan) ??
+                                    true))
+                                  Column(children: [
+                                    ViewAllRowWidget(
+                                      text: AppLocalizations.of(context)!
+                                          .upcomingSessions,
+                                    ),
+                                    heightGap(8),
+                                    SizedBox(
+                                      height: 185,
+                                      child: ListView.builder(
+                                        scrollDirection: Axis.horizontal,
+                                        itemCount: 5,
+                                        clipBehavior: Clip.none,
+                                        physics: const BouncingScrollPhysics(),
+                                        itemBuilder: (context, index) {
+                                          return UpComingSessionItem(
+                                            cancelPressed: () {
+                                              showDialog<void>(
+                                                context: context,
+                                                barrierDismissible:
+                                                    true, // user must tap button!
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return AlertDialog(
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              12),
+                                                    ),
+                                                    content: StatefulBuilder(
+                                                      builder:
+                                                          (context, setState) {
+                                                        return Column(
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .stretch,
+                                                          children: [
+                                                            Column(
+                                                              children: [
+                                                                Lottie.asset(
+                                                                    AppImages
+                                                                        .warningJson,
+                                                                    width: 100,
+                                                                    height:
+                                                                        100),
+                                                                heightGap(5),
+                                                                TextWidget(
+                                                                  text: AppLocalizations.of(
+                                                                          context)!
+                                                                      .areYouSureToCancelTheSession,
+                                                                  fontSize: 16,
+                                                                  fontFamily:
+                                                                      AppFonts
+                                                                          .poppins,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            heightGap(18),
+                                                            HorizontalTwoButtonWidget(
+                                                              text1: AppLocalizations
+                                                                      .of(context)!
+                                                                  .no,
+                                                              text1Tap: () {
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop();
+                                                              },
+                                                              text2: AppLocalizations
+                                                                      .of(context)!
+                                                                  .yes,
+                                                              text2Tap: () {
+                                                                setState(() {
+                                                                  showDropDown =
+                                                                      true;
+                                                                });
+                                                              },
+                                                            ),
+                                                            heightGap(18),
+                                                            const Divider(
+                                                              color: AppColors
+                                                                  .checkBoxBorderColor,
+                                                              height: 2,
+                                                              indent: 10,
+                                                              endIndent: 10,
+                                                            ),
+                                                            if (showDropDown)
+                                                              Column(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    heightGap(
+                                                                        18),
+                                                                    TextWidget(
+                                                                      text: AppLocalizations.of(
+                                                                              context)!
+                                                                          .selectReason,
+                                                                      fontSize:
+                                                                          14,
+                                                                      fontFamily:
+                                                                          AppFonts
+                                                                              .poppins,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w400,
+                                                                    ),
+                                                                    const TextWidget(
+                                                                      text:
+                                                                          'Donec vitae mi vulputate, suscipit urna in, malesuada nisl. Pellentesque laoreet pretium nisl, et pulvinar massa.',
+                                                                      fontSize:
+                                                                          12,
+                                                                      color: AppColors
+                                                                          .greyText,
+                                                                      fontFamily:
+                                                                          AppFonts
+                                                                              .poppins,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w400,
+                                                                    ),
+                                                                    heightGap(
+                                                                        18),
+                                                                    DropdownButtonFormField(
+                                                                      isDense:
+                                                                          true,
+                                                                      icon:
+                                                                          const Icon(
+                                                                        Icons
+                                                                            .keyboard_arrow_down,
+                                                                        color: AppColors
+                                                                            .checkBoxBorderColor,
+                                                                      ),
+                                                                      decoration:
+                                                                          InputDecoration(
+                                                                        enabledBorder:
+                                                                            OutlineInputBorder(
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(10),
+                                                                          borderSide: const BorderSide(
+                                                                              color: AppColors.checkBoxBorderColor,
+                                                                              width: 1),
+                                                                        ),
+                                                                        focusedBorder:
+                                                                            OutlineInputBorder(
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(10),
+                                                                          borderSide: const BorderSide(
+                                                                              color: AppColors.checkBoxBorderColor,
+                                                                              width: 1),
+                                                                        ),
+                                                                        filled:
+                                                                            true,
+                                                                        fillColor:
+                                                                            AppColors.borderColor,
+                                                                      ),
+                                                                      value:
+                                                                          dropdownValue,
+                                                                      onChanged:
+                                                                          (String?
+                                                                              newValue) {
+                                                                        setState(
+                                                                            () {
+                                                                          dropdownValue =
+                                                                              newValue!;
+                                                                          showChangeTherapistsOption =
+                                                                              true;
+                                                                        });
+                                                                      },
+                                                                      items: <
+                                                                          String>[
+                                                                        'reason1',
+                                                                        'reason2',
+                                                                        'reason3',
+                                                                        'reason4'
+                                                                      ].map<
+                                                                          DropdownMenuItem<
+                                                                              String>>((String
+                                                                          value) {
+                                                                        return DropdownMenuItem<
+                                                                            String>(
+                                                                          value:
+                                                                              value,
+                                                                          child:
+                                                                              TextWidget(
+                                                                            text:
+                                                                                value,
+                                                                            fontSize:
+                                                                                14,
+                                                                            fontFamily:
+                                                                                AppFonts.poppins,
+                                                                            fontWeight:
+                                                                                FontWeight.w400,
+                                                                          ),
+                                                                        );
+                                                                      }).toList(),
+                                                                    ),
+                                                                  ]),
+                                                            if (showChangeTherapistsOption)
+                                                              Column(children: [
+                                                                const Divider(
+                                                                  color: AppColors
+                                                                      .checkBoxBorderColor,
+                                                                  height: 2,
+                                                                  indent: 10,
+                                                                  endIndent: 10,
+                                                                ),
+                                                                heightGap(18),
+                                                                const TextWidget(
+                                                                  text:
+                                                                      'Do you want to change your therapist?',
+                                                                  fontSize: 14,
+                                                                  fontFamily:
+                                                                      AppFonts
+                                                                          .poppins,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                ),
+                                                                heightGap(18),
+                                                                HorizontalTwoButtonWidget(
+                                                                  text1: AppLocalizations.of(
+                                                                          context)!
+                                                                      .no,
+                                                                  text1Tap:
+                                                                      () {},
+                                                                  text2: AppLocalizations.of(
+                                                                          context)!
+                                                                      .yes,
+                                                                  text2Tap:
+                                                                      () {},
+                                                                ),
+                                                              ]),
+                                                          ],
+                                                        );
+                                                      },
+                                                    ),
+                                                  );
+                                                },
+                                              );
+                                            },
+                                            postponePressed: () {
+                                              showDialog<void>(
+                                                context: context,
+                                                barrierDismissible:
+                                                    true, // user must tap button!
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return AlertDialog(
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              12),
+                                                    ),
+                                                    content: Column(
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .stretch,
+                                                        children: [
+                                                          Column(
+                                                            children: [
+                                                              Lottie.asset(
+                                                                  AppImages
+                                                                      .worryJson,
+                                                                  width: 100,
+                                                                  height: 100),
+                                                              heightGap(5),
+                                                              const TextWidget(
+                                                                text:
+                                                                    'No worries,',
+                                                                color: AppColors
+                                                                    .greenLight,
+                                                                fontSize: 24,
+                                                                fontFamily:
+                                                                    AppFonts
+                                                                        .poppins,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
+                                                              const TextWidget(
+                                                                text:
+                                                                    'just select another timeslot',
+                                                                fontFamily:
+                                                                    AppFonts
+                                                                        .poppins,
+                                                                fontSize: 18,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          heightGap(18),
+                                                          ElevatedButtonWidget(
+                                                              onPressed: () {
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop();
+                                                                _bottomSheet(
+                                                                    context:
+                                                                        context,
+                                                                    showBookAgainText:
+                                                                        true);
+                                                              },
+                                                              text: 'Select'),
+                                                        ]),
+                                                  );
+                                                },
+                                              );
+                                            },
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                    heightGap(24),
+                                  ]),
+                                if (dashboardData!.articles!.isNotEmpty)
+                                  ViewAllRowWidget(
+                                      text: AppLocalizations.of(context)!
+                                          .articles,
+                                      onViewAllPressed: () {
+                                        NavigationServices.push(
+                                            context: context,
+                                            screen: AllArticlesScreen(
+                                              articleList:
+                                                  dashboardData.articles,
+                                            ));
+                                      },
+                                      viewAllColor: AppColors.blue),
+                                if (dashboardData.articles!.isNotEmpty)
+                                  heightGap(8),
+                                if (dashboardData.articles!.isNotEmpty)
+                                  SizedBox(
+                                    height: 220,
+                                    child: ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount:
+                                          dashboardData?.articles?.length,
+                                      physics: const BouncingScrollPhysics(),
+                                      clipBehavior: Clip.none,
+                                      itemBuilder: (context, index) {
+                                        final articleData =
+                                            dashboardData?.articles?[index];
+                                        return InkWell(
+                                          onTap: () {
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ArticleDetailScreen(
+                                                        article: articleData),
+                                              ),
+                                            );
+                                          },
+                                          /*  child: Container(
                                 width: deviceWidth(context) * 0.70,
                                 margin: const EdgeInsets.only(right: 10),
                                 decoration: BoxDecoration(
@@ -660,13 +868,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ],
                                 ),
                               ),*/
-                              child: ArticleItem(articleData: articleData),
+                                          child: ArticleItem(
+                                              articleData: articleData),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                heightGap(10),
+                              ],
                             );
-                          },
-                        ),
-                      ),
-                      heightGap(10),
-                    ],
+                    },
                   ),
                   Positioned(
                     right: 0,
@@ -719,298 +930,291 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (BuildContext context) {
         return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
-              return Padding(
-                padding: MediaQuery
-                    .of(context)
-                    .viewInsets,
-                child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 10),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30),
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
+          return Padding(
+            padding: MediaQuery.of(context).viewInsets,
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 10),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              height: 5,
-                              width: 130,
-                              decoration: BoxDecoration(
-                                color: AppColors.green,
-                                borderRadius: BorderRadius.circular(100),
-                              ),
-                            ),
-                          ],
-                        ),
-                        TableCalendar(
-                          firstDay: kFirstDay,
-                          lastDay: kLastDay,
-                          focusedDay: _focusedDay,
-                          calendarFormat: _calendarFormat,
-                          availableGestures: AvailableGestures.horizontalSwipe,
-                          calendarStyle: const CalendarStyle(
-                            defaultTextStyle: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontFamily: AppFonts.poppins,
-                              fontSize: 18,
-                            ),
-                          ),
-                          headerStyle: const HeaderStyle(
-                            formatButtonVisible: false,
-                            headerMargin: EdgeInsets.only(left: 0),
-                          ),
-                          daysOfWeekStyle: const DaysOfWeekStyle(
-                            weekdayStyle: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              fontFamily: AppFonts.poppins,
-                              fontSize: 13,
-                            ),
-                            weekendStyle: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              fontFamily: AppFonts.poppins,
-                              fontSize: 13,
-                            ),
-                          ),
-                          calendarBuilders: CalendarBuilders(
-                            dowBuilder: (context, day) {
-                              return Container();
-                            },
-                            defaultBuilder: (context, day, focusedDay) {
-                              return Container();
-                            },
-                            selectedBuilder: (context, day, focusedDay) {
-                              return Container();
-                            },
-                            markerBuilder: (context, date, events) {
-                              return InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    _selectedDay = date;
-                                    _focusedDay = date;
-                                  });
-                                },
-                                child: Container(
-                                  width: 70,
-                                  height: 80,
-                                  margin: const EdgeInsets.only(right: 5),
-                                  decoration: BoxDecoration(
-                                    color: _selectedDay == date
-                                        ? AppColors.green
-                                        : AppColors.white,
-                                    borderRadius: const BorderRadius.all(
-                                      Radius.circular(25),
-                                    ),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 5, vertical: 5),
-                                    child: Column(
-                                      children: [
-                                        _showWeek(date),
-                                        Expanded(
-                                          child: _showDate(date),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                          selectedDayPredicate: (day) {
-                            return isSameDay(_selectedDay, day);
-                          },
-                          onDaySelected: (selectedDay, focusedDay) {
-                            if (!isSameDay(_selectedDay, selectedDay)) {
-                              setState(() {
-                                _selectedDay = selectedDay;
-                                _focusedDay = focusedDay;
-                              });
-                            }
-                          },
-                          onFormatChanged: (format) {
-                            if (_calendarFormat != format) {}
-                          },
-                          onPageChanged: (focusedDay) {
-                            _focusedDay = focusedDay;
-                          },
-                        ),
-                        heightGap(15),
-                        TextWidget(
-                          text: AppLocalizations.of(context)!.selectTime,
-                          fontSize: 20,
-                          fontFamily: AppFonts.poppins,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        heightGap(15),
-                        SizedBox(
-                          height: 50,
-                          child: ListView.builder(
-                            itemCount: 3,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (context, index) {
-                              return Container(
-                                width: 90,
-                                margin: const EdgeInsets.only(right: 10),
-                                decoration: BoxDecoration(
-                                  color: index == 0
-                                      ? AppColors.green
-                                      : AppColors.white,
-                                  borderRadius: BorderRadius.circular(44),
-                                ),
-                                child: Center(
-                                  child: TextWidget(
-                                    text: '6.00 PM',
-                                    fontSize: 13,
-                                    color: index == 0
-                                        ? AppColors.white
-                                        : AppColors.black,
-                                    fontFamily: AppFonts.poppins,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              );
-                            },
+                        Container(
+                          height: 5,
+                          width: 130,
+                          decoration: BoxDecoration(
+                            color: AppColors.green,
+                            borderRadius: BorderRadius.circular(100),
                           ),
                         ),
-                        heightGap(15),
-                        ElevatedButtonWidget(
-                            onPressed: () {
-                              if (showBookAgainText) {
-                                Navigator.of(context).pop();
-                                showDialog<void>(
-                                  context: context,
-                                  barrierDismissible: true,
-                                  // user must tap button!
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      content: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.stretch,
-                                          children: [
-                                            Column(
-                                              children: [
-                                                Lottie.asset(
-                                                    AppImages.congratsJson,
-                                                    width: 100, height: 100),
-                                                heightGap(5),
-                                                TextWidget(
-                                                  text:
-                                                  AppLocalizations.of(context)!
-                                                      .congrats,
-                                                  color: AppColors.greenLight,
-                                                  fontSize: 24,
-                                                  fontFamily: AppFonts.poppins,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                                const TextWidget(
-                                                  text:
-                                                  'your new appointment is at 5.30 PM',
-                                                  fontFamily: AppFonts.poppins,
-                                                  fontSize: 18,
-                                                  textAlign: TextAlign.center,
-                                                  fontWeight: FontWeight.w400,
-                                                ),
-                                              ],
-                                            ),
-                                            heightGap(18),
-                                            ElevatedButtonWidget(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              text: AppLocalizations.of(
-                                                  context)!
-                                                  .goToHome,
-                                            ),
-                                          ]),
-                                    );
-                                  },
-                                );
-                              } else if (navigateToPackageScreen) {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (
-                                      context) => const PlanPackageScreen(),
-                                ));
-                              } else {
-                                Navigator.of(context).pop();
-                                showDialog<void>(
-                                  context: context,
-                                  barrierDismissible: true,
-                                  // user must tap button!
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      content: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.stretch,
-                                          children: [
-                                            Column(
-                                              children: [
-                                                Lottie.asset(
-                                                    AppImages.congratsJson,
-                                                    width: 100, height: 100),
-                                                heightGap(5),
-                                                TextWidget(
-                                                  text:
-                                                  AppLocalizations.of(context)!
-                                                      .congrats,
-                                                  color: AppColors.greenLight,
-                                                  fontSize: 24,
-                                                  fontFamily: AppFonts.poppins,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                                TextWidget(
-                                                  text:
-                                                  AppLocalizations.of(context)!
-                                                      .yesYouBookedSuccessfully,
-                                                  fontFamily: AppFonts.poppins,
-                                                  fontSize: 18,
-                                                  textAlign: TextAlign.center,
-                                                  fontWeight: FontWeight.w400,
-                                                ),
-                                              ],
-                                            ),
-                                            heightGap(18),
-                                            ElevatedButtonWidget(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              text: AppLocalizations.of(
-                                                  context)!
-                                                  .goToHome,
-                                            ),
-                                          ]),
-                                    );
-                                  },
-                                );
-                              }
-                            },
-                            text: showBookAgainText
-                                ? 'Book Again'
-                                : AppLocalizations.of(context)!.bookSession,
-                            primary: AppColors.yellow),
                       ],
                     ),
-                  ),
+                    TableCalendar(
+                      firstDay: kFirstDay,
+                      lastDay: kLastDay,
+                      focusedDay: _focusedDay,
+                      calendarFormat: _calendarFormat,
+                      availableGestures: AvailableGestures.horizontalSwipe,
+                      calendarStyle: const CalendarStyle(
+                        defaultTextStyle: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontFamily: AppFonts.poppins,
+                          fontSize: 18,
+                        ),
+                      ),
+                      headerStyle: const HeaderStyle(
+                        formatButtonVisible: false,
+                        headerMargin: EdgeInsets.only(left: 0),
+                      ),
+                      daysOfWeekStyle: const DaysOfWeekStyle(
+                        weekdayStyle: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontFamily: AppFonts.poppins,
+                          fontSize: 13,
+                        ),
+                        weekendStyle: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontFamily: AppFonts.poppins,
+                          fontSize: 13,
+                        ),
+                      ),
+                      calendarBuilders: CalendarBuilders(
+                        dowBuilder: (context, day) {
+                          return Container();
+                        },
+                        defaultBuilder: (context, day, focusedDay) {
+                          return Container();
+                        },
+                        selectedBuilder: (context, day, focusedDay) {
+                          return Container();
+                        },
+                        markerBuilder: (context, date, events) {
+                          return InkWell(
+                            onTap: () {
+                              setState(() {
+                                _selectedDay = date;
+                                _focusedDay = date;
+                              });
+                            },
+                            child: Container(
+                              width: 70,
+                              height: 80,
+                              margin: const EdgeInsets.only(right: 5),
+                              decoration: BoxDecoration(
+                                color: _selectedDay == date
+                                    ? AppColors.green
+                                    : AppColors.white,
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(25),
+                                ),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 5, vertical: 5),
+                                child: Column(
+                                  children: [
+                                    _showWeek(date),
+                                    Expanded(
+                                      child: _showDate(date),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      selectedDayPredicate: (day) {
+                        return isSameDay(_selectedDay, day);
+                      },
+                      onDaySelected: (selectedDay, focusedDay) {
+                        if (!isSameDay(_selectedDay, selectedDay)) {
+                          setState(() {
+                            _selectedDay = selectedDay;
+                            _focusedDay = focusedDay;
+                          });
+                        }
+                      },
+                      onFormatChanged: (format) {
+                        if (_calendarFormat != format) {}
+                      },
+                      onPageChanged: (focusedDay) {
+                        _focusedDay = focusedDay;
+                      },
+                    ),
+                    heightGap(15),
+                    TextWidget(
+                      text: AppLocalizations.of(context)!.selectTime,
+                      fontSize: 20,
+                      fontFamily: AppFonts.poppins,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    heightGap(15),
+                    SizedBox(
+                      height: 50,
+                      child: ListView.builder(
+                        itemCount: 3,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          return Container(
+                            width: 90,
+                            margin: const EdgeInsets.only(right: 10),
+                            decoration: BoxDecoration(
+                              color: index == 0
+                                  ? AppColors.green
+                                  : AppColors.white,
+                              borderRadius: BorderRadius.circular(44),
+                            ),
+                            child: Center(
+                              child: TextWidget(
+                                text: '6.00 PM',
+                                fontSize: 13,
+                                color: index == 0
+                                    ? AppColors.white
+                                    : AppColors.black,
+                                fontFamily: AppFonts.poppins,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    heightGap(15),
+                    ElevatedButtonWidget(
+                        onPressed: () {
+                          if (showBookAgainText) {
+                            Navigator.of(context).pop();
+                            showDialog<void>(
+                              context: context,
+                              barrierDismissible: true,
+                              // user must tap button!
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  content: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: [
+                                        Column(
+                                          children: [
+                                            Lottie.asset(AppImages.congratsJson,
+                                                width: 100, height: 100),
+                                            heightGap(5),
+                                            TextWidget(
+                                              text:
+                                                  AppLocalizations.of(context)!
+                                                      .congrats,
+                                              color: AppColors.greenLight,
+                                              fontSize: 24,
+                                              fontFamily: AppFonts.poppins,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                            const TextWidget(
+                                              text:
+                                                  'your new appointment is at 5.30 PM',
+                                              fontFamily: AppFonts.poppins,
+                                              fontSize: 18,
+                                              textAlign: TextAlign.center,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          ],
+                                        ),
+                                        heightGap(18),
+                                        ElevatedButtonWidget(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          text: AppLocalizations.of(context)!
+                                              .goToHome,
+                                        ),
+                                      ]),
+                                );
+                              },
+                            );
+                          } else if (navigateToPackageScreen) {
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => const PlanPackageScreen(),
+                            ));
+                          } else {
+                            Navigator.of(context).pop();
+                            showDialog<void>(
+                              context: context,
+                              barrierDismissible: true,
+                              // user must tap button!
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  content: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: [
+                                        Column(
+                                          children: [
+                                            Lottie.asset(AppImages.congratsJson,
+                                                width: 100, height: 100),
+                                            heightGap(5),
+                                            TextWidget(
+                                              text:
+                                                  AppLocalizations.of(context)!
+                                                      .congrats,
+                                              color: AppColors.greenLight,
+                                              fontSize: 24,
+                                              fontFamily: AppFonts.poppins,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                            TextWidget(
+                                              text:
+                                                  AppLocalizations.of(context)!
+                                                      .yesYouBookedSuccessfully,
+                                              fontFamily: AppFonts.poppins,
+                                              fontSize: 18,
+                                              textAlign: TextAlign.center,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          ],
+                                        ),
+                                        heightGap(18),
+                                        ElevatedButtonWidget(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          text: AppLocalizations.of(context)!
+                                              .goToHome,
+                                        ),
+                                      ]),
+                                );
+                              },
+                            );
+                          }
+                        },
+                        text: showBookAgainText
+                            ? 'Book Again'
+                            : AppLocalizations.of(context)!.bookSession,
+                        primary: AppColors.yellow),
+                  ],
                 ),
-              );
-            });
+              ),
+            ),
+          );
+        });
       },
     );
   }
@@ -1063,5 +1267,59 @@ class _HomeScreenState extends State<HomeScreen> {
             primary: AppColors.yellowLight),
       ),
     ]);
+  }
+
+  Future<bool> _handleLocationPermission() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              'Location services are disabled. Please enable the services')));
+      return false;
+    }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        /* ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Location permissions are denied')));*/
+        return false;
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      /* ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              'Location permissions are permanently denied, we cannot request permissions.')));*/
+      return false;
+    }
+    return true;
+  }
+
+  Future<void> _getCurrentPosition() async {
+    final hasPermission = await _handleLocationPermission();
+    if (!hasPermission) return;
+    await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
+        .then((Position position) {
+      _getAddressFromLatLng(position: position);
+    }).catchError((e) {
+      debugPrint(e);
+    });
+  }
+
+  Future<void> _getAddressFromLatLng({Position? position}) async {
+    await placemarkFromCoordinates(position!.latitude, position.longitude)
+        .then((List<Placemark> placemarks) {
+      Placemark place = placemarks[0];
+      setState(() {
+        context.read<AuthProvider>().setAddressData(
+            address:
+                '${place.street}, ${place.subLocality},${place.subAdministrativeArea}, ${place.postalCode}',
+            currentPosition: position);
+      });
+    }).catchError((e) {
+      debugPrint(e);
+    });
   }
 }

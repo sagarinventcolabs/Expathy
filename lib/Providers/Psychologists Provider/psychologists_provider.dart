@@ -10,6 +10,7 @@ import '../../Utils/helper_methods.dart';
 
 class PsychologistsProvider with ChangeNotifier {
   bool gettingPsychologistDetail = false;
+  GetPsychologistDetailApi? psychologistDetailData;
 
   Future<List<PsychologistList>?> fetchPsychologistsListApi(
       {required BuildContext context}) async {
@@ -44,7 +45,6 @@ class PsychologistsProvider with ChangeNotifier {
   Future<GetPsychologistDetailApi?> fetchPsychologistsDetailApi(
       {required BuildContext context, required String psychologistId}) async {
     gettingPsychologistDetail = true;
-    notifyListeners();
     final data = await RemoteService().callPutApi(
       url: '$eGetPsychologistDetail/$psychologistId',
     );
@@ -53,15 +53,13 @@ class PsychologistsProvider with ChangeNotifier {
           GetPsychologistDetailApi.fromJson(jsonDecode(data.body));
       if (context.mounted) {
         if (getPsychologistDetailResponse.status == 200) {
-          gettingPsychologistDetail = false;
+          psychologistDetailData = getPsychologistDetailResponse;
         } else if (getPsychologistDetailResponse.status == 404) {
-          gettingPsychologistDetail = false;
           showSnackBar(
               isSuccess: false,
               message: getPsychologistDetailResponse.message,
               context: context);
         } else if (getPsychologistDetailResponse.status == 400) {
-          gettingPsychologistDetail = false;
           showSnackBar(
               isSuccess: false,
               message: getPsychologistDetailResponse.message,

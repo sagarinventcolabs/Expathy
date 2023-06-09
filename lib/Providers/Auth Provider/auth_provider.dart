@@ -12,6 +12,7 @@ import 'package:expathy/Utils/app_strings.dart';
 import 'package:expathy/Utils/helper_methods.dart';
 import 'package:expathy/main.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import '../../Models/personal_information_model.dart';
 import '../../Remote/api_config.dart';
@@ -21,6 +22,8 @@ import '../Language Provider/language_provider.dart';
 
 class AuthProvider with ChangeNotifier {
   String? _email;
+  String? _currentAddress;
+  Position? _currentPosition;
 
   String? get getEmail => _email;
 
@@ -388,5 +391,12 @@ class AuthProvider with ChangeNotifier {
       return personalInfoModel.data;
     }
     return null;
+  }
+
+  Future<void> setAddressData(
+      {String? address, Position? currentPosition}) async {
+    _currentAddress = address;
+    _currentPosition = currentPosition;
+    notifyListeners();
   }
 }

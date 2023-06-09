@@ -8,6 +8,7 @@ import 'package:expathy/Widgets/gradient_background_widget.dart';
 import 'package:expathy/Widgets/toolbar_widget.dart';
 import 'package:expathy/Widgets/underline_text_widget.dart';
 import 'package:expathy/Widgets/view_all_row_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
@@ -21,13 +22,16 @@ import '../../Utils/helper_methods.dart';
 import '../../Widgets/article_item.dart';
 import '../../Widgets/horzontal_two_button_widget.dart';
 import '../../Widgets/info_widget.dart';
+import '../../Widgets/skeleton_widget.dart';
 import '../Article Screen/article_detail_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TherapistsDetailScreen extends StatefulWidget {
-  final PsychologistList? psychologist;
+  // final PsychologistList? psychologist;
+  final String? psychologistId;
 
-  const TherapistsDetailScreen({Key? key, this.psychologist}) : super(key: key);
+  const TherapistsDetailScreen({Key? key, this.psychologistId})
+      : super(key: key);
 
   @override
   State<TherapistsDetailScreen> createState() => _TherapistsDetailScreenState();
@@ -75,7 +79,7 @@ class _TherapistsDetailScreenState extends State<TherapistsDetailScreen> {
   void initState() {
     context.read<PsychologistsProvider>().fetchPsychologistsDetailApi(
         context: context,
-        psychologistId: widget.psychologist?.id.toString() ?? '');
+        psychologistId: widget.psychologistId.toString() ?? '');
     super.initState();
   }
 
@@ -92,204 +96,251 @@ class _TherapistsDetailScreenState extends State<TherapistsDetailScreen> {
             child: SingleChildScrollView(
               clipBehavior: Clip.none,
               physics: const BouncingScrollPhysics(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  heightGap(20),
-                  ToolBarWidget(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                    iconColor: AppColors.white,
-                    title: AppLocalizations.of(context)!.therapistDetails,
-                    titleColor: AppColors.white,
-                  ),
-                  heightGap(20),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.white,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12.0,
-                        vertical: 18,
-                      ),
-                      child: Column(
-                        children: [
-                          InfoWidget(
-                            name: widget.psychologist?.name ?? 'Norma Warren',
-                            type: widget.psychologist?.psychologistType?.name ??
-                                'Biopsychologists',
-                            description: widget.psychologist?.description ??
-                                'Vestibsfevulum semwe acssscv fre porttitor...',
-                            imageUrl: widget.psychologist?.profilePic ?? '',
-                            onTap: () {
-                              /* Navigator.of(context).push(MaterialPageRoute(
+              child: Consumer<PsychologistsProvider>(
+                builder: (context, value, child) {
+                  final details = value.psychologistDetailData?.data;
+                  return value.gettingPsychologistDetail
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            heightGap(20),
+                            ToolBarWidget(
+                              onTap: () {
+                                Navigator.of(context).pop();
+                              },
+                              iconColor: AppColors.white,
+                              title: AppLocalizations.of(context)!
+                                  .therapistDetails,
+                              titleColor: AppColors.white,
+                            ),
+                            heightGap(20),
+                            ListView.separated(
+                              itemCount: 10,
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemBuilder: (context, index) {
+                                return shimmerEffect(
+                                  widget: const SkeletonWidget(
+                                    radius: 8,
+                                    height: 60,
+                                    width: double.infinity,
+                                  ),
+                                );
+                              },
+                              separatorBuilder:
+                                  (BuildContext context, int index) {
+                                return heightGap(10);
+                              },
+                            ),
+                          ],
+                        )
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            heightGap(20),
+                            ToolBarWidget(
+                              onTap: () {
+                                Navigator.of(context).pop();
+                              },
+                              iconColor: AppColors.white,
+                              title: AppLocalizations.of(context)!
+                                  .therapistDetails,
+                              titleColor: AppColors.white,
+                            ),
+                            heightGap(20),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: AppColors.white,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12.0,
+                                  vertical: 18,
+                                ),
+                                child: Column(
+                                  children: [
+                                    InfoWidget(
+                                      name: details?.name ?? '',
+                                      type:
+                                          details?.psychologistType?.name ?? '',
+                                      description: details?.description ?? '',
+                                      imageUrl: details?.profilePic ?? '',
+                                      onTap: () {
+                                        /* Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) =>
                                     const TherapistsDetailScreen(),
                               ));*/
-                            },
-                          ),
-                          heightGap(10),
-                          HorizontalTwoButtonWidget(
-                            text1: AppLocalizations.of(context)!.freeSessionNow,
-                            text1Tap: () {
-                              _bottomSheet(context: context);
-                            },
-                            text2:
-                                AppLocalizations.of(context)!.bookFullSession,
-                            text2Tap: () {
-                              _bottomSheet(
-                                  context: context,
-                                  navigateToPackageScreen: true);
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  heightGap(16),
-                  TextWidget(
-                    text: AppLocalizations.of(context)!.biography,
-                    fontSize: 18,
-                    color: AppColors.white,
-                    fontFamily: AppFonts.poppins,
-                    fontWeight: FontWeight.w400,
-                  ),
-                  heightGap(10),
-                  Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: AppColors.white,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          UnderLineText(
-                            text:
-                                AppLocalizations.of(context)!.areasOfExpertise,
-                          ),
-                          heightGap(10),
-                          GridView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount:
-                                widget.psychologist?.areaOfExperties?.length ??
-                                    2,
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2,
-                                    childAspectRatio: 4 / 1,
-                                    crossAxisSpacing: 10,
-                                    mainAxisSpacing: 10),
-                            itemBuilder: (context, index) {
-                              return Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(30),
-                                    color: AppColors.yellowLight),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0),
-                                  child: Center(
-                                    child: FittedBox(
-                                      fit: BoxFit.contain,
-                                      child: TextWidget(
-                                        text: widget
-                                                .psychologist
-                                                ?.areaOfExperties?[index]
-                                                .name ??
-                                            'Social Psychologist',
-                                        fontFamily: AppFonts.poppins,
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 13,
-                                      ),
+                                      },
                                     ),
-                                  ),
+                                    heightGap(10),
+                                    HorizontalTwoButtonWidget(
+                                      text1: AppLocalizations.of(context)!
+                                          .freeSessionNow,
+                                      text1Tap: () {
+                                        _bottomSheet(context: context);
+                                      },
+                                      text2: AppLocalizations.of(context)!
+                                          .bookFullSession,
+                                      text2Tap: () {
+                                        _bottomSheet(
+                                            context: context,
+                                            navigateToPackageScreen: true);
+                                      },
+                                    ),
+                                  ],
                                 ),
-                              );
-                            },
-                          ),
-                          heightGap(30),
-                          UnderLineText(
-                            text: AppLocalizations.of(context)!.education,
-                          ),
-                          heightGap(10),
-                          ListView.separated(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount:
-                                widget.psychologist?.education?.length ?? 1,
-                            itemBuilder: (context, index) {
-                              return educationItem(
-                                  university: widget.psychologist
-                                      ?.education?[index].university,
-                                  graduationType: widget.psychologist
-                                      ?.education?[index].graduationType);
-                            },
-                            separatorBuilder:
-                                (BuildContext context, int index) {
-                              return const Divider();
-                            },
-                          ),
-                          heightGap(30),
-                          UnderLineText(
-                            text: AppLocalizations.of(context)!.about,
-                          ),
-                          heightGap(12),
-                          TextWidget(
-                            text: widget.psychologist?.description ??
-                                'Donec vitae mi vulputate, suscipit urna in, malesuada nisl. Pellentesque laoreet pretium nisl, et pulvinar massa eleifend sed. Curabitur maximus mollis diam, vel varius sapien suscipit eget. Cras sollicitudin Read more',
-                            fontSize: 14,
-                            color: AppColors.greyText,
-                            fontFamily: AppFonts.poppins,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  heightGap(24),
-                  ViewAllRowWidget(
-                      text: AppLocalizations.of(context)!.articles,
-                      textColor: AppColors.black,
-                      onViewAllPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const AllArticlesScreen(),
-                          ),
-                        );
-                      },
-                      viewAllColor: AppColors.blue),
-                  heightGap(8),
-                  SizedBox(
-                    height: 220,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: articleList.length,
-                      physics: const BouncingScrollPhysics(),
-                      clipBehavior: Clip.none,
-                      itemBuilder: (context, index) {
-                        final articleData = articleList[index];
-                        return InkWell(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const ArticleDetailScreen(),
                               ),
-                            );
-                          },
-                          child: ArticleItem(articleData: articleData),
+                            ),
+                            heightGap(16),
+                            TextWidget(
+                              text: AppLocalizations.of(context)!.biography,
+                              fontSize: 18,
+                              color: AppColors.white,
+                              fontFamily: AppFonts.poppins,
+                              fontWeight: FontWeight.w400,
+                            ),
+                            heightGap(10),
+                            Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: AppColors.white,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    UnderLineText(
+                                      text: AppLocalizations.of(context)!
+                                          .areasOfExpertise,
+                                    ),
+                                    heightGap(10),
+                                    GridView.builder(
+                                      shrinkWrap: true,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      itemCount:
+                                          details?.areaOfExperties?.length ?? 2,
+                                      gridDelegate:
+                                          const SliverGridDelegateWithFixedCrossAxisCount(
+                                              crossAxisCount: 2,
+                                              childAspectRatio: 4 / 1,
+                                              crossAxisSpacing: 10,
+                                              mainAxisSpacing: 10),
+                                      itemBuilder: (context, index) {
+                                        final areaOfExperties =
+                                            details?.areaOfExperties?[index];
+                                        return Container(
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
+                                              color: AppColors.yellowLight),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8.0),
+                                            child: Center(
+                                              child: FittedBox(
+                                                fit: BoxFit.contain,
+                                                child: TextWidget(
+                                                  text: areaOfExperties?.name ??
+                                                      'Social Psychologist',
+                                                  fontFamily: AppFonts.poppins,
+                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: 13,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                    heightGap(30),
+                                    UnderLineText(
+                                      text: AppLocalizations.of(context)!
+                                          .education,
+                                    ),
+                                    heightGap(10),
+                                    ListView.separated(
+                                      shrinkWrap: true,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      itemCount:
+                                          details?.education?.length ?? 1,
+                                      itemBuilder: (context, index) {
+                                        final education =
+                                            details?.education?[index];
+                                        return educationItem(
+                                            university: education?.university,
+                                            graduationType:
+                                                education?.graduationType);
+                                      },
+                                      separatorBuilder:
+                                          (BuildContext context, int index) {
+                                        return const Divider();
+                                      },
+                                    ),
+                                    heightGap(30),
+                                    UnderLineText(
+                                      text: AppLocalizations.of(context)!.about,
+                                    ),
+                                    heightGap(12),
+                                    TextWidget(
+                                      text: details?.description ??
+                                          'Donec vitae mi vulputate, suscipit urna in, malesuada nisl. Pellentesque laoreet pretium nisl, et pulvinar massa eleifend sed. Curabitur maximus mollis diam, vel varius sapien suscipit eget. Cras sollicitudin Read more',
+                                      fontSize: 14,
+                                      color: AppColors.greyText,
+                                      fontFamily: AppFonts.poppins,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            heightGap(24),
+                            ViewAllRowWidget(
+                                text: AppLocalizations.of(context)!.articles,
+                                textColor: AppColors.black,
+                                onViewAllPressed: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => AllArticlesScreen(
+                                          articleList: details?.articles),
+                                    ),
+                                  );
+                                },
+                                viewAllColor: AppColors.blue),
+                            heightGap(8),
+                            SizedBox(
+                              height: 220,
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: details?.articles?.length,
+                                physics: const BouncingScrollPhysics(),
+                                clipBehavior: Clip.none,
+                                itemBuilder: (context, index) {
+                                  final articleData = details?.articles?[index];
+                                  return InkWell(
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              ArticleDetailScreen(
+                                                  article: articleData),
+                                        ),
+                                      );
+                                    },
+                                    child:
+                                        ArticleItem(articleData: articleData),
+                                  );
+                                },
+                              ),
+                            ),
+                            heightGap(10),
+                          ],
                         );
-                      },
-                    ),
-                  ),
-                  heightGap(10),
-                ],
+                },
               ),
             ),
           ),

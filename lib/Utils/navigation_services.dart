@@ -25,8 +25,8 @@ class NavigationServices {
   }
 
   static Future<void> pushReplacement(
-      {BuildContext? context, required Widget screen}) async {
-    Navigator.of(context!).pushReplacement(
+      {required BuildContext context, required Widget screen}) async {
+    Navigator.of(context).pushReplacement(
       PageRouteBuilder(
           pageBuilder: (context, animation, anotherAnimation) {
             return screen;
@@ -47,8 +47,8 @@ class NavigationServices {
   }
 
   static Future<void> pushAndRemoveUntil(
-      {BuildContext? context, required Widget screen}) async {
-    Navigator.of(context!).pushAndRemoveUntil(
+      {required BuildContext context, required Widget screen}) async {
+    Navigator.of(context).pushAndRemoveUntil(
       PageRouteBuilder(
           pageBuilder: (context, animation, anotherAnimation) {
             return screen;

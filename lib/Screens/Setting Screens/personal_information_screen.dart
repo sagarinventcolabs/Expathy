@@ -32,7 +32,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
   void initState() {
     personalInfoFuture = context.read<AuthProvider>().getPersonalInfoApi(
           context: context,
-          type: 'Psychologist',
+          type: 'Expact',
           slug: widget.type == 'About Us'
               ? 'about_us'
               : widget.type == 'Privacy Policy'
@@ -118,7 +118,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                                           .read<AuthProvider>()
                                           .getPersonalInfoApi(
                                             context: context,
-                                            type: 'Psychologist',
+                                            type: 'Expact',
                                             slug: widget.type == 'About Us'
                                                 ? 'about_us'
                                                 : widget.type ==

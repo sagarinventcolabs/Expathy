@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:expathy/Screens/Auth%20Screens/login_screen.dart';
 import 'package:expathy/Utils/app_fonts.dart';
 import 'package:expathy/Utils/app_strings.dart';
 import 'package:expathy/main.dart';
@@ -131,7 +132,7 @@ Future<void> logOut({BuildContext? context}) async {
   sharedPrefs?.setBool(AppStrings.isFirstTimeOnApp, false);
   Navigator.of(context!).pushAndRemoveUntil(
     MaterialPageRoute(
-      builder: (context) => const PreHomeScreen(),
+      builder: (context) => const LoginScreen(),
     ),
     (route) => false,
   );
