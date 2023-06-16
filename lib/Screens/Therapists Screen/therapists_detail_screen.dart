@@ -2,20 +2,20 @@ import 'package:expathy/Common%20Widgets/custom_scaffold.dart';
 import 'package:expathy/Common%20Widgets/text_widget.dart';
 import 'package:expathy/Providers/Psychologists%20Provider/psychologists_provider.dart';
 import 'package:expathy/Screens/Articles%20Screen/all_articles_screen.dart';
-import 'package:expathy/Screens/Package%20Screen/plan_package_screen.dart';
+import 'package:expathy/Screens/Package%20Screen/package_screen.dart';
 import 'package:expathy/Utils/app_images.dart';
 import 'package:expathy/Widgets/gradient_background_widget.dart';
 import 'package:expathy/Widgets/toolbar_widget.dart';
 import 'package:expathy/Widgets/underline_text_widget.dart';
 import 'package:expathy/Widgets/view_all_row_widget.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
+import '../../Common Widgets/custom_future_builder.dart';
 import '../../Common Widgets/elevated_button_widget.dart';
 import '../../Models/article_model.dart';
-import '../../Models/pyschologist_list_model.dart';
+import '../../Models/get_psychologist_detail_model.dart';
 import '../../Utils/app_colors.dart';
 import '../../Utils/app_fonts.dart';
 import '../../Utils/helper_methods.dart';
@@ -75,11 +75,14 @@ class _TherapistsDetailScreenState extends State<TherapistsDetailScreen> {
     ),
   ];
 
+  late Future<GetPsychologistDetailApi?> dashboardFuture;
+
   @override
   void initState() {
-    context.read<PsychologistsProvider>().fetchPsychologistsDetailApi(
-        context: context,
-        psychologistId: widget.psychologistId.toString() ?? '');
+    dashboardFuture = context
+        .read<PsychologistsProvider>()
+        .fetchPsychologistsDetailApi(
+            context: context, psychologistId: widget.psychologistId.toString());
     super.initState();
   }
 
@@ -94,258 +97,552 @@ class _TherapistsDetailScreenState extends State<TherapistsDetailScreen> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: SingleChildScrollView(
-              clipBehavior: Clip.none,
-              physics: const BouncingScrollPhysics(),
-              child: Consumer<PsychologistsProvider>(
-                builder: (context, value, child) {
-                  final details = value.psychologistDetailData?.data;
-                  return value.gettingPsychologistDetail
-                      ? Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            heightGap(20),
-                            ToolBarWidget(
-                              onTap: () {
-                                Navigator.of(context).pop();
-                              },
-                              iconColor: AppColors.white,
-                              title: AppLocalizations.of(context)!
-                                  .therapistDetails,
-                              titleColor: AppColors.white,
-                            ),
-                            heightGap(20),
-                            ListView.separated(
-                              itemCount: 10,
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemBuilder: (context, index) {
-                                return shimmerEffect(
-                                  widget: const SkeletonWidget(
-                                    radius: 8,
-                                    height: 60,
-                                    width: double.infinity,
-                                  ),
-                                );
-                              },
-                              separatorBuilder:
-                                  (BuildContext context, int index) {
-                                return heightGap(10);
-                              },
-                            ),
-                          ],
-                        )
-                      : Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            heightGap(20),
-                            ToolBarWidget(
-                              onTap: () {
-                                Navigator.of(context).pop();
-                              },
-                              iconColor: AppColors.white,
-                              title: AppLocalizations.of(context)!
-                                  .therapistDetails,
-                              titleColor: AppColors.white,
-                            ),
-                            heightGap(20),
-                            Container(
-                              decoration: BoxDecoration(
-                                color: AppColors.white,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12.0,
-                                  vertical: 18,
+                clipBehavior: Clip.none,
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    heightGap(20),
+                    ToolBarWidget(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                      iconColor: AppColors.white,
+                      title: AppLocalizations.of(context)!.therapistDetails,
+                      titleColor: AppColors.white,
+                    ),
+                    heightGap(20),
+                    CustomFutureBuilder<GetPsychologistDetailApi?>(
+                      loaderWidget: loadingShimmer(),
+                      future: dashboardFuture,
+                      noInternetOnPressed: () {
+                        setState(() {
+                          dashboardFuture = context
+                              .read<PsychologistsProvider>()
+                              .fetchPsychologistsDetailApi(
+                                  context: context,
+                                  psychologistId:
+                                      widget.psychologistId.toString());
+                        });
+                      },
+                      data: (snapshot) {
+                        final details = snapshot?.data;
+                        return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: AppColors.white,
+                                  borderRadius: BorderRadius.circular(12),
                                 ),
-                                child: Column(
-                                  children: [
-                                    InfoWidget(
-                                      name: details?.name ?? '',
-                                      type:
-                                          details?.psychologistType?.name ?? '',
-                                      description: details?.description ?? '',
-                                      imageUrl: details?.profilePic ?? '',
-                                      onTap: () {
-                                        /* Navigator.of(context).push(MaterialPageRoute(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12.0,
+                                    vertical: 18,
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      InfoWidget(
+                                        name: details?.name ?? '',
+                                        type: details?.psychologistType?.name ??
+                                            '',
+                                        description: details?.description ?? '',
+                                        imageUrl: details?.profilePic ?? '',
+                                        onTap: () {
+                                          /* Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) =>
                                     const TherapistsDetailScreen(),
                               ));*/
-                                      },
-                                    ),
-                                    heightGap(10),
-                                    HorizontalTwoButtonWidget(
-                                      text1: AppLocalizations.of(context)!
-                                          .freeSessionNow,
-                                      text1Tap: () {
-                                        _bottomSheet(context: context);
-                                      },
-                                      text2: AppLocalizations.of(context)!
-                                          .bookFullSession,
-                                      text2Tap: () {
-                                        _bottomSheet(
-                                            context: context,
-                                            navigateToPackageScreen: true);
-                                      },
-                                    ),
-                                  ],
+                                        },
+                                      ),
+                                      heightGap(10),
+                                      HorizontalTwoButtonWidget(
+                                        text1: AppLocalizations.of(context)!
+                                            .freeSessionNow,
+                                        text1Tap: () {
+                                          _bottomSheet(context: context);
+                                        },
+                                        text2: AppLocalizations.of(context)!
+                                            .bookFullSession,
+                                        text2Tap: () {
+                                          _bottomSheet(
+                                              context: context,
+                                              navigateToPackageScreen: true);
+                                        },
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                            heightGap(16),
-                            TextWidget(
-                              text: AppLocalizations.of(context)!.biography,
-                              fontSize: 18,
-                              color: AppColors.white,
-                              fontFamily: AppFonts.poppins,
-                              fontWeight: FontWeight.w400,
-                            ),
-                            heightGap(10),
-                            Container(
-                              width: double.infinity,
-                              decoration: BoxDecoration(
+                              heightGap(16),
+                              TextWidget(
+                                text: AppLocalizations.of(context)!.biography,
+                                fontSize: 18,
                                 color: AppColors.white,
-                                borderRadius: BorderRadius.circular(12),
+                                fontFamily: AppFonts.poppins,
+                                fontWeight: FontWeight.w400,
                               ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    UnderLineText(
-                                      text: AppLocalizations.of(context)!
-                                          .areasOfExpertise,
-                                    ),
-                                    heightGap(10),
-                                    GridView.builder(
-                                      shrinkWrap: true,
-                                      physics:
-                                          const NeverScrollableScrollPhysics(),
-                                      itemCount:
-                                          details?.areaOfExperties?.length ?? 2,
-                                      gridDelegate:
-                                          const SliverGridDelegateWithFixedCrossAxisCount(
-                                              crossAxisCount: 2,
-                                              childAspectRatio: 4 / 1,
-                                              crossAxisSpacing: 10,
-                                              mainAxisSpacing: 10),
-                                      itemBuilder: (context, index) {
-                                        final areaOfExperties =
-                                            details?.areaOfExperties?[index];
-                                        return Container(
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(30),
-                                              color: AppColors.yellowLight),
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8.0),
-                                            child: Center(
-                                              child: FittedBox(
-                                                fit: BoxFit.contain,
-                                                child: TextWidget(
-                                                  text: areaOfExperties?.name ??
-                                                      'Social Psychologist',
-                                                  fontFamily: AppFonts.poppins,
-                                                  fontWeight: FontWeight.w400,
-                                                  fontSize: 13,
+                              heightGap(10),
+                              Container(
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  color: AppColors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      UnderLineText(
+                                        text: AppLocalizations.of(context)!
+                                            .areasOfExpertise,
+                                      ),
+                                      heightGap(10),
+                                      GridView.builder(
+                                        shrinkWrap: true,
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        itemCount:
+                                            details?.areaOfExperties?.length ??
+                                                2,
+                                        gridDelegate:
+                                            const SliverGridDelegateWithFixedCrossAxisCount(
+                                                crossAxisCount: 2,
+                                                childAspectRatio: 4 / 1,
+                                                crossAxisSpacing: 10,
+                                                mainAxisSpacing: 10),
+                                        itemBuilder: (context, index) {
+                                          final areaOfExperties =
+                                              details?.areaOfExperties?[index];
+                                          return Container(
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(30),
+                                                color: AppColors.yellowLight),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 8.0),
+                                              child: Center(
+                                                child: FittedBox(
+                                                  fit: BoxFit.contain,
+                                                  child: TextWidget(
+                                                    text: areaOfExperties
+                                                            ?.name ??
+                                                        'Social Psychologist',
+                                                    fontFamily:
+                                                        AppFonts.poppins,
+                                                    fontWeight: FontWeight.w400,
+                                                    fontSize: 13,
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                    heightGap(30),
-                                    UnderLineText(
-                                      text: AppLocalizations.of(context)!
-                                          .education,
-                                    ),
-                                    heightGap(10),
-                                    ListView.separated(
-                                      shrinkWrap: true,
-                                      physics:
-                                          const NeverScrollableScrollPhysics(),
-                                      itemCount:
-                                          details?.education?.length ?? 1,
-                                      itemBuilder: (context, index) {
-                                        final education =
-                                            details?.education?[index];
-                                        return educationItem(
-                                            university: education?.university,
-                                            graduationType:
-                                                education?.graduationType);
-                                      },
-                                      separatorBuilder:
-                                          (BuildContext context, int index) {
-                                        return const Divider();
-                                      },
-                                    ),
-                                    heightGap(30),
-                                    UnderLineText(
-                                      text: AppLocalizations.of(context)!.about,
-                                    ),
-                                    heightGap(12),
-                                    TextWidget(
-                                      text: details?.description ??
-                                          'Donec vitae mi vulputate, suscipit urna in, malesuada nisl. Pellentesque laoreet pretium nisl, et pulvinar massa eleifend sed. Curabitur maximus mollis diam, vel varius sapien suscipit eget. Cras sollicitudin Read more',
-                                      fontSize: 14,
-                                      color: AppColors.greyText,
-                                      fontFamily: AppFonts.poppins,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ],
+                                          );
+                                        },
+                                      ),
+                                      heightGap(30),
+                                      UnderLineText(
+                                        text: AppLocalizations.of(context)!
+                                            .education,
+                                      ),
+                                      heightGap(10),
+                                      ListView.separated(
+                                        shrinkWrap: true,
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        itemCount:
+                                            details?.education?.length ?? 1,
+                                        itemBuilder: (context, index) {
+                                          final education =
+                                              details?.education?[index];
+                                          return educationItem(
+                                              university: education?.university,
+                                              graduationType:
+                                                  education?.graduationType);
+                                        },
+                                        separatorBuilder:
+                                            (BuildContext context, int index) {
+                                          return const Divider();
+                                        },
+                                      ),
+                                      heightGap(30),
+                                      UnderLineText(
+                                        text:
+                                            AppLocalizations.of(context)!.about,
+                                      ),
+                                      heightGap(12),
+                                      TextWidget(
+                                        text: details?.description ??
+                                            'Donec vitae mi vulputate, suscipit urna in, malesuada nisl. Pellentesque laoreet pretium nisl, et pulvinar massa eleifend sed. Curabitur maximus mollis diam, vel varius sapien suscipit eget. Cras sollicitudin Read more',
+                                        fontSize: 14,
+                                        color: AppColors.greyText,
+                                        fontFamily: AppFonts.poppins,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                            heightGap(24),
-                            ViewAllRowWidget(
-                                text: AppLocalizations.of(context)!.articles,
-                                textColor: AppColors.black,
-                                onViewAllPressed: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => AllArticlesScreen(
-                                          articleList: details?.articles),
-                                    ),
-                                  );
-                                },
-                                viewAllColor: AppColors.blue),
-                            heightGap(8),
-                            SizedBox(
-                              height: 220,
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: details?.articles?.length,
-                                physics: const BouncingScrollPhysics(),
-                                clipBehavior: Clip.none,
-                                itemBuilder: (context, index) {
-                                  final articleData = details?.articles?[index];
-                                  return InkWell(
-                                    onTap: () {
+                              heightGap(24),
+                              if (details!.articles!.isNotEmpty)
+                                ViewAllRowWidget(
+                                    text:
+                                        AppLocalizations.of(context)!.articles,
+                                    textColor: AppColors.black,
+                                    onViewAllPressed: () {
                                       Navigator.of(context).push(
                                         MaterialPageRoute(
                                           builder: (context) =>
-                                              ArticleDetailScreen(
-                                                  article: articleData),
+                                              AllArticlesScreen(
+                                                  articleList:
+                                                      details.articles),
                                         ),
                                       );
                                     },
-                                    child:
-                                        ArticleItem(articleData: articleData),
-                                  );
-                                },
-                              ),
-                            ),
-                            heightGap(10),
-                          ],
-                        );
-                },
-              ),
-            ),
+                                    viewAllColor: AppColors.blue),
+                              if (details.articles!.isNotEmpty) heightGap(8),
+                              if (details.articles!.isNotEmpty)
+                                SizedBox(
+                                  height: 220,
+                                  child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: details.articles?.length,
+                                    physics: const BouncingScrollPhysics(),
+                                    clipBehavior: Clip.none,
+                                    itemBuilder: (context, index) {
+                                      final articleData =
+                                          details.articles?[index];
+                                      return InkWell(
+                                        onTap: () {
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ArticleDetailScreen(
+                                                      article: articleData),
+                                            ),
+                                          );
+                                        },
+                                        child: ArticleItem(
+                                            articleData: articleData),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              heightGap(10),
+                            ]);
+                      },
+                    ),
+                  ],
+                )),
           ),
         ),
       )),
+    );
+  }
+
+  Widget loadingShimmer() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 12.0,
+              vertical: 18,
+            ),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    shimmerEffect(
+                      widget: const SkeletonWidget(
+                        radius: 100,
+                        height: 75,
+                        width: 75,
+                      ),
+                    ),
+                    widthGap(12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          shimmerEffect(
+                            widget: const SkeletonWidget(
+                              radius: 0,
+                              height: 15,
+                            ),
+                          ),
+                          heightGap(5),
+                          shimmerEffect(
+                            widget: const SkeletonWidget(
+                              radius: 0,
+                              height: 10,
+                            ),
+                          ),
+                          heightGap(5),
+                          shimmerEffect(
+                            widget: const SkeletonWidget(
+                              radius: 0,
+                              height: 10,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                heightGap(10),
+                Row(children: [
+                  Expanded(
+                    child: shimmerEffect(
+                      widget: const SkeletonWidget(
+                        radius: 0,
+                        height: 45,
+                      ),
+                    ),
+                  ),
+                  widthGap(20),
+                  Expanded(
+                    child: shimmerEffect(
+                      widget: const SkeletonWidget(
+                        radius: 0,
+                        height: 45,
+                      ),
+                    ),
+                  ),
+                ]),
+              ],
+            ),
+          ),
+        ),
+        heightGap(10),
+        Row(children: [
+          shimmerEffect(
+            widget: SkeletonWidget(
+              radius: 0,
+              height: 16,
+              width: deviceWidth(context) * 0.30,
+            ),
+          ),
+        ]),
+        heightGap(10),
+        Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                shimmerEffect(
+                  widget: SkeletonWidget(
+                    radius: 0,
+                    height: 20,
+                    width: deviceWidth(context) * 0.45,
+                  ),
+                ),
+                heightGap(10),
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: 2,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 4 / 1,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10),
+                  itemBuilder: (context, index) {
+                    return shimmerEffect(
+                      widget: const SkeletonWidget(
+                        radius: 30,
+                      ),
+                    );
+                  },
+                ),
+                heightGap(30),
+                shimmerEffect(
+                  widget: SkeletonWidget(
+                    radius: 0,
+                    height: 20,
+                    width: deviceWidth(context) * 0.35,
+                  ),
+                ),
+                heightGap(10),
+                ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: 1,
+                  itemBuilder: (context, index) {
+                    return Row(children: [
+                      shimmerEffect(
+                        widget: const SkeletonWidget(
+                          radius: 0,
+                          height: 60,
+                          width: 60,
+                        ),
+                      ),
+                      widthGap(10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            shimmerEffect(
+                              widget: const SkeletonWidget(
+                                radius: 0,
+                                height: 20,
+                                width: double.infinity,
+                              ),
+                            ),
+                            heightGap(6),
+                            shimmerEffect(
+                              widget: const SkeletonWidget(
+                                radius: 0,
+                                height: 16,
+                                width: double.infinity,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ]);
+                  },
+                  separatorBuilder: (BuildContext context, int index) {
+                    return const Divider();
+                  },
+                ),
+                heightGap(30),
+                shimmerEffect(
+                  widget: SkeletonWidget(
+                    radius: 0,
+                    height: 20,
+                    width: deviceWidth(context) * 0.40,
+                  ),
+                ),
+                heightGap(12),
+                shimmerEffect(
+                  widget: const SkeletonWidget(
+                    radius: 0,
+                    height: 10,
+                    width: double.infinity,
+                  ),
+                ),
+                heightGap(5),
+                shimmerEffect(
+                  widget: const SkeletonWidget(
+                    radius: 0,
+                    height: 10,
+                    width: double.infinity,
+                  ),
+                ),
+                heightGap(5),
+                shimmerEffect(
+                  widget: const SkeletonWidget(
+                    radius: 0,
+                    height: 10,
+                    width: double.infinity,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        heightGap(10),
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          shimmerEffect(
+            widget: SkeletonWidget(
+              radius: 0,
+              height: 16,
+              width: deviceWidth(context) * 0.30,
+            ),
+          ),
+          shimmerEffect(
+            widget: SkeletonWidget(
+              radius: 0,
+              height: 16,
+              width: deviceWidth(context) * 0.30,
+            ),
+          ),
+        ]),
+        heightGap(10),
+        SizedBox(
+          height: 200,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: 5,
+            physics: const BouncingScrollPhysics(),
+            clipBehavior: Clip.none,
+            itemBuilder: (context, index) {
+              return Container(
+                width: deviceWidth(context) * 0.55,
+                margin: const EdgeInsets.only(right: 10),
+                decoration: BoxDecoration(
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    shimmerEffect(
+                      widget: const SkeletonWidget(
+                        radius: 8,
+                        height: 120,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 10.0, right: 10.0, bottom: 10.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          heightGap(10),
+                          shimmerEffect(
+                            widget: const SkeletonWidget(
+                              radius: 0,
+                              height: 10,
+                            ),
+                          ),
+                          heightGap(5),
+                          shimmerEffect(
+                            widget: const SkeletonWidget(
+                              radius: 0,
+                              height: 10,
+                            ),
+                          ),
+                          heightGap(5),
+                          shimmerEffect(
+                            widget: const SkeletonWidget(
+                              radius: 0,
+                              height: 10,
+                            ),
+                          ),
+                          heightGap(10),
+                          shimmerEffect(
+                            widget: const SkeletonWidget(
+                              radius: 0,
+                              height: 6,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 
@@ -601,7 +898,7 @@ class _TherapistsDetailScreenState extends State<TherapistsDetailScreen> {
                           if (navigateToPackageScreen) {
                             Navigator.of(context).pop();
                             Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const PlanPackageScreen(),
+                              builder: (context) => const PackageScreen(),
                             ));
                           } else {
                             Navigator.of(context).pop();

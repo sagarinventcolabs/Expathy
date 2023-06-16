@@ -3,13 +3,16 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:expathy/Screens/Auth%20Screens/login_screen.dart';
 import 'package:expathy/Utils/app_fonts.dart';
 import 'package:expathy/Utils/app_strings.dart';
+import 'package:expathy/Widgets/svg_picture.dart';
 import 'package:expathy/main.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shimmer/shimmer.dart';
 import '../Common Widgets/text_widget.dart';
-import '../Screens/Auth Screens/prehome_screen.dart';
 import 'app_colors.dart';
+import 'app_images.dart';
 
 const emailPattern =
     r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
@@ -26,6 +29,84 @@ SizedBox widthGap(double width) {
   );
 }
 
+///Time
+
+String? convert12HourTo24Hour({required String time}) {
+  ///convert 01.29Am to 13.29
+  if (time == '') {
+    return null;
+  }
+  DateTime date2 = DateFormat("hh:mma").parse(time);
+  print(DateFormat("HH:mm").format(date2));
+  return DateFormat("HH:mm").format(date2);
+}
+
+String? convert24HourTo12Hour({required String time, bool showAmPm = false}) {
+  ///convert 13.29 to 01.29 Am
+  print(time);
+  if (time == '') {
+    return null;
+  }
+  DateTime date2 = DateFormat("HH:mm").parse(time);
+  if (showAmPm) {
+    return DateFormat("h:mm a").format(date2);
+  } else {
+    return DateFormat("h:mm").format(date2);
+  }
+}
+
+dateTimeFormat(val) {
+  if (val == '') {
+    return;
+  }
+  var getDate = DateTime.parse("$val");
+  var formattedDate =
+      DateFormat("dd-MM-yyyy hh:mm a").format(getDate.toLocal());
+  return formattedDate.toString();
+}
+
+convertTimeStampToTime({String? timeStamp}) {
+  if (timeStamp == null || timeStamp == '') {
+    return;
+  }
+  DateTime data = DateTime.fromMillisecondsSinceEpoch(int.parse(timeStamp));
+  return DateFormat('HH:mm a').format(data);
+}
+
+convertTimeStampToLocalDate({String? timeStamp}) {
+  if (timeStamp == null || timeStamp == '') {
+    return;
+  }
+  DateTime data = DateTime.fromMillisecondsSinceEpoch(int.parse(timeStamp));
+  return DateFormat('dd-MMM-yyy').format(data);
+}
+
+getDateFormatted({String? data, bool showMonthTextMiddle = false}) {
+  if (data == null || data == '') {
+    return '';
+  }
+  var parsedDate = DateTime.parse(data);
+  var outputFormat;
+  if (showMonthTextMiddle) {
+    var date = DateFormat("d MMMM y");
+    outputFormat = date;
+  } else {
+    var date = DateFormat("yyyy-MM-dd");
+    outputFormat = date;
+  }
+
+  return outputFormat.format(parsedDate);
+}
+
+getTimeFormatted(String? data) {
+  if (data == null || data == '') {
+    return '';
+  }
+  final dateTime = DateTime.parse(data);
+  final format = DateFormat('HH:mm a');
+  return format.format(dateTime);
+}
+
 double deviceHeight(BuildContext context) {
   return MediaQuery.of(context).size.height;
 }
@@ -40,6 +121,28 @@ Future<void> checkDeviceOs() async {
   } else if (Platform.isIOS) {
     sharedPrefs?.setString(AppStrings.deviceOs, 'Ios');
   }
+}
+
+Widget noData({String? title, required BuildContext context}) {
+  return Center(
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        //Lottie.asset(AppImages.emptyJson, width: 300, height: 300),
+        Container(
+            width: deviceWidth(context) * 50,
+            height: deviceHeight(context) * 0.30,
+            child: const SvgPic(image: AppImages.noData)),
+        TextWidget(
+          text: title ?? '',
+          color: AppColors.green,
+          fontFamily: AppFonts.poppins,
+          fontWeight: FontWeight.w400,
+          fontSize: 18,
+        ),
+      ],
+    ),
+  );
 }
 
 void showSnackBar({

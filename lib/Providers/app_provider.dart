@@ -1,5 +1,6 @@
 import 'package:expathy/Providers/Psychologists%20Provider/psychologists_provider.dart';
 import 'package:expathy/Providers/Question%20Provider/question_provider.dart';
+import 'package:expathy/Providers/Session%20Provider/session_provider.dart';
 import 'package:expathy/Providers/Subscription%20Provider/subscription_provider.dart';
 import 'package:expathy/Providers/User%20Provider/user_provider.dart';
 import 'package:provider/provider.dart';
@@ -15,5 +16,6 @@ class AppProvider {
         create: (_) => PsychologistsProvider()),
     ChangeNotifierProvider<SubscriptionProvider>(
         create: (_) => SubscriptionProvider()),
+    ChangeNotifierProvider<SessionProvider>(create: (_) => SessionProvider()),
   ];
 }

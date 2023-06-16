@@ -1,15 +1,10 @@
 import 'dart:io';
-
 import 'package:expathy/Common%20Widgets/text_widget.dart';
-import 'package:expathy/Models/auth_model.dart';
 import 'package:expathy/Utils/app_fonts.dart';
-import 'package:expathy/Utils/app_strings.dart';
-import 'package:expathy/main.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-
 import '../../Common Widgets/custom_scaffold.dart';
 import '../../Common Widgets/elevated_button_widget.dart';
 import '../../Common Widgets/text_form_field_widget.dart';

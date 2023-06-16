@@ -23,6 +23,8 @@ import '../../Widgets/horzontal_two_button_widget.dart';
 import '../../Widgets/toolbar_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../Setting Screens/notification_screen.dart';
+
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key? key}) : super(key: key);
 
@@ -147,6 +149,14 @@ class ProfileScreen extends StatelessWidget {
                                 NavigationServices.push(
                                     context: context,
                                     screen: const ManageNotificationScreen());
+                              }),
+                          tileWidget(
+                              title: 'Notification',
+                              icon: AppImages.notiIcon,
+                              onTap: () {
+                                NavigationServices.push(
+                                    context: context,
+                                    screen: const NotificationScreen());
                               }),
                           divider(),
                           tileWidget(

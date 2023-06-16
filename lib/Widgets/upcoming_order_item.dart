@@ -5,6 +5,7 @@ import 'package:expathy/Widgets/horzontal_two_button_widget.dart';
 import 'package:flutter/material.dart';
 
 import '../Common Widgets/text_widget.dart';
+import '../Models/get_session_model.dart';
 import '../Utils/app_colors.dart';
 import '../Utils/app_fonts.dart';
 import 'info_widget.dart';
@@ -15,12 +16,15 @@ class UpcomingOrderItem extends StatefulWidget {
   final Function()? postponePressed;
   final Function()? rebookPressed;
   final bool showRebookButton;
+  final List<Session>? data;
+
   const UpcomingOrderItem(
       {Key? key,
       this.cancelPressed,
       this.postponePressed,
       this.showRebookButton = false,
-      this.rebookPressed})
+      this.rebookPressed,
+      this.data})
       : super(key: key);
 
   @override
@@ -31,9 +35,10 @@ class _UpcomingOrderItemState extends State<UpcomingOrderItem> {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
-      itemCount: 10,
+      itemCount: widget.data?.length ?? 0,
       physics: const BouncingScrollPhysics(),
       itemBuilder: (context, index) {
+        final sessionData = widget.data?[index];
         return Container(
           decoration: BoxDecoration(
             color: AppColors.white,
@@ -59,7 +64,7 @@ class _UpcomingOrderItemState extends State<UpcomingOrderItem> {
                         height: 40,
                         child: ElevatedButtonWidget(
                           onPressed: () {},
-                          text: 'Free',
+                          text: sessionData?.sessionType ?? '',
                           textColor: AppColors.black,
                           primary: AppColors.yellowLight,
                         ),

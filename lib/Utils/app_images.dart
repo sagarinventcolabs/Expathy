@@ -40,6 +40,7 @@ class AppImages {
   static const personPlus = "assets/images/personplus.svg";
   static const buddyImage = "assets/images/buddyimage.svg";
   static const butterfly = "assets/images/butterfly.svg";
+  static const noData = "assets/images/nodata.svg";
 
   ///png
   static const logo = "assets/images/logo.png";

@@ -6,11 +6,8 @@ import 'package:expathy/Screens/Profile%20Screen/profile_screen.dart';
 import 'package:expathy/Utils/app_colors.dart';
 import 'package:expathy/Utils/app_fonts.dart';
 import 'package:expathy/Utils/app_images.dart';
-import 'package:expathy/Utils/helper_methods.dart';
 import 'package:expathy/Widgets/svg_picture.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:geolocator/geolocator.dart';
 
 class BottomBarScreen extends StatefulWidget {
   const BottomBarScreen({Key? key}) : super(key: key);

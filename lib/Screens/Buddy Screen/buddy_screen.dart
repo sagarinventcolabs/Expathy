@@ -25,8 +25,7 @@ class _BuddyScreenState extends State<BuddyScreen> {
           padding: const EdgeInsets.only(top: 20, left: 10, right: 10.0),
           child: Column(
             children: [
-              ToolBarWidget(
-                  onTap: () {}, title: 'Gossips', showArrowIcon: false),
+              ToolBarWidget(onTap: () {}, title: 'Buddy', showArrowIcon: false),
               heightGap(20),
               Expanded(
                 child: SizedBox(

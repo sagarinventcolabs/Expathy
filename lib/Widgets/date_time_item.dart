@@ -9,8 +9,14 @@ class DateTimeItem extends StatefulWidget {
   final String? value;
   final String? heading;
   final CrossAxisAlignment crossAxisAlignment;
+  final bool showHeading;
+
   const DateTimeItem(
-      {Key? key, this.value, this.heading, required this.crossAxisAlignment})
+      {Key? key,
+      this.value,
+      this.heading,
+      required this.crossAxisAlignment,
+      this.showHeading = true})
       : super(key: key);
 
   @override
@@ -28,13 +34,14 @@ class _DateTimeItemState extends State<DateTimeItem> {
         fontWeight: FontWeight.w500,
       ),
       heightGap(5),
-      TextWidget(
-        text: widget.heading ?? '',
-        fontSize: 16,
-        fontFamily: AppFonts.poppins,
-        color: AppColors.greyText,
-        fontWeight: FontWeight.w400,
-      ),
+      if (widget.showHeading)
+        TextWidget(
+          text: widget.heading ?? '',
+          fontSize: 16,
+          fontFamily: AppFonts.poppins,
+          color: AppColors.greyText,
+          fontWeight: FontWeight.w400,
+        ),
     ]);
   }
 }

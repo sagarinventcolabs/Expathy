@@ -1,5 +1,6 @@
 import 'package:expathy/Widgets/date_time_item.dart';
 import 'package:flutter/material.dart';
+import '../Models/dashboard_model.dart';
 import '../Utils/app_colors.dart';
 import '../Utils/helper_methods.dart';
 import 'horzontal_two_button_widget.dart';
@@ -8,8 +9,13 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class UpComingSessionItem extends StatelessWidget {
   final Function() postponePressed;
   final Function() cancelPressed;
+  final Upcoming? upcoming;
+
   const UpComingSessionItem(
-      {Key? key, required this.postponePressed, required this.cancelPressed})
+      {Key? key,
+      required this.postponePressed,
+      required this.cancelPressed,
+      this.upcoming})
       : super(key: key);
 
   @override
@@ -30,16 +36,20 @@ class UpComingSessionItem extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Row(
-              children: const [
+              children: [
                 Expanded(
                   child: DateTimeItem(
                       heading: 'Date',
-                      value: '22 April 2023, Monday',
+                      showHeading: false,
+                      value:
+                          '${getDateFormatted(data: upcoming?.date ?? '', showMonthTextMiddle: true)}, ${upcoming?.day?[0].toUpperCase()}${upcoming?.day?.substring(1)}',
                       crossAxisAlignment: CrossAxisAlignment.start),
                 ),
                 DateTimeItem(
                     heading: 'Time',
-                    value: '4.15 PM',
+                    showHeading: false,
+                    value:
+                        '${convertTimeStampToTime(timeStamp: upcoming?.sessionTimeStamp ?? '')}',
                     crossAxisAlignment: CrossAxisAlignment.end),
               ],
             ),

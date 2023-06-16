@@ -64,47 +64,48 @@ class Data {
   String? address;
   int? latitude;
   int? longitude;
+  List<Upcoming>? upcoming;
   List<Articles>? articles;
 
-  Data({
-    this.sId,
-    this.isActive,
-    this.isDeleted,
-    this.percentage,
-    this.language,
-    this.type,
-    this.isQuestionSubmit,
-    this.isSuicide,
-    this.isProfileCompleted,
-    this.isNotification,
-    this.isHaveTherapists,
-    this.experience,
-    this.loginType,
-    this.email,
-    this.password,
-    this.userName,
-    this.name,
-    this.createdAt,
-    this.updatedAt,
-    this.iV,
-    this.languageId,
-    this.therapists,
-    this.age,
-    this.completedFreeSession,
-    this.completedPaidSession,
-    this.endDate,
-    this.freeSession,
-    this.gossipSection,
-    this.isSubscription,
-    this.noOfClick,
-    this.paidSession,
-    this.refferalCount,
-    this.subscription,
-    this.address,
-    this.latitude,
-    this.longitude,
-    this.articles,
-  });
+  Data(
+      {this.sId,
+      this.isActive,
+      this.isDeleted,
+      this.percentage,
+      this.language,
+      this.type,
+      this.isQuestionSubmit,
+      this.isSuicide,
+      this.isProfileCompleted,
+      this.isNotification,
+      this.isHaveTherapists,
+      this.experience,
+      this.loginType,
+      this.email,
+      this.password,
+      this.userName,
+      this.name,
+      this.createdAt,
+      this.updatedAt,
+      this.iV,
+      this.languageId,
+      this.therapists,
+      this.age,
+      this.completedFreeSession,
+      this.completedPaidSession,
+      this.endDate,
+      this.freeSession,
+      this.gossipSection,
+      this.isSubscription,
+      this.noOfClick,
+      this.paidSession,
+      this.refferalCount,
+      this.subscription,
+      this.address,
+      this.latitude,
+      this.longitude,
+      this.articles,
+      this.upcoming});
 
   Data.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
@@ -155,6 +156,12 @@ class Data {
         articles!.add(Articles.fromJson(v));
       });
     }
+    if (json['upcoming'] != null) {
+      upcoming = <Upcoming>[];
+      json['upcoming'].forEach((v) {
+        upcoming!.add(Upcoming.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -203,6 +210,9 @@ class Data {
     data['longitude'] = longitude;
     if (articles != null) {
       data['articles'] = articles!.map((v) => v.toJson()).toList();
+    }
+    if (upcoming != null) {
+      data['upcoming'] = upcoming!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -571,6 +581,75 @@ class Topic {
     data['is_deleted'] = isDeleted;
     data['_id'] = sId;
     data['name'] = name;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    data['__v'] = iV;
+    return data;
+  }
+}
+
+class Upcoming {
+  bool? isActive;
+  String? sessionType;
+  int? amount;
+  String? date;
+  String? time;
+  String? day;
+  String? sessionTimeStamp;
+  String? status;
+  String? sId;
+  String? psychologist;
+  String? customer;
+  String? createdAt;
+  String? updatedAt;
+  int? iV;
+
+  Upcoming(
+      {this.isActive,
+      this.sessionType,
+      this.amount,
+      this.date,
+      this.time,
+      this.day,
+      this.sessionTimeStamp,
+      this.status,
+      this.sId,
+      this.psychologist,
+      this.customer,
+      this.createdAt,
+      this.updatedAt,
+      this.iV});
+
+  Upcoming.fromJson(Map<String, dynamic> json) {
+    isActive = json['is_active'];
+    sessionType = json['sessionType'];
+    amount = json['amount'];
+    date = json['date'];
+    time = json['time'];
+    day = json['day'];
+    sessionTimeStamp = json['sessionTimeStamp'];
+    status = json['status'];
+    sId = json['_id'];
+    psychologist = json['psychologist'];
+    customer = json['customer'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
+    iV = json['__v'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['is_active'] = isActive;
+    data['sessionType'] = sessionType;
+    data['amount'] = amount;
+    data['date'] = date;
+    data['time'] = time;
+    data['day'] = day;
+    data['sessionTimeStamp'] = sessionTimeStamp;
+    data['status'] = status;
+    data['_id'] = sId;
+    data['psychologist'] = psychologist;
+    data['customer'] = customer;
     data['created_at'] = createdAt;
     data['updated_at'] = updatedAt;
     data['__v'] = iV;

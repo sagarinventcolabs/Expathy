@@ -1,9 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import '../Common Widgets/text_widget.dart';
-import '../Models/article_model.dart';
 import '../Models/dashboard_model.dart';
 import '../Utils/app_colors.dart';
 import '../Utils/app_fonts.dart';

@@ -1,11 +1,16 @@
+import 'package:expathy/Models/get_session_model.dart';
+import 'package:expathy/Providers/Session%20Provider/session_provider.dart';
 import 'package:expathy/Screens/Bottom%20Bar%20Screen/bottom_bar_screen.dart';
+import 'package:expathy/Screens/Package%20Screen/package_screen.dart';
 import 'package:expathy/Utils/app_colors.dart';
 import 'package:expathy/Utils/helper_methods.dart';
+import 'package:expathy/Widgets/skeleton_widget.dart';
 import 'package:expathy/Widgets/upcoming_order_item.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
-
+import '../../Common Widgets/custom_future_builder.dart';
 import '../../Common Widgets/custom_scaffold.dart';
 import '../../Common Widgets/elevated_button_widget.dart';
 import '../../Common Widgets/text_widget.dart';
@@ -13,7 +18,6 @@ import '../../Utils/app_fonts.dart';
 import '../../Utils/app_images.dart';
 import '../../Widgets/gradient_background_widget.dart';
 import '../../Widgets/toolbar_widget.dart';
-import '../Package Screen/plan_package_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class OrderScreen extends StatefulWidget {
@@ -23,10 +27,50 @@ class OrderScreen extends StatefulWidget {
   State<OrderScreen> createState() => _OrderScreenState();
 }
 
-class _OrderScreenState extends State<OrderScreen> {
+class _OrderScreenState extends State<OrderScreen>
+    with SingleTickerProviderStateMixin {
+  TabController? tabController;
   final CalendarFormat _calendarFormat = CalendarFormat.week;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
+  int tabBarIndex = 0;
+  late Future<List<Session>?> sessionListFuture;
+
+  //("Completed ,Cancelled,Upcoming")
+
+  @override
+  void initState() {
+    sessionListFuture = context.read<SessionProvider>().getSessionListApi(
+        type: tabBarIndex == 0
+            ? 'Upcoming'
+            : tabBarIndex == 1
+                ? 'Completed'
+                : 'Cancelled',
+        context: context);
+    tabController = TabController(length: 3, vsync: this);
+    tabController?.addListener(_getSessionList);
+    super.initState();
+  }
+
+  void _getSessionList() {
+    setState(() {
+      sessionListFuture = context.read<SessionProvider>().getSessionListApi(
+          type: tabController?.index == 0
+              ? 'Upcoming'
+              : tabController?.index == 1
+                  ? 'Completed'
+                  : 'Cancelled',
+          context: context);
+    });
+  }
+
+  @override
+  void dispose() {
+    tabController?.dispose();
+    tabController?.removeListener(_getSessionList);
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -54,6 +98,27 @@ class _OrderScreenState extends State<OrderScreen> {
                   child: AppBar(
                     backgroundColor: AppColors.white,
                     bottom: TabBar(
+                      controller: tabController,
+                      onTap: (value) {
+                        setState(() {
+                          if (value == 0) {
+                            sessionListFuture = context
+                                .read<SessionProvider>()
+                                .getSessionListApi(
+                                    type: 'Upcoming', context: context);
+                          } else if (value == 1) {
+                            sessionListFuture = context
+                                .read<SessionProvider>()
+                                .getSessionListApi(
+                                    type: 'Completed', context: context);
+                          } else {
+                            sessionListFuture = context
+                                .read<SessionProvider>()
+                                .getSessionListApi(
+                                    type: 'Cancelled', context: context);
+                          }
+                        });
+                      },
                       labelColor: AppColors.yellow,
                       unselectedLabelColor: AppColors.black,
                       indicatorColor: AppColors.yellow,
@@ -78,71 +143,127 @@ class _OrderScreenState extends State<OrderScreen> {
                     padding:
                         const EdgeInsets.only(top: 20.0, right: 16, left: 16),
                     child: TabBarView(
+                      controller: tabController,
                       children: [
-                        UpcomingOrderItem(
-                          cancelPressed: () {},
-                          postponePressed: () {
-                            showDialog<void>(
-                              context: context,
-                              barrierDismissible: true, // user must tap button!
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  content: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.stretch,
-                                      children: [
-                                        Column(
-                                          children: [
-                                            Lottie.asset(AppImages.worryJson,
-                                                width: 100, height: 100),
-                                            heightGap(5),
-                                            const TextWidget(
-                                              text: 'No worries,',
-                                              color: AppColors.greenLight,
-                                              fontSize: 24,
-                                              fontFamily: AppFonts.poppins,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                            const TextWidget(
-                                              text:
-                                                  'just select another timeslot',
-                                              fontFamily: AppFonts.poppins,
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          ],
+                        CustomFutureBuilder<List<Session>?>(
+                          loaderWidget: loadingShimmer(),
+                          future: sessionListFuture,
+                          noInternetOnPressed: () {},
+                          data: (snapshot) {
+                            final sessionList = snapshot;
+
+                            if (sessionList!.isEmpty) {
+                              return noData(
+                                  title: 'No Upcoming Session',
+                                  context: context);
+                            } else {
+                              return UpcomingOrderItem(
+                                data: sessionList,
+                                cancelPressed: () {},
+                                postponePressed: () {
+                                  showDialog<void>(
+                                    context: context,
+                                    barrierDismissible: true,
+                                    // user must tap button!
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
                                         ),
-                                        heightGap(18),
-                                        ElevatedButtonWidget(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                              _bottomSheet(
-                                                  context: context,
-                                                  showBookAgainText: true);
-                                            },
-                                            text: 'Select'),
-                                      ]),
-                                );
-                              },
-                            );
+                                        content: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.stretch,
+                                            children: [
+                                              Column(
+                                                children: [
+                                                  Lottie.asset(
+                                                      AppImages.worryJson,
+                                                      width: 100,
+                                                      height: 100),
+                                                  heightGap(5),
+                                                  const TextWidget(
+                                                    text: 'No worries,',
+                                                    color: AppColors.greenLight,
+                                                    fontSize: 24,
+                                                    fontFamily:
+                                                        AppFonts.poppins,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                  const TextWidget(
+                                                    text:
+                                                        'just select another timeslot',
+                                                    fontFamily:
+                                                        AppFonts.poppins,
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                ],
+                                              ),
+                                              heightGap(18),
+                                              ElevatedButtonWidget(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                    _bottomSheet(
+                                                        context: context,
+                                                        showBookAgainText:
+                                                            true);
+                                                  },
+                                                  text: 'Select'),
+                                            ]),
+                                      );
+                                    },
+                                  );
+                                },
+                              );
+                            }
                           },
                         ),
-                        UpcomingOrderItem(
-                          showRebookButton: true,
-                          rebookPressed: () {
-                            _bottomSheet(
-                                context: context, showBookAgainText: true);
+                        CustomFutureBuilder<List<Session>?>(
+                          loaderWidget: loadingShimmer(),
+                          future: sessionListFuture,
+                          noInternetOnPressed: () {},
+                          data: (snapshot) {
+                            final sessionList = snapshot;
+                            if (sessionList!.isEmpty) {
+                              return noData(
+                                  title: 'No Completed Session',
+                                  context: context);
+                            } else {
+                              return UpcomingOrderItem(
+                                data: sessionList,
+                                showRebookButton: true,
+                                rebookPressed: () {
+                                  _bottomSheet(
+                                      context: context,
+                                      showBookAgainText: true);
+                                },
+                              );
+                            }
                           },
                         ),
-                        UpcomingOrderItem(
-                          showRebookButton: true,
-                          rebookPressed: () {
-                            _bottomSheet(
-                                context: context, showBookAgainText: true);
+                        CustomFutureBuilder<List<Session>?>(
+                          loaderWidget: loadingShimmer(),
+                          future: sessionListFuture,
+                          noInternetOnPressed: () {},
+                          data: (snapshot) {
+                            final sessionList = snapshot;
+                            if (sessionList!.isEmpty) {
+                              return noData(
+                                  title: 'No cancelled Session',
+                                  context: context);
+                            } else {
+                              return UpcomingOrderItem(
+                                data: sessionList,
+                                showRebookButton: true,
+                                rebookPressed: () {
+                                  _bottomSheet(
+                                      context: context,
+                                      showBookAgainText: true);
+                                },
+                              );
+                            }
                           },
                         ),
                       ],
@@ -154,6 +275,106 @@ class _OrderScreenState extends State<OrderScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget loadingShimmer() {
+    return ListView.separated(
+      itemCount: 10,
+      physics: const BouncingScrollPhysics(),
+      itemBuilder: (context, index) {
+        return Container(
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      shimmerEffect(
+                          widget: SkeletonWidget(
+                        height: 10,
+                        width: deviceWidth(context) * 0.30,
+                      )),
+                      shimmerEffect(
+                          widget: SkeletonWidget(
+                        height: 40,
+                        width: deviceWidth(context) * 0.20,
+                      )),
+                    ],
+                  ),
+                  heightGap(10),
+                  Row(
+                    children: [
+                      shimmerEffect(
+                        widget: const SkeletonWidget(
+                          radius: 100,
+                          height: 75,
+                          width: 75,
+                        ),
+                      ),
+                      widthGap(12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            shimmerEffect(
+                              widget: const SkeletonWidget(
+                                radius: 0,
+                                height: 15,
+                              ),
+                            ),
+                            heightGap(5),
+                            shimmerEffect(
+                              widget: const SkeletonWidget(
+                                radius: 0,
+                                height: 10,
+                              ),
+                            ),
+                            heightGap(5),
+                            shimmerEffect(
+                              widget: const SkeletonWidget(
+                                radius: 0,
+                                height: 10,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  heightGap(10),
+                  Row(children: [
+                    Expanded(
+                      child: shimmerEffect(
+                        widget: const SkeletonWidget(
+                          radius: 0,
+                          height: 45,
+                        ),
+                      ),
+                    ),
+                    widthGap(20),
+                    Expanded(
+                      child: shimmerEffect(
+                        widget: const SkeletonWidget(
+                          radius: 0,
+                          height: 45,
+                        ),
+                      ),
+                    ),
+                  ]),
+                ]),
+          ),
+        );
+      },
+      separatorBuilder: (BuildContext context, int index) {
+        return heightGap(10);
+      },
     );
   }
 
@@ -337,7 +558,8 @@ class _OrderScreenState extends State<OrderScreen> {
                             Navigator.of(context).pop();
                             showDialog<void>(
                               context: context,
-                              barrierDismissible: true, // user must tap button!
+                              barrierDismissible: true,
+                              // user must tap button!
                               builder: (BuildContext context) {
                                 return AlertDialog(
                                   shape: RoundedRectangleBorder(
@@ -389,13 +611,14 @@ class _OrderScreenState extends State<OrderScreen> {
                             );
                           } else if (navigateToPackageScreen) {
                             Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const PlanPackageScreen(),
+                              builder: (context) => const PackageScreen(),
                             ));
                           } else {
                             Navigator.of(context).pop();
                             showDialog<void>(
                               context: context,
-                              barrierDismissible: true, // user must tap button!
+                              barrierDismissible: true,
+                              // user must tap button!
                               builder: (BuildContext context) {
                                 return AlertDialog(
                                   shape: RoundedRectangleBorder(

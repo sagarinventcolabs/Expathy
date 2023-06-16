@@ -8,7 +8,6 @@ import 'package:expathy/Utils/app_fonts.dart';
 import 'package:expathy/Utils/helper_methods.dart';
 import 'package:expathy/Utils/navigation_services.dart';
 import 'package:expathy/Widgets/toolbar_widget.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../Common Widgets/text_widget.dart';
@@ -26,7 +25,7 @@ class PlanPackageScreen extends StatefulWidget {
 }
 
 class _PlanPackageScreenState extends State<PlanPackageScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   List<BenefitsModel> benefitsList = [
     BenefitsModel(
       heading: 'Cancel & Reschedule',
@@ -47,8 +46,10 @@ class _PlanPackageScreenState extends State<PlanPackageScreen>
   ];
   String dropdownValue = 'EURO';
   TabController? tabController;
+  int? planLength;
+  bool firstTime = true;
 
-  @override
+/*  @override
   void initState() {
     context
         .read<SubscriptionProvider>()
@@ -56,6 +57,27 @@ class _PlanPackageScreenState extends State<PlanPackageScreen>
     tabController = TabController(length: 3, vsync: this);
     tabController?.addListener(_getActiveTabIndex);
     super.initState();
+  }*/
+
+  @override
+  void didChangeDependencies() async {
+    if (firstTime) {
+      await context
+          .read<SubscriptionProvider>()
+          .fetchSubscriptionListApi(context: context)
+          .then((value) {
+        planLength = value?.data?.data?.length ?? 0;
+      });
+      await getTabController();
+      tabController?.addListener(_getActiveTabIndex);
+      firstTime = false;
+    }
+
+    super.didChangeDependencies();
+  }
+
+  Future<void> getTabController() async {
+    tabController = TabController(length: planLength ?? 0, vsync: this);
   }
 
   void _getActiveTabIndex() {
@@ -65,10 +87,17 @@ class _PlanPackageScreenState extends State<PlanPackageScreen>
   }
 
   @override
+  void dispose() {
+    tabController?.dispose();
+    tabController?.removeListener(_getActiveTabIndex);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final subscriptionProvider = context.read<SubscriptionProvider>();
     return DefaultTabController(
-      length: 3,
+      length: subscriptionProvider.planLength ?? 0,
       child: CustomScaffold(
         body: SafeArea(
           child: SizedBox(
@@ -79,12 +108,11 @@ class _PlanPackageScreenState extends State<PlanPackageScreen>
                 CustomPaint(
                   size: Size(deviceWidth(context),
                       (deviceHeight(context) * 0.60).toDouble()),
-                  //You can Replace [WIDTH] with your desired width for Custom Paint and height will be calculated automatically
                   painter: AuthScreenPainter(),
                 ),
                 Padding(
                   padding:
-                      const EdgeInsets.only(top: 20.0, right: 22, left: 22),
+                  const EdgeInsets.only(top: 20.0, right: 22, left: 22),
                   child: Column(
                     children: [
                       //heightGap(20),
@@ -142,7 +170,9 @@ class _PlanPackageScreenState extends State<PlanPackageScreen>
                                   value: value,
                                   child: TextWidget(
                                     text:
-                                        '${value == 'EURO' ? '€' : value == 'IND' ? '₹' : '\$'} $value',
+                                    '${value == 'EURO' ? '€' : value == 'IND'
+                                        ? '₹'
+                                        : '\$'} $value',
                                     fontSize: 14,
                                     fontFamily: AppFonts.poppins,
                                     fontWeight: FontWeight.w400,
@@ -172,31 +202,45 @@ class _PlanPackageScreenState extends State<PlanPackageScreen>
                               color: AppColors.white,
                             ),
                             child: TabBar(
-                              controller: tabController,
-                              padding: const EdgeInsets.all(4),
-                              indicatorColor: Colors.transparent,
-                              labelColor: AppColors.white,
-                              unselectedLabelColor: AppColors.greyText,
-                              onTap: (value) {
-                                subscriptionProvider.filterPlan(index: value);
-                              },
-                              labelStyle: const TextStyle(
-                                fontSize: 18,
-                                fontFamily: AppFonts.poppins,
-                                fontWeight: FontWeight.w400,
-                              ),
-                              unselectedLabelStyle: const TextStyle(
-                                fontSize: 18,
-                                fontFamily: AppFonts.poppins,
-                                fontWeight: FontWeight.w400,
-                              ),
-                              indicator: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                color: value.fetchingSubscription
-                                    ? AppColors.white
-                                    : AppColors.green,
-                              ),
-                              tabs: [
+                                controller: tabController,
+                                padding: const EdgeInsets.all(4),
+                                indicatorColor: Colors.transparent,
+                                labelColor: AppColors.white,
+                                unselectedLabelColor: AppColors.greyText,
+                                onTap: (value) {
+                                  subscriptionProvider.filterPlan(index: value);
+                                },
+                                labelStyle: const TextStyle(
+                                  fontSize: 18,
+                                  fontFamily: AppFonts.poppins,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                unselectedLabelStyle: const TextStyle(
+                                  fontSize: 18,
+                                  fontFamily: AppFonts.poppins,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                indicator: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  color: value.fetchingSubscription
+                                      ? AppColors.white
+                                      : AppColors.green,
+                                ),
+                                tabs: value.subscriptionPlanList!
+                                    .map(
+                                      (e) =>
+                                  value.fetchingSubscription
+                                      ? shimmerEffect(
+                                      widget: const SkeletonWidget(
+                                        radius: 12,
+                                        height: 48,
+                                        width: double.infinity,
+                                      ))
+                                      : Tab(
+                                    text: e.type,
+                                  ),
+                                )
+                                    .toList() /* [
                                 value.fetchingSubscription
                                     ? shimmerEffect(
                                         widget: const SkeletonWidget(
@@ -230,7 +274,7 @@ class _PlanPackageScreenState extends State<PlanPackageScreen>
                                         text: AppLocalizations.of(context)!
                                             .silver,
                                       )
-                              ],
+                              ],*/
                             ),
                           );
                         },
@@ -249,8 +293,18 @@ class _PlanPackageScreenState extends State<PlanPackageScreen>
                               return value.fetchingSubscription
                                   ? loadingShimmer()
                                   : TabBarView(
-                                      controller: tabController,
-                                      children: [
+                                  controller: tabController,
+                                  children: value.subscriptionPlanList!
+                                      .map(
+                                        (e) =>
+                                        planItem(
+                                          amount: e.price.toString(),
+                                          saveAmount: '100',
+                                          session: e.session.toString(),
+                                        ),
+                                  )
+                                      .toList()
+                                /*  [
                                         planItem(
                                           amount: plan?.price.toString(),
                                           saveAmount: '100',
@@ -266,8 +320,8 @@ class _PlanPackageScreenState extends State<PlanPackageScreen>
                                           saveAmount: '100',
                                           session: plan?.session.toString(),
                                         ),
-                                      ],
-                                    );
+                                      ],*/
+                              );
                             },
                           ),
                         ),
@@ -293,129 +347,83 @@ class _PlanPackageScreenState extends State<PlanPackageScreen>
                           padding: const EdgeInsets.all(12.0),
                           child: value.fetchingSubscription
                               ? Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment.start,
                                   children: [
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          shimmerEffect(
-                                            widget: const SkeletonWidget(
-                                              radius: 0,
-                                              height: 10,
-                                            ),
-                                          ),
-                                          heightGap(10),
-                                          shimmerEffect(
-                                            widget: const SkeletonWidget(
-                                              radius: 0,
-                                              height: 20,
-                                              width: 60,
-                                            ),
-                                          )
-                                        ],
+                                    shimmerEffect(
+                                      widget: const SkeletonWidget(
+                                        radius: 0,
+                                        height: 10,
                                       ),
                                     ),
-                                    widthGap(20),
-                                    Expanded(
-                                      child: shimmerEffect(
-                                        widget: const SkeletonWidget(
-                                          radius: 8,
-                                          height: 48,
-                                        ),
+                                    heightGap(10),
+                                    shimmerEffect(
+                                      widget: const SkeletonWidget(
+                                        radius: 0,
+                                        height: 20,
+                                        width: 60,
                                       ),
-                                    ),
-                                  ],
-                                )
-                              : Row(
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          TextWidget(
-                                            text:
-                                                '${plan?.session ?? ''} Sessions in 1 months',
-                                            fontFamily: AppFonts.poppins,
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 14,
-                                          ),
-                                          TextWidget(
-                                            text:
-                                                '${dropdownValue == 'EURO' ? '€' : dropdownValue == 'IND' ? '₹' : '\$'} ${plan?.totalPrice ?? ''}',
-                                            fontFamily: AppFonts.poppins,
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 22,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    ElevatedButtonWidget(
-                                        onPressed: () {
-                                          NavigationServices.push(
-                                              context: context,
-                                              screen: const CheckoutScreen());
-                                        },
-                                        text: 'Purchased'),
+                                    )
                                   ],
                                 ),
+                              ),
+                              widthGap(20),
+                              Expanded(
+                                child: shimmerEffect(
+                                  widget: const SkeletonWidget(
+                                    radius: 8,
+                                    height: 48,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                              : Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment.start,
+                                  children: [
+                                    TextWidget(
+                                      text:
+                                      '${plan?.session ??
+                                          ''} Sessions in 1 months',
+                                      fontFamily: AppFonts.poppins,
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 14,
+                                    ),
+                                    TextWidget(
+                                      text:
+                                      '${dropdownValue == 'EURO'
+                                          ? '€'
+                                          : dropdownValue == 'IND'
+                                          ? '₹'
+                                          : '\$'} ${plan?.totalPrice ?? ''}',
+                                      fontFamily: AppFonts.poppins,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 22,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              ElevatedButtonWidget(
+                                  onPressed: () {
+                                    NavigationServices.push(
+                                        context: context,
+                                        screen: const CheckoutScreen());
+                                  },
+                                  text: 'Purchased'),
+                            ],
+                          ),
                         ),
                       );
                     },
                   ),
                 ),
-                /* Positioned(
-                  top: 0,
-                  right: 10,
-                  child: Container(
-                    width: deviceWidth(context) * 0.30,
-                    height: 40,
-                    decoration: BoxDecoration(
-                        color: AppColors.white,
-                        borderRadius: BorderRadius.circular(20)),
-                    child: DropdownButtonFormField(
-                      isDense: true,
-                      icon: const Icon(
-                        Icons.keyboard_arrow_down,
-                        color: AppColors.black,
-                      ),
-                      decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.all(10),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: const BorderSide(
-                              color: AppColors.checkBoxBorderColor, width: 1),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: const BorderSide(
-                              color: AppColors.checkBoxBorderColor, width: 1),
-                        ),
-                        filled: true,
-                        fillColor: AppColors.white,
-                      ),
-                      value: dropdownValue,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          dropdownValue = newValue!;
-                        });
-                      },
-                      items: <String>['EURO', 'IND', 'USD', 'DINAR']
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: TextWidget(
-                            text: '€ $value',
-                            fontSize: 14,
-                            fontFamily: AppFonts.poppins,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                ),*/
               ],
             ),
           ),
@@ -443,8 +451,8 @@ class _PlanPackageScreenState extends State<PlanPackageScreen>
                       text: dropdownValue == 'EURO'
                           ? '€'
                           : dropdownValue == 'IND'
-                              ? '₹'
-                              : '\$',
+                          ? '₹'
+                          : '\$',
                       fontSize: 42,
                       fontWeight: FontWeight.w600,
                       fontFamily: AppFonts.poppins,
@@ -547,10 +555,10 @@ class _PlanPackageScreenState extends State<PlanPackageScreen>
                         ),
                         child: const Center(
                             child: Icon(
-                          Icons.check,
-                          color: AppColors.black,
-                          size: 18,
-                        )),
+                              Icons.check,
+                              color: AppColors.black,
+                              size: 18,
+                            )),
                       ),
                       widthGap(10),
                       Expanded(

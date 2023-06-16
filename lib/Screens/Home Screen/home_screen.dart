@@ -1,10 +1,14 @@
 import 'package:expathy/Common%20Widgets/custom_scaffold.dart';
 import 'package:expathy/Common%20Widgets/elevated_button_widget.dart';
 import 'package:expathy/Providers/Auth%20Provider/auth_provider.dart';
+import 'package:expathy/Providers/Session%20Provider/session_provider.dart';
 import 'package:expathy/Providers/User%20Provider/user_provider.dart';
 import 'package:expathy/Screens/Article%20Screen/article_detail_screen.dart';
 import 'package:expathy/Screens/Articles%20Screen/all_articles_screen.dart';
+import 'package:expathy/Screens/Bottom%20Bar%20Screen/bottom_bar_screen.dart';
+import 'package:expathy/Screens/Package%20Screen/package_screen.dart';
 import 'package:expathy/Screens/Package%20Screen/plan_package_screen.dart';
+import 'package:expathy/Screens/Question%20Answer%20Screen/first_question_screen.dart';
 import 'package:expathy/Screens/Setting%20Screens/invite_friends_screen.dart';
 import 'package:expathy/Screens/Therapists%20Screen/therapists_list_screen.dart';
 import 'package:expathy/Utils/app_images.dart';
@@ -24,9 +28,10 @@ import 'package:geolocator/geolocator.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
+import '../../Common Widgets/custom_future_builder.dart';
 import '../../Common Widgets/text_widget.dart';
 import '../../Models/article_model.dart';
-import '../../Models/pyschologist_list_model.dart';
+import '../../Models/dashboard_model.dart';
 import '../../Utils/app_colors.dart';
 import '../../Utils/app_fonts.dart';
 import '../../Utils/navigation_services.dart';
@@ -50,6 +55,8 @@ class _HomeScreenState extends State<HomeScreen> {
   bool showDropDown = false;
   bool showChangeTherapistsOption = false;
   String dropdownValue = 'reason1';
+  String? day;
+  String? slotTimeFrom;
 
   List<ArticleModel> articleList = [
     ArticleModel(
@@ -84,9 +91,13 @@ class _HomeScreenState extends State<HomeScreen> {
     ),
   ];
 
+  late Future<DashboardModel?> dashboardFuture;
+
   @override
   void initState() {
-    context.read<UserProvider>().dashboardApi(context: context);
+    // context.read<UserProvider>().dashboardApi(context: context);
+    dashboardFuture =
+        context.read<UserProvider>().dashboardApi(context: context);
     super.initState();
   }
 
@@ -114,122 +125,65 @@ class _HomeScreenState extends State<HomeScreen> {
               physics: const BouncingScrollPhysics(),
               child: Stack(
                 children: [
-                  Consumer<UserProvider>(
-                    builder: (context, value, child) {
-                      final dashboardData = value.dashboardData?.data;
-                      return value.dashboardFetching
-                          ? Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              width: deviceWidth(context) * 0.40,
+                              height: deviceHeight(context) * 0.15,
+                              child: const SvgPic(
+                                image: AppImages.logoMain,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                            heightGap(20),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Center(
-                                  child: Column(
-                                    children: [
-                                      SizedBox(
-                                        width: deviceWidth(context) * 0.40,
-                                        height: deviceHeight(context) * 0.15,
-                                        child: const SvgPic(
-                                          image: AppImages.logoMain,
-                                          fit: BoxFit.contain,
-                                        ),
-                                      ),
-                                      heightGap(20),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          TextWidget(
-                                            text:
-                                                '${sharedPrefs?.getString(AppStrings.userName) ?? ''}, ',
-                                            textAlign: TextAlign.center,
-                                            fontSize: 22,
-                                            color: AppColors.white,
-                                            fontFamily: AppFonts.poppins,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                          Flexible(
-                                            child: TextWidget(
-                                              text:
-                                                  AppLocalizations.of(context)!
-                                                      .weAreHereForYou,
-                                              textAlign: TextAlign.center,
-                                              fontSize: 22,
-                                              color: AppColors.white,
-                                              fontFamily: AppFonts.poppins,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
+                                TextWidget(
+                                  text:
+                                      '${sharedPrefs?.getString(AppStrings.userName) ?? ''}, ',
+                                  textAlign: TextAlign.center,
+                                  fontSize: 22,
+                                  color: AppColors.white,
+                                  fontFamily: AppFonts.poppins,
+                                  fontWeight: FontWeight.w600,
                                 ),
-                                heightGap(24),
-                                ListView.separated(
-                                  itemCount: 10,
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  itemBuilder: (context, index) {
-                                    return shimmerEffect(
-                                      widget: const SkeletonWidget(
-                                        radius: 8,
-                                        height: 60,
-                                        width: double.infinity,
-                                      ),
-                                    );
-                                  },
-                                  separatorBuilder:
-                                      (BuildContext context, int index) {
-                                    return heightGap(10);
-                                  },
+                                Flexible(
+                                  child: TextWidget(
+                                    text: AppLocalizations.of(context)!
+                                        .weAreHereForYou,
+                                    textAlign: TextAlign.center,
+                                    fontSize: 22,
+                                    color: AppColors.white,
+                                    fontFamily: AppFonts.poppins,
+                                    fontWeight: FontWeight.w400,
+                                  ),
                                 ),
                               ],
-                            )
-                          : Column(
+                            ),
+                          ],
+                        ),
+                      ),
+                      heightGap(24),
+                      CustomFutureBuilder<DashboardModel?>(
+                        loaderWidget: loadingShimmer(),
+                        future: dashboardFuture,
+                        noInternetOnPressed: () {
+                          setState(() {
+                            dashboardFuture = context
+                                .read<UserProvider>()
+                                .dashboardApi(context: context);
+                          });
+                        },
+                        data: (snapshot) {
+                          final dashboardData = snapshot?.data;
+                          return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Center(
-                                  child: Column(
-                                    children: [
-                                      SizedBox(
-                                        width: deviceWidth(context) * 0.40,
-                                        height: deviceHeight(context) * 0.15,
-                                        child: const SvgPic(
-                                          image: AppImages.logoMain,
-                                          fit: BoxFit.contain,
-                                        ),
-                                      ),
-                                      heightGap(20),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          TextWidget(
-                                            text:
-                                                '${sharedPrefs?.getString(AppStrings.userName) ?? ''}, ',
-                                            textAlign: TextAlign.center,
-                                            fontSize: 22,
-                                            color: AppColors.white,
-                                            fontFamily: AppFonts.poppins,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                          Flexible(
-                                            child: TextWidget(
-                                              text:
-                                                  AppLocalizations.of(context)!
-                                                      .weAreHereForYou,
-                                              textAlign: TextAlign.center,
-                                              fontSize: 22,
-                                              color: AppColors.white,
-                                              fontFamily: AppFonts.poppins,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                heightGap(24),
                                 TextWidget(
                                   text:
                                       AppLocalizations.of(context)!.activePlan,
@@ -240,9 +194,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 heightGap(8),
                                 ActivePlanItem(
-                                    isFreePlan: sharedPrefs
-                                            ?.getBool(AppStrings.isFreePlan) ??
-                                        true),
+                                    isFreePlan:
+                                        dashboardData?.isSubscription ?? false,
+                                    subscription: dashboardData?.subscription),
                                 heightGap(24),
 
                                 ///therapist
@@ -262,8 +216,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       onPressed: () {
                                         showDialog<void>(
                                           context: context,
-                                          barrierDismissible:
-                                              true, // user must tap button!
+                                          barrierDismissible: true,
                                           builder: (BuildContext context) {
                                             return AlertDialog(
                                               shape: RoundedRectangleBorder(
@@ -277,14 +230,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 children: [
                                                   Column(
                                                     children: [
-                                                      Lottie.asset(
-                                                          AppImages.warningJson,
-                                                          width: 120,
-                                                          height: 120),
-                                                      heightGap(5),
                                                       const TextWidget(
                                                         text:
-                                                            'Are you sure to change your therapist?',
+                                                            'Changing Your Therapist',
                                                         fontSize: 20,
                                                         textAlign:
                                                             TextAlign.center,
@@ -293,34 +241,111 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         fontWeight:
                                                             FontWeight.w500,
                                                       ),
+                                                      heightGap(10),
+                                                      const TextWidget(
+                                                        text:
+                                                            'You are changing your therapist. Do you want to answer your onboarding questions again?',
+                                                        fontSize: 16,
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        fontFamily:
+                                                            AppFonts.poppins,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                      ),
                                                     ],
                                                   ),
                                                   heightGap(18),
-                                                  HorizontalTwoButtonWidget(
-                                                    text1: AppLocalizations.of(
-                                                            context)!
-                                                        .no,
-                                                    text1Tap: () {
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                    },
-                                                    text2: AppLocalizations.of(
-                                                            context)!
-                                                        .yes,
-                                                    text2Tap: () {
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                      Navigator.of(context)
-                                                          .push(
-                                                        MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              const TherapistsListScreen(
-                                                                  isFromHome:
-                                                                      true),
-                                                        ),
-                                                      );
-                                                    },
-                                                  ),
+                                                  ElevatedButtonWidget(
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pop();
+
+                                                        showDialog<void>(
+                                                          context: context,
+                                                          barrierDismissible:
+                                                              true,
+                                                          builder: (BuildContext
+                                                              context) {
+                                                            return AlertDialog(
+                                                              shape:
+                                                                  RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            12),
+                                                              ),
+                                                              content: Column(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .min,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .stretch,
+                                                                children: [
+                                                                  Column(
+                                                                    children: [
+                                                                      const TextWidget(
+                                                                        text:
+                                                                            'You will be matched with a new therapist based on your most recent answers to the questions. are you sure?',
+                                                                        fontSize:
+                                                                            14,
+                                                                        textAlign:
+                                                                            TextAlign.center,
+                                                                        fontFamily:
+                                                                            AppFonts.poppins,
+                                                                        fontWeight:
+                                                                            FontWeight.w400,
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  heightGap(18),
+                                                                  HorizontalTwoButtonWidget(
+                                                                    text1: AppLocalizations.of(
+                                                                            context)!
+                                                                        .no,
+                                                                    text1Tap:
+                                                                        () {
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .pop();
+                                                                    },
+                                                                    text2: AppLocalizations.of(
+                                                                            context)!
+                                                                        .yes,
+                                                                    text2Tap:
+                                                                        () {
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .pop();
+                                                                      NavigationServices.pushAndRemoveUntil(
+                                                                          context: context,
+                                                                          screen: const TherapistsListScreen(
+                                                                            showBackButton:
+                                                                                false,
+                                                                          ));
+                                                                    },
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            );
+                                                          },
+                                                        );
+                                                      },
+                                                      text:
+                                                          'Proceed with Previous Answers'),
+                                                  heightGap(8),
+                                                  ElevatedButtonWidget(
+                                                      onPressed: () {
+                                                        NavigationServices
+                                                            .pushAndRemoveUntil(
+                                                                context:
+                                                                    context,
+                                                                screen:
+                                                                    const FirstQuestionScreen());
+                                                      },
+                                                      text:
+                                                          'Answer Questions Again'),
                                                 ],
                                               ),
                                             );
@@ -383,7 +408,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                           shrinkWrap: true,
                                           physics:
                                               const NeverScrollableScrollPhysics(),
-                                          itemCount: 2,
+                                          itemCount: ((dashboardData
+                                                          ?.therapists
+                                                          ?.areaOfExperties
+                                                          ?.length ??
+                                                      0) >
+                                                  2)
+                                              ? 2
+                                              : dashboardData?.therapists
+                                                  ?.areaOfExperties?.length,
                                           gridDelegate:
                                               const SliverGridDelegateWithFixedCrossAxisCount(
                                                   crossAxisCount: 2,
@@ -427,14 +460,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                           text1: AppLocalizations.of(context)!
                                               .freeSessionNow,
                                           text1Tap: () {
-                                            _bottomSheet(context: context);
+                                            _bottomSheet(
+                                                context: context, type: 'free');
                                           },
                                           text2: AppLocalizations.of(context)!
                                               .bookFullSession,
                                           text2Tap: () {
                                             _bottomSheet(
                                                 context: context,
-                                                navigateToPackageScreen: true);
+                                                navigateToPackageScreen: true,
+                                                type: 'paid');
                                           },
                                         ),
                                       ],
@@ -442,9 +477,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
                                 heightGap(24),
-                                if (!(sharedPrefs
-                                        ?.getBool(AppStrings.isFreePlan) ??
-                                    true))
+                                if (dashboardData?.upcoming?.isNotEmpty ??
+                                    false)
                                   Column(children: [
                                     ViewAllRowWidget(
                                       text: AppLocalizations.of(context)!
@@ -452,13 +486,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                     heightGap(8),
                                     SizedBox(
-                                      height: 185,
+                                      height: 145,
                                       child: ListView.builder(
                                         scrollDirection: Axis.horizontal,
-                                        itemCount: 5,
+                                        itemCount:
+                                            dashboardData?.upcoming?.length,
                                         clipBehavior: Clip.none,
                                         physics: const BouncingScrollPhysics(),
                                         itemBuilder: (context, index) {
+                                          final upcomingSession =
+                                              dashboardData?.upcoming?[index];
                                           return UpComingSessionItem(
                                             cancelPressed: () {
                                               showDialog<void>(
@@ -763,6 +800,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 },
                                               );
                                             },
+                                            upcoming: upcomingSession,
                                           );
                                         },
                                       ),
@@ -789,13 +827,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                     height: 220,
                                     child: ListView.builder(
                                       scrollDirection: Axis.horizontal,
-                                      itemCount:
-                                          dashboardData?.articles?.length,
+                                      itemCount: dashboardData.articles?.length,
                                       physics: const BouncingScrollPhysics(),
                                       clipBehavior: Clip.none,
                                       itemBuilder: (context, index) {
                                         final articleData =
-                                            dashboardData?.articles?[index];
+                                            dashboardData.articles?[index];
                                         return InkWell(
                                           onTap: () {
                                             Navigator.of(context).push(
@@ -875,9 +912,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                   ),
                                 heightGap(10),
-                              ],
-                            );
-                    },
+                              ]);
+                        },
+                      ),
+                    ],
                   ),
                   Positioned(
                     right: 0,
@@ -921,6 +959,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _bottomSheet({
     BuildContext? context,
     bool showBookAgainText = false,
+    String? type,
     bool navigateToPackageScreen = false,
   }) async {
     return await showModalBottomSheet<void>(
@@ -928,10 +967,9 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (BuildContext context) {
-        return StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
+        return StatefulBuilder(builder: (BuildContext c, StateSetter setState) {
           return Padding(
-            padding: MediaQuery.of(context).viewInsets,
+            padding: MediaQuery.of(c).viewInsets,
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 10),
               decoration: const BoxDecoration(
@@ -1002,6 +1040,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         markerBuilder: (context, date, events) {
                           return InkWell(
                             onTap: () {
+                              context.read<SessionProvider>().getSlotListApi(
+                                  context: context,
+                                  day: arr[date.weekday - 1].day ?? '');
+
+                              day = arr[date.weekday - 1].day ?? '';
+
                               setState(() {
                                 _selectedDay = date;
                                 _focusedDay = date;
@@ -1054,161 +1098,267 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     ),
                     heightGap(15),
-                    TextWidget(
-                      text: AppLocalizations.of(context)!.selectTime,
-                      fontSize: 20,
-                      fontFamily: AppFonts.poppins,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    heightGap(15),
-                    SizedBox(
-                      height: 50,
-                      child: ListView.builder(
-                        itemCount: 3,
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) {
-                          return Container(
-                            width: 90,
-                            margin: const EdgeInsets.only(right: 10),
-                            decoration: BoxDecoration(
-                              color: index == 0
-                                  ? AppColors.green
-                                  : AppColors.white,
-                              borderRadius: BorderRadius.circular(44),
-                            ),
-                            child: Center(
-                              child: TextWidget(
-                                text: '6.00 PM',
-                                fontSize: 13,
-                                color: index == 0
-                                    ? AppColors.white
-                                    : AppColors.black,
-                                fontFamily: AppFonts.poppins,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    heightGap(15),
-                    ElevatedButtonWidget(
-                        onPressed: () {
-                          if (showBookAgainText) {
-                            Navigator.of(context).pop();
-                            showDialog<void>(
-                              context: context,
-                              barrierDismissible: true,
-                              // user must tap button!
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
+                    Consumer<SessionProvider>(
+                      builder: (context, value, child) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            (value.getSlotData == null ||
+                                    value.getSlotData!.data!.data!.isEmpty)
+                                ? const SizedBox()
+                                : TextWidget(
+                                    text: AppLocalizations.of(context)!
+                                        .selectTime,
+                                    fontSize: 20,
+                                    fontFamily: AppFonts.poppins,
+                                    fontWeight: FontWeight.w500,
                                   ),
-                                  content: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.stretch,
-                                      children: [
-                                        Column(
-                                          children: [
-                                            Lottie.asset(AppImages.congratsJson,
-                                                width: 100, height: 100),
-                                            heightGap(5),
-                                            TextWidget(
-                                              text:
-                                                  AppLocalizations.of(context)!
-                                                      .congrats,
-                                              color: AppColors.greenLight,
-                                              fontSize: 24,
-                                              fontFamily: AppFonts.poppins,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                            const TextWidget(
-                                              text:
-                                                  'your new appointment is at 5.30 PM',
-                                              fontFamily: AppFonts.poppins,
-                                              fontSize: 18,
-                                              textAlign: TextAlign.center,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          ],
-                                        ),
-                                        heightGap(18),
-                                        ElevatedButtonWidget(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
+                            heightGap(15),
+                            value.gettingSlots
+                                ? const Center(
+                                    child: CupertinoActivityIndicator(),
+                                  )
+                                : (value.getSlotData == null ||
+                                        value.getSlotData!.data!.data!.isEmpty)
+                                    ? const SizedBox()
+                                    : SizedBox(
+                                        height: 50,
+                                        child: ListView.builder(
+                                          itemCount: type == 'free'
+                                              ? (value.getSlotData?.data
+                                                  ?.data?[0].freeSlots?.length)
+                                              : (value.getSlotData?.data
+                                                  ?.data?[0].paidSlots?.length),
+                                          scrollDirection: Axis.horizontal,
+                                          itemBuilder: (context, index) {
+                                            final slots = type == 'free'
+                                                ? (value
+                                                    .getSlotData
+                                                    ?.data
+                                                    ?.data?[0]
+                                                    .freeSlots?[index])
+                                                : (value
+                                                    .getSlotData
+                                                    ?.data
+                                                    ?.data?[0]
+                                                    .paidSlots?[index]);
+                                            return InkWell(
+                                              onTap: () {
+                                                value.setIndex(index: index);
+                                                slotTimeFrom = slots?.from;
+                                              },
+                                              child: Container(
+                                                width: 90,
+                                                margin: const EdgeInsets.only(
+                                                    right: 10),
+                                                decoration: BoxDecoration(
+                                                  color: index == value.index
+                                                      ? AppColors.green
+                                                      : AppColors.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(44),
+                                                ),
+                                                child: Center(
+                                                  child: TextWidget(
+                                                    text:
+                                                        '${convert24HourTo12Hour(time: slots?.from ?? '')}-${convert24HourTo12Hour(time: slots?.to ?? '')}',
+                                                    fontSize: 13,
+                                                    color: index == value.index
+                                                        ? AppColors.white
+                                                        : AppColors.black,
+                                                    fontFamily:
+                                                        AppFonts.poppins,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ),
+                                            );
                                           },
-                                          text: AppLocalizations.of(context)!
-                                              .goToHome,
                                         ),
-                                      ]),
-                                );
-                              },
-                            );
-                          } else if (navigateToPackageScreen) {
-                            Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const PlanPackageScreen(),
-                            ));
-                          } else {
-                            Navigator.of(context).pop();
-                            showDialog<void>(
-                              context: context,
-                              barrierDismissible: true,
-                              // user must tap button!
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  content: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.stretch,
-                                      children: [
-                                        Column(
-                                          children: [
-                                            Lottie.asset(AppImages.congratsJson,
-                                                width: 100, height: 100),
-                                            heightGap(5),
-                                            TextWidget(
-                                              text:
-                                                  AppLocalizations.of(context)!
-                                                      .congrats,
-                                              color: AppColors.greenLight,
-                                              fontSize: 24,
-                                              fontFamily: AppFonts.poppins,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                            TextWidget(
-                                              text:
-                                                  AppLocalizations.of(context)!
-                                                      .yesYouBookedSuccessfully,
-                                              fontFamily: AppFonts.poppins,
-                                              fontSize: 18,
-                                              textAlign: TextAlign.center,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          ],
-                                        ),
-                                        heightGap(18),
-                                        ElevatedButtonWidget(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
+                                      ),
+                            heightGap(15),
+                            value.bookingSession
+                                ? const Center(
+                                    child: CupertinoActivityIndicator(),
+                                  )
+                                : ElevatedButtonWidget(
+                                    onPressed: () {
+                                      if (showBookAgainText) {
+                                        Navigator.of(context).pop();
+                                        showDialog<void>(
+                                          context: context,
+                                          barrierDismissible: true,
+                                          // user must tap button!
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                              content: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment
+                                                          .stretch,
+                                                  children: [
+                                                    Column(
+                                                      children: [
+                                                        Lottie.asset(
+                                                            AppImages
+                                                                .congratsJson,
+                                                            width: 100,
+                                                            height: 100),
+                                                        heightGap(5),
+                                                        TextWidget(
+                                                          text: AppLocalizations
+                                                                  .of(context)!
+                                                              .congrats,
+                                                          color: AppColors
+                                                              .greenLight,
+                                                          fontSize: 24,
+                                                          fontFamily:
+                                                              AppFonts.poppins,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        ),
+                                                        const TextWidget(
+                                                          text:
+                                                              'your new appointment is at 5.30 PM',
+                                                          fontFamily:
+                                                              AppFonts.poppins,
+                                                          fontSize: 18,
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    heightGap(18),
+                                                    ElevatedButtonWidget(
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                      text: AppLocalizations.of(
+                                                              context)!
+                                                          .goToHome,
+                                                    ),
+                                                  ]),
+                                            );
                                           },
-                                          text: AppLocalizations.of(context)!
-                                              .goToHome,
-                                        ),
-                                      ]),
-                                );
-                              },
-                            );
-                          }
-                        },
-                        text: showBookAgainText
-                            ? 'Book Again'
-                            : AppLocalizations.of(context)!.bookSession,
-                        primary: AppColors.yellow),
+                                        );
+                                      } else if (navigateToPackageScreen) {
+                                        Navigator.of(context)
+                                            .push(MaterialPageRoute(
+                                          builder: (context) =>
+                                              const PackageScreen(),
+                                        ));
+                                      } else {
+                                        context
+                                            .read<SessionProvider>()
+                                            .bookSessionApi(
+                                                context: context,
+                                                date: getDateFormatted(
+                                                    data: _selectedDay
+                                                        .toString()),
+                                                time: slotTimeFrom ?? '',
+                                                day: day ?? '',
+                                                type: type == 'free'
+                                                    ? 'Free'
+                                                    : 'Paid')
+                                            .then((value) {
+                                          if (value?.status == 200) {
+                                            Navigator.of(context).pop();
+                                            showDialog<void>(
+                                              context: context,
+                                              barrierDismissible: true,
+                                              // user must tap button!
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12),
+                                                  ),
+                                                  content: Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .stretch,
+                                                      children: [
+                                                        Column(
+                                                          children: [
+                                                            Lottie.asset(
+                                                                AppImages
+                                                                    .congratsJson,
+                                                                width: 100,
+                                                                height: 100),
+                                                            heightGap(5),
+                                                            TextWidget(
+                                                              text: AppLocalizations
+                                                                      .of(context)!
+                                                                  .congrats,
+                                                              color: AppColors
+                                                                  .greenLight,
+                                                              fontSize: 24,
+                                                              fontFamily:
+                                                                  AppFonts
+                                                                      .poppins,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                            ),
+                                                            TextWidget(
+                                                              text: AppLocalizations
+                                                                      .of(context)!
+                                                                  .yesYouBookedSuccessfully,
+                                                              fontFamily:
+                                                                  AppFonts
+                                                                      .poppins,
+                                                              fontSize: 18,
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        heightGap(18),
+                                                        ElevatedButtonWidget(
+                                                          onPressed: () {
+                                                            NavigationServices
+                                                                .pushAndRemoveUntil(
+                                                                    context:
+                                                                        context,
+                                                                    screen:
+                                                                        const BottomBarScreen());
+                                                          },
+                                                          text: AppLocalizations
+                                                                  .of(context)!
+                                                              .goToHome,
+                                                        ),
+                                                      ]),
+                                                );
+                                              },
+                                            );
+                                          }
+                                        });
+                                      }
+                                    },
+                                    text: showBookAgainText
+                                        ? 'Book Again'
+                                        : AppLocalizations.of(context)!
+                                            .bookSession,
+                                    primary: AppColors.yellow),
+                          ],
+                        );
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -1219,11 +1369,42 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  List<String> arr = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  //List<String> arr = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  List<DayModel> arr = [
+    DayModel(
+      day: 'monday',
+      nickName: 'Mon',
+    ),
+    DayModel(
+      day: 'tuesday',
+      nickName: 'Tue',
+    ),
+    DayModel(
+      day: 'wednesday',
+      nickName: 'Wed',
+    ),
+    DayModel(
+      day: 'thursday',
+      nickName: 'Thu',
+    ),
+    DayModel(
+      day: 'friday',
+      nickName: 'Fri',
+    ),
+    DayModel(
+      day: 'saturday',
+      nickName: 'Sat',
+    ),
+    DayModel(
+      day: 'sunday',
+      nickName: 'Sun',
+    ),
+  ];
 
   Widget _showDate(DateTime date) {
     return TextWidget(
-      text: arr[date.weekday - 1],
+      // text: arr[date.weekday - 1],
+      text: arr[date.weekday - 1].nickName ?? '',
       fontSize: 13,
       color: _selectedDay == date ? AppColors.white : AppColors.black,
       fontFamily: AppFonts.poppins,
@@ -1267,6 +1448,329 @@ class _HomeScreenState extends State<HomeScreen> {
             primary: AppColors.yellowLight),
       ),
     ]);
+  }
+
+  Widget loadingShimmer() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        shimmerEffect(
+          widget: SkeletonWidget(
+            radius: 0,
+            height: 16,
+            width: deviceWidth(context) * 0.30,
+          ),
+        ),
+        heightGap(10),
+        Container(
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 12.0,
+              vertical: 16,
+            ),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          shimmerEffect(
+                            widget: SkeletonWidget(
+                              radius: 0,
+                              height: 16,
+                              width: deviceWidth(context) * 0.20,
+                            ),
+                          ),
+                          shimmerEffect(
+                            widget: SkeletonWidget(
+                              radius: 0,
+                              height: 16,
+                              width: deviceWidth(context) * 0.20,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    shimmerEffect(
+                      widget: SkeletonWidget(
+                        radius: 0,
+                        height: 45,
+                        width: deviceWidth(context) * 0.25,
+                      ),
+                    ),
+                  ],
+                ),
+                const Divider(color: AppColors.checkBoxBorderColor),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Column(
+                        children: [
+                          shimmerEffect(
+                            widget: SkeletonWidget(
+                              radius: 0,
+                              height: 10,
+                              width: deviceWidth(context) * 0.25,
+                            ),
+                          ),
+                          heightGap(10),
+                          shimmerEffect(
+                            widget: SkeletonWidget(
+                              radius: 0,
+                              height: 15,
+                              width: deviceWidth(context) * 0.10,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          shimmerEffect(
+                            widget: SkeletonWidget(
+                              radius: 0,
+                              height: 10,
+                              width: deviceWidth(context) * 0.25,
+                            ),
+                          ),
+                          heightGap(10),
+                          shimmerEffect(
+                            widget: SkeletonWidget(
+                              radius: 0,
+                              height: 15,
+                              width: deviceWidth(context) * 0.10,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          shimmerEffect(
+                            widget: SkeletonWidget(
+                              radius: 0,
+                              height: 10,
+                              width: deviceWidth(context) * 0.25,
+                            ),
+                          ),
+                          heightGap(10),
+                          shimmerEffect(
+                            widget: SkeletonWidget(
+                              radius: 0,
+                              height: 15,
+                              width: deviceWidth(context) * 0.10,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ]),
+              ],
+            ),
+          ),
+        ),
+        heightGap(20),
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          shimmerEffect(
+            widget: SkeletonWidget(
+              radius: 0,
+              height: 16,
+              width: deviceWidth(context) * 0.30,
+            ),
+          ),
+          shimmerEffect(
+            widget: SkeletonWidget(
+              radius: 0,
+              height: 30,
+              width: deviceWidth(context) * 0.25,
+            ),
+          ),
+        ]),
+        heightGap(10),
+        Container(
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 12.0,
+              vertical: 18,
+            ),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    shimmerEffect(
+                      widget: const SkeletonWidget(
+                        radius: 100,
+                        height: 75,
+                        width: 75,
+                      ),
+                    ),
+                    widthGap(12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          shimmerEffect(
+                            widget: const SkeletonWidget(
+                              radius: 0,
+                              height: 15,
+                            ),
+                          ),
+                          heightGap(5),
+                          shimmerEffect(
+                            widget: const SkeletonWidget(
+                              radius: 0,
+                              height: 10,
+                            ),
+                          ),
+                          heightGap(5),
+                          shimmerEffect(
+                            widget: const SkeletonWidget(
+                              radius: 0,
+                              height: 10,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                heightGap(10),
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: 2,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 4 / 1,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10),
+                  itemBuilder: (context, index) {
+                    return shimmerEffect(
+                      widget: const SkeletonWidget(
+                        radius: 30,
+                      ),
+                    );
+                  },
+                ),
+                heightGap(10),
+                Row(children: [
+                  Expanded(
+                    child: shimmerEffect(
+                      widget: const SkeletonWidget(
+                        radius: 0,
+                        height: 45,
+                      ),
+                    ),
+                  ),
+                  widthGap(20),
+                  Expanded(
+                    child: shimmerEffect(
+                      widget: const SkeletonWidget(
+                        radius: 0,
+                        height: 45,
+                      ),
+                    ),
+                  ),
+                ]),
+              ],
+            ),
+          ),
+        ),
+        heightGap(10),
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          shimmerEffect(
+            widget: SkeletonWidget(
+              radius: 0,
+              height: 16,
+              width: deviceWidth(context) * 0.30,
+            ),
+          ),
+          shimmerEffect(
+            widget: SkeletonWidget(
+              radius: 0,
+              height: 16,
+              width: deviceWidth(context) * 0.30,
+            ),
+          ),
+        ]),
+        heightGap(10),
+        SizedBox(
+          height: 200,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: 5,
+            physics: const BouncingScrollPhysics(),
+            clipBehavior: Clip.none,
+            itemBuilder: (context, index) {
+              return Container(
+                width: deviceWidth(context) * 0.55,
+                margin: const EdgeInsets.only(right: 10),
+                decoration: BoxDecoration(
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    shimmerEffect(
+                      widget: const SkeletonWidget(
+                        radius: 8,
+                        height: 120,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 10.0, right: 10.0, bottom: 10.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          heightGap(10),
+                          shimmerEffect(
+                            widget: const SkeletonWidget(
+                              radius: 0,
+                              height: 10,
+                            ),
+                          ),
+                          heightGap(5),
+                          shimmerEffect(
+                            widget: const SkeletonWidget(
+                              radius: 0,
+                              height: 10,
+                            ),
+                          ),
+                          heightGap(5),
+                          shimmerEffect(
+                            widget: const SkeletonWidget(
+                              radius: 0,
+                              height: 10,
+                            ),
+                          ),
+                          heightGap(10),
+                          shimmerEffect(
+                            widget: const SkeletonWidget(
+                              radius: 0,
+                              height: 6,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
   }
 
   Future<bool> _handleLocationPermission() async {
@@ -1322,4 +1826,11 @@ class _HomeScreenState extends State<HomeScreen> {
       debugPrint(e);
     });
   }
+}
+
+class DayModel {
+  final String? day;
+  final String? nickName;
+
+  DayModel({this.day, this.nickName});
 }

@@ -1,7 +1,6 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:expathy/Models/apply_discount_model.dart';
 import 'package:expathy/Providers/Subscription%20Provider/subscription_provider.dart';
-import 'package:expathy/Screens/Payment%20Screen/payment_successful_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -25,6 +24,7 @@ class CheckoutScreen extends StatefulWidget {
 class _CheckoutScreenState extends State<CheckoutScreen> {
   final applyDiscountController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  String? discountCode;
 
   @override
   void dispose() {
@@ -449,6 +449,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                                                 .trim())
                                                     .then((value) {
                                                   if (value?.status == 200) {
+                                                    discountCode =
+                                                        applyDiscountController
+                                                            .text
+                                                            .trim();
                                                     applyDiscountController
                                                         .clear();
                                                   }
@@ -543,16 +547,35 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         padding: const EdgeInsets.all(12.0),
                         child: Row(
                           children: [
-                            Expanded(
-                                child: ElevatedButtonWidget(
-                              onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) =>
-                                      const PaymentSuccessfulScreen(),
-                                ));
-                              },
-                              text: AppLocalizations.of(context)!.payNow,
-                            )),
+                            value.makingPayment
+                                ? Center(
+                                    child: CupertinoActivityIndicator(),
+                                  )
+                                : Expanded(
+                                    child: ElevatedButtonWidget(
+                                    onPressed: () {
+                                      subscriptionProvider.paymentApi(
+                                        context: context,
+                                        subscriptionId: plan?.sId.toString(),
+                                        amount: double.parse(
+                                                '${double.parse(plan?.totalPrice.toString() ?? '0.0') - double.parse(value.applyDiscountModel?.data?.discount.toString() ?? '0.0')}')
+                                            .toStringAsFixed(2),
+                                        discountAmount: double.parse(value
+                                                    .applyDiscountModel
+                                                    ?.data
+                                                    ?.discount
+                                                    .toString() ??
+                                                '0.0')
+                                            .toStringAsFixed(2),
+                                        promoCode: discountCode,
+                                        totalAmount: double.parse(
+                                                plan?.totalPrice.toString() ??
+                                                    '0.0')
+                                            .toStringAsFixed(2),
+                                      );
+                                    },
+                                    text: AppLocalizations.of(context)!.payNow,
+                                  )),
                           ],
                         ),
                       ),

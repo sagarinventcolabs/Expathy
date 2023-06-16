@@ -7,7 +7,6 @@ import '../../Common Widgets/elevated_button_widget.dart';
 import '../../Common Widgets/text_widget.dart';
 import '../../Utils/app_colors.dart';
 import '../../Utils/app_fonts.dart';
-import '../../Utils/app_images.dart';
 import '../../Utils/helper_methods.dart';
 import '../../Widgets/gradient_background_widget.dart';
 import '../../Widgets/info_widget.dart';

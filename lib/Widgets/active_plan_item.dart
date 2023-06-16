@@ -1,8 +1,10 @@
+import 'package:expathy/Screens/Package%20Screen/package_screen.dart';
 import 'package:expathy/Utils/helper_methods.dart';
 import 'package:expathy/Utils/navigation_services.dart';
 import 'package:flutter/material.dart';
 import '../Common Widgets/elevated_button_widget.dart';
 import '../Common Widgets/text_widget.dart';
+import '../Models/dashboard_model.dart';
 import '../Screens/Package Screen/plan_package_screen.dart';
 import '../Utils/app_colors.dart';
 import '../Utils/app_fonts.dart';
@@ -10,8 +12,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ActivePlanItem extends StatefulWidget {
   final bool isFreePlan;
+  final Subscription? subscription;
 
-  const ActivePlanItem({Key? key, this.isFreePlan = true}) : super(key: key);
+  const ActivePlanItem({Key? key, this.isFreePlan = true, this.subscription})
+      : super(key: key);
 
   @override
   State<ActivePlanItem> createState() => _ActivePlanItemState();
@@ -34,7 +38,7 @@ class _ActivePlanItemState extends State<ActivePlanItem> {
           children: [
             Row(
               children: [
-                if (widget.isFreePlan)
+                if (widget.isFreePlan == false)
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,7 +51,7 @@ class _ActivePlanItemState extends State<ActivePlanItem> {
                           fontWeight: FontWeight.w500,
                         ),
                         TextWidget(
-                          text: '(10 min./session)',
+                          text: '(20 min./session)',
                           textAlign: TextAlign.center,
                           fontSize: 12,
                           fontFamily: AppFonts.poppins,
@@ -56,7 +60,7 @@ class _ActivePlanItemState extends State<ActivePlanItem> {
                       ],
                     ),
                   ),
-                if (!widget.isFreePlan)
+                if (widget.isFreePlan)
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,8 +79,8 @@ class _ActivePlanItemState extends State<ActivePlanItem> {
                               ),
                             ),
                             widthGap(5),
-                            const TextWidget(
-                              text: 'Gold Plan',
+                            TextWidget(
+                              text: widget.subscription?.type ?? '',
                               textAlign: TextAlign.center,
                               fontSize: 18,
                               fontFamily: AppFonts.poppins,
@@ -87,7 +91,7 @@ class _ActivePlanItemState extends State<ActivePlanItem> {
                               child: FittedBox(
                                 fit: BoxFit.contain,
                                 child: TextWidget(
-                                  text: '(10 min./session)',
+                                  text: '(60 min./session)',
                                   textAlign: TextAlign.center,
                                   fontSize: 12,
                                   fontFamily: AppFonts.poppins,
@@ -110,7 +114,7 @@ class _ActivePlanItemState extends State<ActivePlanItem> {
                 ElevatedButtonWidget(
                   onPressed: () {
                     NavigationServices.push(
-                        context: context, screen: const PlanPackageScreen());
+                        context: context, screen: const PackageScreen());
                   },
                   primary: AppColors.yellow,
                   text: AppLocalizations.of(context)!.upgrade,
@@ -119,9 +123,15 @@ class _ActivePlanItemState extends State<ActivePlanItem> {
             ),
             const Divider(color: AppColors.checkBoxBorderColor),
             Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-              planItem(heading: '', value: '02'),
-              planItem(heading: '', value: '02'),
-              planItem(heading: '', value: '02'),
+              planItem(
+                  heading: AppLocalizations.of(context)!.totalSessions,
+                  value: '02'),
+              planItem(
+                  heading: AppLocalizations.of(context)!.completed,
+                  value: '02'),
+              planItem(
+                  heading: AppLocalizations.of(context)!.remaining,
+                  value: '02'),
             ]),
           ],
         ),
@@ -131,16 +141,16 @@ class _ActivePlanItemState extends State<ActivePlanItem> {
 
   Widget planItem({String? heading, String? value}) {
     return Column(
-      children: const [
+      children: [
         TextWidget(
-          text: 'Total Sessions',
+          text: heading ?? '',
           textAlign: TextAlign.center,
           fontSize: 13,
           fontFamily: AppFonts.poppins,
           fontWeight: FontWeight.w400,
         ),
         TextWidget(
-          text: '02',
+          text: value ?? '',
           textAlign: TextAlign.center,
           fontSize: 16,
           fontFamily: AppFonts.poppins,

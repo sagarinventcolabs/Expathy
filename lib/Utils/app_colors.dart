@@ -21,4 +21,6 @@ class AppColors {
   static const gradientBelowColor = Color(0xFFEEEEEE);
   static const gradientBeor = Color(0xFF2B4D45);
   static const shimmerBaseColor = Color(0xFFE6E6E6);
+  static const notificationUnread = Color(0xFFF8F9FF);
+  static const blueLight = Color(0xFF006BFF);
 }

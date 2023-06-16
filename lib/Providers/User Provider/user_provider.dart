@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import '../../Models/dashboard_model.dart';
 import '../../Models/get_profile_model.dart';
 import '../../Models/image_upload_model.dart';
+import '../../Models/notification_model.dart';
 import '../../Remote/api_config.dart';
 import '../../Remote/remote_service.dart';
 import '../../Screens/Bottom Bar Screen/bottom_bar_screen.dart';
@@ -25,6 +26,7 @@ class UserProvider with ChangeNotifier {
   GetProfileModel? profileData;
   bool profileImageUploading = false;
   String? profileImageUrl;
+  List<NotificationDoc>? notificationList;
 
   Future<UpdateProfileModel?> updateProfileApi(
       {String? language,
@@ -250,6 +252,101 @@ class UserProvider with ChangeNotifier {
     }
     profileLoading = false;
     notifyListeners();
+    return null;
+  }
+
+  Future<List<NotificationDoc>?> notificationListApi(
+      {required BuildContext context,
+      required int limit,
+      required int pageNumber}) async {
+    final data = await RemoteService().callGetApi(
+      url: '$eNotificationGet?limit=$limit&page=$pageNumber',
+    );
+    if (data != null) {
+      final notificationResponse =
+          NotificationModel.fromJson(jsonDecode(data.body));
+      if (context.mounted) {
+        if (notificationResponse.status == 200) {
+          notificationList = notificationResponse.data?.docs;
+        } else if (notificationResponse.status == 404) {
+          showSnackBar(
+              isSuccess: false,
+              message: notificationResponse.message,
+              context: context);
+        } else if (notificationResponse.status == 400) {
+          showSnackBar(
+              isSuccess: false,
+              message: notificationResponse.message,
+              context: context);
+        }
+      }
+      notifyListeners();
+      return notificationResponse.data?.docs;
+    }
+    return null;
+  }
+
+  Future<CommonModel?> readNotificationApi({
+    required BuildContext context,
+    required String notificationId,
+    required int index,
+  }) async {
+    final data = await RemoteService().callPutApi(
+      url: '$eReadNotification?notificationId=$notificationId',
+    );
+    if (data != null) {
+      final readNotificationResponse =
+          CommonModel.fromJson(jsonDecode(data.body));
+      if (context.mounted) {
+        if (readNotificationResponse.status == 200) {
+          notificationList?[index].isRead = true;
+        } else if (readNotificationResponse.status == 404) {
+          showSnackBar(
+              isSuccess: false,
+              message: readNotificationResponse.message,
+              context: context);
+        } else if (readNotificationResponse.status == 400) {
+          showSnackBar(
+              isSuccess: false,
+              message: readNotificationResponse.message,
+              context: context);
+        }
+      }
+      notifyListeners();
+      return readNotificationResponse;
+    }
+    return null;
+  }
+
+  Future<CommonModel?> deleteNotificationApi({
+    required BuildContext context,
+    required String notificationId,
+    required int index,
+  }) async {
+    final data = await RemoteService().callDeleteApi(
+      url: '$eDeleteNotification?notificationId=$notificationId',
+    );
+    if (data != null) {
+      final readNotificationResponse =
+          CommonModel.fromJson(jsonDecode(data.body));
+      if (context.mounted) {
+        if (readNotificationResponse.status == 200) {
+          notificationList?.removeAt(index);
+        } else if (readNotificationResponse.status == 404) {
+          showSnackBar(
+              isSuccess: false,
+              message: readNotificationResponse.message,
+              context: context);
+        } else if (readNotificationResponse.status == 400) {
+          showSnackBar(
+              isSuccess: false,
+              message: readNotificationResponse.message,
+              context: context);
+        }
+      }
+      notifyListeners();
+      return readNotificationResponse;
+    }
     return null;
   }
 }
