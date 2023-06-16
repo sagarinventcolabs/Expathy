@@ -1,7 +1,7 @@
 const String BASE_URL = BASE_URL_LIVE;
 const String BASE_URL_LIVE = 'http://3.20.147.34:9999/api/';
 const String IMAGE_URL = 'https://inventcolabs.s3.amazonaws.com/';
-//Date : 08/06/2023
+//Date : 16/06/2023
 
 ///auth
 String eLogin = 'app/auth/login';
