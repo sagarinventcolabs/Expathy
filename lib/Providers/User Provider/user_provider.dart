@@ -42,7 +42,9 @@ class UserProvider with ChangeNotifier {
     final data =
         await RemoteService().callPostApi(url: eUpdateProfile, jsonData: {
       "language": language,
+      "appLanguage": language,
       "languageId": languageId,
+      "appLanguageId": languageId,
       "name": userName,
       "therapists": therapistsId,
       "profilePic": profilePic,

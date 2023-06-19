@@ -29,8 +29,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class TherapistsDetailScreen extends StatefulWidget {
   // final PsychologistList? psychologist;
   final String? psychologistId;
+  final bool isFromTherapistListScreen;
 
-  const TherapistsDetailScreen({Key? key, this.psychologistId})
+  const TherapistsDetailScreen(
+      {Key? key, this.psychologistId, this.isFromTherapistListScreen = false})
       : super(key: key);
 
   @override
@@ -141,6 +143,8 @@ class _TherapistsDetailScreenState extends State<TherapistsDetailScreen> {
                                     vertical: 18,
                                   ),
                                   child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
                                     children: [
                                       InfoWidget(
                                         name: details?.name ?? '',
@@ -156,20 +160,24 @@ class _TherapistsDetailScreenState extends State<TherapistsDetailScreen> {
                                         },
                                       ),
                                       heightGap(10),
-                                      HorizontalTwoButtonWidget(
-                                        text1: AppLocalizations.of(context)!
-                                            .freeSessionNow,
-                                        text1Tap: () {
-                                          _bottomSheet(context: context);
-                                        },
-                                        text2: AppLocalizations.of(context)!
-                                            .bookFullSession,
-                                        text2Tap: () {
-                                          _bottomSheet(
-                                              context: context,
-                                              navigateToPackageScreen: true);
-                                        },
-                                      ),
+                                      if (widget.isFromTherapistListScreen)
+                                        ElevatedButtonWidget(
+                                            onPressed: () {}, text: 'Select'),
+                                      if (!widget.isFromTherapistListScreen)
+                                        HorizontalTwoButtonWidget(
+                                          text1: AppLocalizations.of(context)!
+                                              .freeSessionNow,
+                                          text1Tap: () {
+                                            _bottomSheet(context: context);
+                                          },
+                                          text2: AppLocalizations.of(context)!
+                                              .bookFullSession,
+                                          text2Tap: () {
+                                            _bottomSheet(
+                                                context: context,
+                                                navigateToPackageScreen: true);
+                                          },
+                                        ),
                                     ],
                                   ),
                                 ),

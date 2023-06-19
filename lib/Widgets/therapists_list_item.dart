@@ -37,8 +37,9 @@ class TherapistsListItem extends StatelessWidget {
             imageUrl: psychologist?.profilePic ?? '',
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) =>
-                    TherapistsDetailScreen(psychologistId: psychologist?.id),
+                builder: (context) => TherapistsDetailScreen(
+                    psychologistId: psychologist?.id,
+                    isFromTherapistListScreen: true),
               ));
             },
             showGreenIcon: false,
