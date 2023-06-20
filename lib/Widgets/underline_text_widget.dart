@@ -7,10 +7,12 @@ import '../Utils/app_fonts.dart';
 class UnderLineText extends StatelessWidget {
   final String text;
   final double fontSize;
+  final TextAlign? textAlign;
   final Color textColor;
   const UnderLineText(
       {Key? key,
       required this.text,
+      this.textAlign,
       this.fontSize = 18,
       this.textColor = AppColors.black})
       : super(key: key);
@@ -19,6 +21,7 @@ class UnderLineText extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextWidget(
       text: text,
+      textAlign: textAlign,
       fontSize: fontSize,
       fontFamily: AppFonts.poppins,
       fontWeight: FontWeight.w500,

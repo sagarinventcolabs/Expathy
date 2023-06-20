@@ -120,6 +120,7 @@ class RemoteService {
     http.Response? responseJson;
     try {
       var authToken = await getAuthToken();
+      log(authToken ?? "");
       var osType = await getOsType();
       final response = await http.post(Uri.parse('$BASE_URL$url'),
           headers: <String, String>{

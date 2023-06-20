@@ -1,6 +1,7 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:expathy/Models/apply_discount_model.dart';
 import 'package:expathy/Providers/Subscription%20Provider/subscription_provider.dart';
+import 'package:expathy/main.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -47,7 +48,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         child: SizedBox(
           width: double.infinity,
           height: double.infinity,
-          child: /*Stack(
+          child:
+              /*Stack(
             children: [
               SingleChildScrollView(
                 child: Padding(
@@ -548,7 +550,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         child: Row(
                           children: [
                             value.makingPayment
-                                ? Center(
+                                ? const Center(
                                     child: CupertinoActivityIndicator(),
                                   )
                                 : Expanded(

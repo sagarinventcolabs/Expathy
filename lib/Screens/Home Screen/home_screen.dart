@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:expathy/Common%20Widgets/custom_scaffold.dart';
 import 'package:expathy/Common%20Widgets/elevated_button_widget.dart';
 import 'package:expathy/Providers/Auth%20Provider/auth_provider.dart';
@@ -56,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool showChangeTherapistsOption = false;
   String dropdownValue = 'reason1';
   String? day;
-  String? slotTimeFrom;
+  String? slotTimeFrom, slotTimeTo;
 
   List<ArticleModel> articleList = [
     ArticleModel(
@@ -98,6 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // context.read<UserProvider>().dashboardApi(context: context);
     dashboardFuture =
         context.read<UserProvider>().dashboardApi(context: context);
+
     super.initState();
   }
 
@@ -212,159 +215,165 @@ class _HomeScreenState extends State<HomeScreen> {
                                         fontWeight: FontWeight.w400,
                                       ),
                                     ),
-                                    OutlinedButton.icon(
-                                      onPressed: () {
-                                        showDialog<void>(
-                                          context: context,
-                                          barrierDismissible: true,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                              ),
-                                              content: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.stretch,
-                                                children: [
-                                                  Column(
-                                                    children: [
-                                                      const TextWidget(
-                                                        text:
-                                                            'Changing Your Therapist',
-                                                        fontSize: 20,
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        fontFamily:
-                                                            AppFonts.poppins,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                      ),
-                                                      heightGap(10),
-                                                      const TextWidget(
-                                                        text:
-                                                            'You are changing your therapist. Do you want to answer your onboarding questions again?',
-                                                        fontSize: 16,
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        fontFamily:
-                                                            AppFonts.poppins,
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  heightGap(18),
-                                                  ElevatedButtonWidget(
-                                                      onPressed: () {
-                                                        Navigator.of(context)
-                                                            .pop();
+                                    Visibility(
+                                      visible:
+                                          sharedPrefs?.getString("planType") !=
+                                              "Gold",
+                                      child: OutlinedButton.icon(
+                                        onPressed: () {
+                                          showDialog<void>(
+                                            context: context,
+                                            barrierDismissible: true,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                ),
+                                                content: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment
+                                                          .stretch,
+                                                  children: [
+                                                    Column(
+                                                      children: [
+                                                        const TextWidget(
+                                                          text:
+                                                              'Changing Your Therapist',
+                                                          fontSize: 20,
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          fontFamily:
+                                                              AppFonts.poppins,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        ),
+                                                        heightGap(10),
+                                                        const TextWidget(
+                                                          text:
+                                                              'You are changing your therapist. Do you want to answer your onboarding questions again?',
+                                                          fontSize: 16,
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          fontFamily:
+                                                              AppFonts.poppins,
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    heightGap(18),
+                                                    ElevatedButtonWidget(
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop();
 
-                                                        showDialog<void>(
-                                                          context: context,
-                                                          barrierDismissible:
-                                                              true,
-                                                          builder: (BuildContext
-                                                              context) {
-                                                            return AlertDialog(
-                                                              shape:
-                                                                  RoundedRectangleBorder(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            12),
-                                                              ),
-                                                              content: Column(
-                                                                mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .min,
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .stretch,
-                                                                children: [
-                                                                  Column(
-                                                                    children: [
-                                                                      const TextWidget(
-                                                                        text:
-                                                                            'You will be matched with a new therapist based on your most recent answers to the questions. are you sure?',
-                                                                        fontSize:
-                                                                            14,
-                                                                        textAlign:
-                                                                            TextAlign.center,
-                                                                        fontFamily:
-                                                                            AppFonts.poppins,
-                                                                        fontWeight:
-                                                                            FontWeight.w400,
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                  heightGap(18),
-                                                                  HorizontalTwoButtonWidget(
-                                                                    text1: AppLocalizations.of(
-                                                                            context)!
-                                                                        .no,
-                                                                    text1Tap:
-                                                                        () {
-                                                                      Navigator.of(
-                                                                              context)
-                                                                          .pop();
-                                                                    },
-                                                                    text2: AppLocalizations.of(
-                                                                            context)!
-                                                                        .yes,
-                                                                    text2Tap:
-                                                                        () {
-                                                                      Navigator.of(
-                                                                              context)
-                                                                          .pop();
-                                                                      NavigationServices.pushAndRemoveUntil(
-                                                                          context: context,
-                                                                          screen: const TherapistsListScreen(
-                                                                            showBackButton:
-                                                                                false,
-                                                                          ));
-                                                                    },
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            );
-                                                          },
-                                                        );
-                                                      },
-                                                      text:
-                                                          'Proceed with Previous Answers'),
-                                                  heightGap(8),
-                                                  ElevatedButtonWidget(
-                                                      onPressed: () {
-                                                        NavigationServices
-                                                            .pushAndRemoveUntil(
-                                                                context:
-                                                                    context,
-                                                                screen:
-                                                                    const FirstQuestionScreen());
-                                                      },
-                                                      text:
-                                                          'Answer Questions Again'),
-                                                ],
-                                              ),
-                                            );
-                                          },
-                                        );
-                                      },
-                                      icon:
-                                          const SvgPic(image: AppImages.reload),
-                                      style: OutlinedButton.styleFrom(
-                                        side: const BorderSide(
-                                            width: 1, color: AppColors.white),
-                                      ),
-                                      label: TextWidget(
-                                        text: AppLocalizations.of(context)!
-                                            .change,
-                                        fontSize: 14,
-                                        color: AppColors.white,
-                                        fontFamily: AppFonts.poppins,
-                                        fontWeight: FontWeight.w400,
+                                                          showDialog<void>(
+                                                            context: context,
+                                                            barrierDismissible:
+                                                                true,
+                                                            builder:
+                                                                (BuildContext
+                                                                    context) {
+                                                              return AlertDialog(
+                                                                shape:
+                                                                    RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              12),
+                                                                ),
+                                                                content: Column(
+                                                                  mainAxisSize:
+                                                                      MainAxisSize
+                                                                          .min,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .stretch,
+                                                                  children: [
+                                                                    const Column(
+                                                                      children: [
+                                                                        TextWidget(
+                                                                          text:
+                                                                              'You will be matched with a new therapist based on your most recent answers to the questions. are you sure?',
+                                                                          fontSize:
+                                                                              14,
+                                                                          textAlign:
+                                                                              TextAlign.center,
+                                                                          fontFamily:
+                                                                              AppFonts.poppins,
+                                                                          fontWeight:
+                                                                              FontWeight.w400,
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                    heightGap(
+                                                                        18),
+                                                                    HorizontalTwoButtonWidget(
+                                                                      text1: AppLocalizations.of(
+                                                                              context)!
+                                                                          .no,
+                                                                      text1Tap:
+                                                                          () {
+                                                                        Navigator.of(context)
+                                                                            .pop();
+                                                                      },
+                                                                      text2: AppLocalizations.of(
+                                                                              context)!
+                                                                          .yes,
+                                                                      text2Tap:
+                                                                          () {
+                                                                        Navigator.of(context)
+                                                                            .pop();
+                                                                        NavigationServices.pushAndRemoveUntil(
+                                                                            context: context,
+                                                                            screen: const TherapistsListScreen(
+                                                                              showBackButton: false,
+                                                                            ));
+                                                                      },
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              );
+                                                            },
+                                                          );
+                                                        },
+                                                        text:
+                                                            'Proceed with Previous Answers'),
+                                                    heightGap(8),
+                                                    ElevatedButtonWidget(
+                                                        onPressed: () {
+                                                          NavigationServices
+                                                              .pushAndRemoveUntil(
+                                                                  context:
+                                                                      context,
+                                                                  screen:
+                                                                      const FirstQuestionScreen());
+                                                        },
+                                                        text:
+                                                            'Answer Questions Again'),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        },
+                                        icon: const SvgPic(
+                                            image: AppImages.reload),
+                                        style: OutlinedButton.styleFrom(
+                                          side: const BorderSide(
+                                              width: 1, color: AppColors.white),
+                                        ),
+                                        label: TextWidget(
+                                          text: AppLocalizations.of(context)!
+                                              .change,
+                                          fontSize: 14,
+                                          color: AppColors.white,
+                                          fontFamily: AppFonts.poppins,
+                                          fontWeight: FontWeight.w400,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -655,8 +664,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                               true;
                                                                         });
                                                                       },
-                                                                      items: <
-                                                                          String>[
+                                                                      items: <String>[
                                                                         'reason1',
                                                                         'reason2',
                                                                         'reason3',
@@ -1146,6 +1154,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                               onTap: () {
                                                 value.setIndex(index: index);
                                                 slotTimeFrom = slots?.from;
+                                                slotTimeTo = slots?.to;
                                               },
                                               child: Container(
                                                 width: 90,
@@ -1265,6 +1274,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         .toString()),
                                                 time: slotTimeFrom ?? '',
                                                 day: day ?? '',
+                                                to: slotTimeTo ?? "",
                                                 type: type == 'free'
                                                     ? 'Free'
                                                     : 'Paid')

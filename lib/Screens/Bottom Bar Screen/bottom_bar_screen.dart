@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:expathy/Screens/Buddy%20Screen/buddy_screen.dart';
 import 'package:expathy/Screens/Home%20Screen/home_screen.dart';
@@ -6,7 +8,9 @@ import 'package:expathy/Screens/Profile%20Screen/profile_screen.dart';
 import 'package:expathy/Utils/app_colors.dart';
 import 'package:expathy/Utils/app_fonts.dart';
 import 'package:expathy/Utils/app_images.dart';
+import 'package:expathy/Utils/app_strings.dart';
 import 'package:expathy/Widgets/svg_picture.dart';
+import 'package:expathy/main.dart';
 import 'package:flutter/material.dart';
 
 class BottomBarScreen extends StatefulWidget {

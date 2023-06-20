@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import '../Common Widgets/elevated_button_widget.dart';
 import '../Common Widgets/text_widget.dart';
 import '../Models/dashboard_model.dart';
-import '../Screens/Package Screen/plan_package_screen.dart';
+import '../Models/subscription_list_model.dart';
 import '../Utils/app_colors.dart';
 import '../Utils/app_fonts.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -37,12 +37,13 @@ class _ActivePlanItemState extends State<ActivePlanItem> {
         child: Column(
           children: [
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (widget.isFreePlan == false)
-                  Expanded(
+                  const Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         TextWidget(
                           text: 'Free Plan',
                           textAlign: TextAlign.center,
@@ -66,6 +67,7 @@ class _ActivePlanItemState extends State<ActivePlanItem> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Container(
                               decoration: BoxDecoration(
@@ -79,26 +81,32 @@ class _ActivePlanItemState extends State<ActivePlanItem> {
                               ),
                             ),
                             widthGap(5),
-                            TextWidget(
-                              text: widget.subscription?.type ?? '',
-                              textAlign: TextAlign.center,
-                              fontSize: 18,
-                              fontFamily: AppFonts.poppins,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            widthGap(5),
-                            const Flexible(
-                              child: FittedBox(
-                                fit: BoxFit.contain,
-                                child: TextWidget(
-                                  text: '(60 min./session)',
-                                  textAlign: TextAlign.center,
-                                  fontSize: 12,
-                                  fontFamily: AppFonts.poppins,
-                                  fontWeight: FontWeight.w400,
-                                ),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  TextWidget(
+                                    text: widget.subscription?.type ?? '',
+                                    textAlign: TextAlign.center,
+                                    fontSize: 18,
+                                    overflow: TextOverflow.ellipsis,
+                                    fontFamily: AppFonts.poppins,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  const FittedBox(
+                                    fit: BoxFit.contain,
+                                    child: TextWidget(
+                                      text: '(60 min./session)',
+                                      textAlign: TextAlign.center,
+                                      fontSize: 12,
+                                      fontFamily: AppFonts.poppins,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
+                            // widthGap(5),
                           ],
                         ),
                         const TextWidget(
@@ -111,6 +119,7 @@ class _ActivePlanItemState extends State<ActivePlanItem> {
                       ],
                     ),
                   ),
+                widthGap(10),
                 ElevatedButtonWidget(
                   onPressed: () {
                     NavigationServices.push(

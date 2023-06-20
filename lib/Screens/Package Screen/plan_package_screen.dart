@@ -112,7 +112,7 @@ class _PlanPackageScreenState extends State<PlanPackageScreen>
                 ),
                 Padding(
                   padding:
-                  const EdgeInsets.only(top: 20.0, right: 22, left: 22),
+                      const EdgeInsets.only(top: 20.0, right: 22, left: 22),
                   child: Column(
                     children: [
                       //heightGap(20),
@@ -170,9 +170,7 @@ class _PlanPackageScreenState extends State<PlanPackageScreen>
                                   value: value,
                                   child: TextWidget(
                                     text:
-                                    '${value == 'EURO' ? '€' : value == 'IND'
-                                        ? '₹'
-                                        : '\$'} $value',
+                                        '${value == 'EURO' ? '€' : value == 'IND' ? '₹' : '\$'} $value',
                                     fontSize: 14,
                                     fontFamily: AppFonts.poppins,
                                     fontWeight: FontWeight.w400,
@@ -228,18 +226,17 @@ class _PlanPackageScreenState extends State<PlanPackageScreen>
                                 ),
                                 tabs: value.subscriptionPlanList!
                                     .map(
-                                      (e) =>
-                                  value.fetchingSubscription
-                                      ? shimmerEffect(
-                                      widget: const SkeletonWidget(
-                                        radius: 12,
-                                        height: 48,
-                                        width: double.infinity,
-                                      ))
-                                      : Tab(
-                                    text: e.type,
-                                  ),
-                                )
+                                      (e) => value.fetchingSubscription
+                                          ? shimmerEffect(
+                                              widget: const SkeletonWidget(
+                                              radius: 12,
+                                              height: 48,
+                                              width: double.infinity,
+                                            ))
+                                          : Tab(
+                                              text: e.type,
+                                            ),
+                                    )
                                     .toList() /* [
                                 value.fetchingSubscription
                                     ? shimmerEffect(
@@ -275,7 +272,7 @@ class _PlanPackageScreenState extends State<PlanPackageScreen>
                                             .silver,
                                       )
                               ],*/
-                            ),
+                                ),
                           );
                         },
                       ),
@@ -293,18 +290,17 @@ class _PlanPackageScreenState extends State<PlanPackageScreen>
                               return value.fetchingSubscription
                                   ? loadingShimmer()
                                   : TabBarView(
-                                  controller: tabController,
-                                  children: value.subscriptionPlanList!
-                                      .map(
-                                        (e) =>
-                                        planItem(
-                                          amount: e.price.toString(),
-                                          saveAmount: '100',
-                                          session: e.session.toString(),
-                                        ),
-                                  )
-                                      .toList()
-                                /*  [
+                                      controller: tabController,
+                                      children: value.subscriptionPlanList!
+                                          .map(
+                                            (e) => planItem(
+                                              amount: e.price.toString(),
+                                              saveAmount: '100',
+                                              session: e.session.toString(),
+                                            ),
+                                          )
+                                          .toList()
+                                      /*  [
                                         planItem(
                                           amount: plan?.price.toString(),
                                           saveAmount: '100',
@@ -321,7 +317,7 @@ class _PlanPackageScreenState extends State<PlanPackageScreen>
                                           session: plan?.session.toString(),
                                         ),
                                       ],*/
-                              );
+                                      );
                             },
                           ),
                         ),
@@ -347,78 +343,73 @@ class _PlanPackageScreenState extends State<PlanPackageScreen>
                           padding: const EdgeInsets.all(12.0),
                           child: value.fetchingSubscription
                               ? Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.start,
                                   children: [
-                                    shimmerEffect(
-                                      widget: const SkeletonWidget(
-                                        radius: 0,
-                                        height: 10,
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          shimmerEffect(
+                                            widget: const SkeletonWidget(
+                                              radius: 0,
+                                              height: 10,
+                                            ),
+                                          ),
+                                          heightGap(10),
+                                          shimmerEffect(
+                                            widget: const SkeletonWidget(
+                                              radius: 0,
+                                              height: 20,
+                                              width: 60,
+                                            ),
+                                          )
+                                        ],
                                       ),
                                     ),
-                                    heightGap(10),
-                                    shimmerEffect(
-                                      widget: const SkeletonWidget(
-                                        radius: 0,
-                                        height: 20,
-                                        width: 60,
+                                    widthGap(20),
+                                    Expanded(
+                                      child: shimmerEffect(
+                                        widget: const SkeletonWidget(
+                                          radius: 8,
+                                          height: 48,
+                                        ),
                                       ),
-                                    )
+                                    ),
                                   ],
-                                ),
-                              ),
-                              widthGap(20),
-                              Expanded(
-                                child: shimmerEffect(
-                                  widget: const SkeletonWidget(
-                                    radius: 8,
-                                    height: 48,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          )
+                                )
                               : Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.start,
                                   children: [
-                                    TextWidget(
-                                      text:
-                                      '${plan?.session ??
-                                          ''} Sessions in 1 months',
-                                      fontFamily: AppFonts.poppins,
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 14,
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          TextWidget(
+                                            text:
+                                                '${plan?.session ?? ''} Sessions in 1 months',
+                                            fontFamily: AppFonts.poppins,
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 14,
+                                          ),
+                                          TextWidget(
+                                            text:
+                                                '${dropdownValue == 'EURO' ? '€' : dropdownValue == 'IND' ? '₹' : '\$'} ${plan?.totalPrice ?? ''}',
+                                            fontFamily: AppFonts.poppins,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 22,
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                    TextWidget(
-                                      text:
-                                      '${dropdownValue == 'EURO'
-                                          ? '€'
-                                          : dropdownValue == 'IND'
-                                          ? '₹'
-                                          : '\$'} ${plan?.totalPrice ?? ''}',
-                                      fontFamily: AppFonts.poppins,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 22,
-                                    ),
+                                    ElevatedButtonWidget(
+                                        onPressed: () {
+                                          NavigationServices.push(
+                                              context: context,
+                                              screen: const CheckoutScreen());
+                                        },
+                                        text: 'Purchased'),
                                   ],
                                 ),
-                              ),
-                              ElevatedButtonWidget(
-                                  onPressed: () {
-                                    NavigationServices.push(
-                                        context: context,
-                                        screen: const CheckoutScreen());
-                                  },
-                                  text: 'Purchased'),
-                            ],
-                          ),
                         ),
                       );
                     },
@@ -451,8 +442,8 @@ class _PlanPackageScreenState extends State<PlanPackageScreen>
                       text: dropdownValue == 'EURO'
                           ? '€'
                           : dropdownValue == 'IND'
-                          ? '₹'
-                          : '\$',
+                              ? '₹'
+                              : '\$',
                       fontSize: 42,
                       fontWeight: FontWeight.w600,
                       fontFamily: AppFonts.poppins,
@@ -555,10 +546,10 @@ class _PlanPackageScreenState extends State<PlanPackageScreen>
                         ),
                         child: const Center(
                             child: Icon(
-                              Icons.check,
-                              color: AppColors.black,
-                              size: 18,
-                            )),
+                          Icons.check,
+                          color: AppColors.black,
+                          size: 18,
+                        )),
                       ),
                       widthGap(10),
                       Expanded(

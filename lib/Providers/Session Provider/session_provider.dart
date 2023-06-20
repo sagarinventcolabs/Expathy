@@ -53,6 +53,7 @@ class SessionProvider with ChangeNotifier {
     required BuildContext context,
     required String date,
     required String time,
+    required String to,
     required String day,
     required String type,
   }) async {
@@ -61,7 +62,8 @@ class SessionProvider with ChangeNotifier {
     final data =
         await RemoteService().callPostApi(url: eBookingSession, jsonData: {
       "date": date,
-      "time": time,
+      "from": time,
+      "to": to,
       "day": day,
       "type": type,
     });

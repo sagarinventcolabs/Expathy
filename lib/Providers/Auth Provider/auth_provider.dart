@@ -109,6 +109,7 @@ class AuthProvider with ChangeNotifier {
       "password": password,
       "type": type,
     });
+    log('api call response : ${data?.body}');
     if (data != null) {
       final loginResponse = AuthModel.fromJson(jsonDecode(data.body));
       log('api call response : ${loginResponse.toJson().toString()}');
@@ -158,6 +159,7 @@ class AuthProvider with ChangeNotifier {
               );
             }
           }
+
           showLoadingIndicator = false;
         } else if (loginResponse.status == 404) {
           showLoadingIndicator = false;
@@ -173,6 +175,7 @@ class AuthProvider with ChangeNotifier {
               context: context);
         }
       }
+      log('api call response : ${data?.body}');
       notifyListeners();
       return loginResponse;
     }

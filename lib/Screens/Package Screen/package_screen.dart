@@ -9,6 +9,7 @@ import 'package:expathy/Utils/helper_methods.dart';
 import 'package:expathy/Widgets/gradient_background_widget.dart';
 import 'package:expathy/Widgets/toolbar_widget.dart';
 import 'package:expathy/Widgets/underline_text_widget.dart';
+import 'package:expathy/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
@@ -29,22 +30,23 @@ class PackageScreen extends StatefulWidget {
 class _PackageScreenState extends State<PackageScreen> {
   List<BenefitsModel> benefitsList = [
     BenefitsModel(
-      heading: 'Cancel & Reschedule',
-      description: 'Cancellation & Rescheduling before 24 hrs',
+      heading: '4-session',
+      //description: 'Cancellation & Rescheduling before 24 hrs',
     ),
     BenefitsModel(
       heading: 'Video Session',
-      description: '50 minutes for video session',
+      // description: '50 minutes for video session',
     ),
     BenefitsModel(
-      heading: 'Video Session',
-      description: '50 minutes for video session',
+      heading: 'Cancellation',
+      // description: '50 minutes for video session',
     ),
     BenefitsModel(
-      heading: 'Video Session',
-      description: '50 minutes for video session',
+      heading: 'Reschedule',
+      //description: '50 minutes for video session',
     ),
   ];
+
   String dropdownValue = 'EURO';
 
   late Future<SubscriptionListModel?> subscriptionListFuture;
@@ -165,11 +167,11 @@ class _PackageScreenState extends State<PackageScreen> {
                                     final benefits = benefitsList[index];
                                     return Row(
                                         crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                            CrossAxisAlignment.center,
                                         children: [
                                           Container(
-                                            width: 26,
-                                            height: 26,
+                                            width: 16,
+                                            height: 16,
                                             decoration: BoxDecoration(
                                               color: AppColors.greenLight,
                                               borderRadius:
@@ -179,7 +181,7 @@ class _PackageScreenState extends State<PackageScreen> {
                                                 child: Icon(
                                               Icons.check,
                                               color: AppColors.white,
-                                              size: 18,
+                                              size: 14,
                                             )),
                                           ),
                                           widthGap(10),
@@ -194,15 +196,15 @@ class _PackageScreenState extends State<PackageScreen> {
                                                 fontWeight: FontWeight.w400,
                                                 fontSize: 17,
                                               ),
-                                              heightGap(2),
-                                              TextWidget(
-                                                text:
-                                                    benefits.description ?? '',
-                                                color: AppColors.white,
-                                                fontFamily: AppFonts.poppins,
-                                                fontWeight: FontWeight.w400,
-                                                fontSize: 13,
-                                              ),
+                                              // heightGap(2),
+                                              // TextWidget(
+                                              //   text:
+                                              //       benefits.description ?? '',
+                                              //   color: AppColors.white,
+                                              //   fontFamily: AppFonts.poppins,
+                                              //   fontWeight: FontWeight.w400,
+                                              //   fontSize: 13,
+                                              // ),
                                             ],
                                           ),
                                         ]);
@@ -215,7 +217,7 @@ class _PackageScreenState extends State<PackageScreen> {
                                 heightGap(30),
                                 CarouselSlider(
                                   options: CarouselOptions(
-                                    height: 300.0,
+                                    height: 270.0,
                                     enlargeCenterPage: true,
                                     scrollPhysics:
                                         const BouncingScrollPhysics(),
@@ -239,11 +241,12 @@ class _PackageScreenState extends State<PackageScreen> {
                                                   MainAxisAlignment.center,
                                               children: [
                                                 UnderLineText(
+                                                  textAlign: TextAlign.center,
                                                   text: i.type ?? '',
-                                                  fontSize: 32,
+                                                  fontSize: 18,
                                                   textColor: AppColors.yellow,
                                                 ),
-                                                heightGap(20),
+                                                heightGap(10),
                                                 Row(
                                                     mainAxisSize:
                                                         MainAxisSize.min,
@@ -409,6 +412,8 @@ class _PackageScreenState extends State<PackageScreen> {
                                   ),
                                   ElevatedButtonWidget(
                                     onPressed: () {
+                                      sharedPrefs?.setString(
+                                          'planType', plan?.type ?? "");
                                       NavigationServices.push(
                                           context: context,
                                           screen: const CheckoutScreen());
